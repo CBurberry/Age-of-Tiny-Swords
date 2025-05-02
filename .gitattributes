@@ -1,0 +1,2 @@
+# Equivalent to core.autocrlf=input in git config
+* text=auto eol=lf
