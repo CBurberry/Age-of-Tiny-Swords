@@ -14,9 +14,11 @@ public class SimpleUnit : MonoBehaviour
     [Expandable]
     protected UnitData data;
 
+    [SerializeField]
+    private UnitHealthBar healthBar;
+
     protected float moveSpeed => data.MovementSpeed;
     protected float maxHp => data.MaxHp;
-
     [ShowNonSerializedField]
     protected float currentHp;
 
@@ -95,6 +97,12 @@ public class SimpleUnit : MonoBehaviour
         //NOTE: Should there be some kind of 'took damage' animation or effect? If so, play here.
 
         currentHp = Mathf.Clamp(currentHp - value, 0f, maxHp);
+
+        //Update health bar
+        bool shouldShow = currentHp < maxHp && currentHp > 0f;
+        healthBar.SetValue(currentHp / maxHp);
+        healthBar.gameObject.SetActive(shouldShow);
+
         if (currentHp <= 0f) 
         {
             TriggerDeath();
