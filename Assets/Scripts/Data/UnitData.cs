@@ -1,16 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "NewUnitData", menuName = "TinyWorld")]
+/// <summary>
+/// Common settings for all units that share this data.
+/// </summary>
+[CreateAssetMenu(fileName = "NewUnitData", menuName = "TinyWorld/UnitData")]
 public class UnitData : ScriptableObject
 {
     [Header("References")]
-    public GameObject Prefab;
-    public List<AnimationClip> Animations;
+    public GameObject UnitPrefab;
 
     [Header("Settings")]
-    public bool IsSelectable;
-    public bool IsMultiSelectable;
-    public bool CanPlayerControl;
+    public float MaxHp = 100f;
+    public float MovementSpeed = 1f;
+    public float AttackSpeed = 1f;
 }

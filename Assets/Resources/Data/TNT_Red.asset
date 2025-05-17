@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffa599e77e1070945b67a57019d31245, type: 3}
+  m_Name: TNT_Red
+  m_EditorClassIdentifier: 
+  UnitPrefab: {fileID: 6396419846726414733, guid: 9f03516f3f09195498ce823ba134f43e, type: 3}
+  MaxHp: 100
+  MovementSpeed: 1
+  AttackSpeed: 1
