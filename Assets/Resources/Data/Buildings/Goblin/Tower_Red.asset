@@ -10,12 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
-  m_Name: Tower
+  m_Name: Tower_Red
   m_EditorClassIdentifier: 
   MaxHp: 1250
   HasAnimatedPrefab: 1
   BuildingSpriteVisuals:
     _serializedList:
+    - Key: 0
+      Value: {fileID: 60528516, guid: 0567e577894f4124490d2c29a639afe1, type: 3}
     - Key: 1
       Value: {fileID: 21300000, guid: 9f973a9e53d0c6b4aa7f6ec42ae8de47, type: 3}
     - Key: 2
