@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
+  m_Name: Tower_Blue
+  m_EditorClassIdentifier: 
+  MaxHp: 1000
+  HasAnimatedPrefab: 0
+  BuildingSpriteVisuals:
+    _serializedList:
+    - Key: 0
+      Value: {fileID: 21300000, guid: 58599f2e003e60f44a5012ce5ad7e602, type: 3}
+    - Key: 1
+      Value: {fileID: 21300000, guid: e1b4ba76c7a31264ea8d630bf9ce1a28, type: 3}
+    - Key: 2
+      Value: {fileID: 21300000, guid: 072c8d5c612fbfe45940276a90c25ea4, type: 3}
+  ConstructedVariants:
+  - {fileID: 21300000, guid: f7d709d9b356c644b830aab8146eaf2a, type: 3}
+  - {fileID: 21300000, guid: 1c8e2deae8f8d04449ccdbde9cc84fac, type: 3}
+  - {fileID: 21300000, guid: 41b3e316c7df29d48a850b694d68e0e7, type: 3}
+  ConstructedAnimatedPrefab: {fileID: 0}
+  ConstructedAnimatedVariantPrefabs: []
