@@ -100,15 +100,23 @@ TextureImporter:
       name: Rocks_04_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 128
-        height: 128
+        x: 24
+        y: 32
+        width: 83
+        height: 62
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -18.5, y: 31}
+        - {x: -41.5, y: 10}
+        - {x: -41.5, y: -20}
+        - {x: -33.5, y: -31}
+        - {x: 16.5, y: -31}
+        - {x: 41.5, y: -23}
+        - {x: 41.5, y: 7}
+        - {x: 19.5, y: 31}
       tessellationDetail: 0
       bones: []
       spriteID: ca87daa7def48594b8ef1ed0f69db5f7
@@ -121,15 +129,22 @@ TextureImporter:
       name: Rocks_04_1
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
-        width: 128
-        height: 128
+        x: 151
+        y: 34
+        width: 86
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -15, y: 30}
+        - {x: -43, y: 13}
+        - {x: -43, y: -30}
+        - {x: 32, y: -30}
+        - {x: 43, y: -19}
+        - {x: 43, y: 13}
+        - {x: 25, y: 30}
       tessellationDetail: 0
       bones: []
       spriteID: 4f6193ba266afb648925957c0ceb4003
@@ -142,15 +157,25 @@ TextureImporter:
       name: Rocks_04_2
       rect:
         serializedVersion: 2
-        x: 256
-        y: 0
-        width: 128
-        height: 128
+        x: 279
+        y: 34
+        width: 86
+        height: 60
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -7, y: 30}
+        - {x: -24, y: 24}
+        - {x: -43, y: 8}
+        - {x: -43, y: -21}
+        - {x: -41, y: -27}
+        - {x: -37, y: -30}
+        - {x: 28, y: -30}
+        - {x: 43, y: -27}
+        - {x: 43, y: 8}
+        - {x: 19, y: 30}
       tessellationDetail: 0
       bones: []
       spriteID: e91e9834002fb7840a034db755323104
@@ -163,15 +188,22 @@ TextureImporter:
       name: Rocks_04_3
       rect:
         serializedVersion: 2
-        x: 384
-        y: 0
-        width: 128
-        height: 128
+        x: 404
+        y: 31
+        width: 90
+        height: 63
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -13, y: 31.5}
+        - {x: -26, y: 29.5}
+        - {x: -45, y: 4.5}
+        - {x: -45, y: -31.5}
+        - {x: 45, y: -31.5}
+        - {x: 45, y: 24.5}
+        - {x: 32, y: 31.5}
       tessellationDetail: 0
       bones: []
       spriteID: c572c14b421ae0648bcdd03be2a84cb4
@@ -184,15 +216,25 @@ TextureImporter:
       name: Rocks_04_4
       rect:
         serializedVersion: 2
-        x: 512
-        y: 0
-        width: 128
-        height: 128
+        x: 532
+        y: 29
+        width: 91
+        height: 65
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -13.5, y: 32.5}
+        - {x: -25.5, y: 30.5}
+        - {x: -45.5, y: 7.5}
+        - {x: -45.5, y: -14.5}
+        - {x: -42.5, y: -24.5}
+        - {x: -29.5, y: -32.5}
+        - {x: 39.5, y: -32.5}
+        - {x: 45.5, y: -11.5}
+        - {x: 45.5, y: 6.5}
+        - {x: 25.5, y: 32.5}
       tessellationDetail: 0
       bones: []
       spriteID: 5bb63ee604e277740828a51d37b7e277
@@ -205,12 +247,12 @@ TextureImporter:
       name: Rocks_04_5
       rect:
         serializedVersion: 2
-        x: 640
-        y: 0
-        width: 128
-        height: 128
+        x: 660
+        y: 53
+        width: 5
+        height: 11
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -226,15 +268,23 @@ TextureImporter:
       name: Rocks_04_6
       rect:
         serializedVersion: 2
-        x: 768
-        y: 0
-        width: 128
-        height: 128
+        x: 665
+        y: 30
+        width: 86
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
-      physicsShape: []
+      physicsShape:
+      - - {x: -14, y: 32}
+        - {x: -43, y: 11}
+        - {x: -43, y: -25}
+        - {x: -32, y: -32}
+        - {x: 38, y: -32}
+        - {x: 43, y: -15}
+        - {x: 43, y: 8}
+        - {x: 16, y: 32}
       tessellationDetail: 0
       bones: []
       spriteID: 985931805abbb4e41a98e02cc62a41b8
@@ -247,19 +297,92 @@ TextureImporter:
       name: Rocks_04_7
       rect:
         serializedVersion: 2
-        x: 896
-        y: 0
-        width: 128
-        height: 128
+        x: 788
+        y: 30
+        width: 91
+        height: 64
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: 15.5, y: -32}
+        - {x: 36.5, y: -26}
+        - {x: 45.5, y: -11}
+        - {x: 45.5, y: 2}
+        - {x: 40.5, y: 12}
+        - {x: 17.5, y: 32}
+        - {x: -8.5, y: 32}
+        - {x: -24.5, y: 28}
+        - {x: -45.5, y: 3}
+        - {x: -45.5, y: -10}
+        - {x: -37.5, y: -23}
+        - {x: -34.5, y: -21}
+        - {x: -21.5, y: -32}
+        - {x: -13.5, y: -32}
+        - {x: -11.5, y: -30}
+        - {x: -12.5, y: -28}
+        - {x: -10.5, y: -32}
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4ead5dc7becab9478e9684dd16cf641
+      internalID: -891612146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rocks_04_8
+      rect:
+        serializedVersion: 2
+        x: 916
+        y: 31
+        width: 90
+        height: 63
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape:
+      - - {x: -14, y: 31.5}
+        - {x: -45, y: 10.5}
+        - {x: -45, y: -17.5}
+        - {x: -37, y: -31.5}
+        - {x: 22, y: -31.5}
+        - {x: 45, y: -21.5}
+        - {x: 45, y: 3.5}
+        - {x: 18, y: 31.5}
+      - - {x: 32, y: -21.5}
+        - {x: 34, y: -23.5}
+        - {x: 39, y: -21.5}
+        - {x: 39, y: -18.5}
+        - {x: 37, y: -16.5}
+        - {x: 32, y: -18.5}
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1d2b40c0b622edf40aa1610d5581f480
+      internalID: -403668589
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rocks_04_9
+      rect:
+        serializedVersion: 2
+        x: 813
+        y: 30
+        width: 7
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: b4ead5dc7becab9478e9684dd16cf641
-      internalID: -891612146
+      spriteID: 2aa9bd069954e8b479ddd7e865c770b5
+      internalID: -1138123450
       vertices: []
       indices: 
       edges: []
@@ -283,6 +406,8 @@ TextureImporter:
       Rocks_04_5: -650279155
       Rocks_04_6: 1543436945
       Rocks_04_7: -891612146
+      Rocks_04_8: -403668589
+      Rocks_04_9: -1138123450
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

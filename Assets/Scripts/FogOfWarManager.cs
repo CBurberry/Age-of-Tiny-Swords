@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
-using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class FogOfWarManager : MonoBehaviour
 {
