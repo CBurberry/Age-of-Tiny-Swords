@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Barrel_Red
   m_EditorClassIdentifier: 
   UnitPrefab: {fileID: 513694697890398105, guid: 1e34cbae0f62287419c70e795df305a0, type: 3}
-  MaxHp: 100
+  MaxHp: 80
   MovementSpeed: 1
   AttackSpeed: 1

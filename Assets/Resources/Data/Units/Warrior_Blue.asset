@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Warrior_Blue
   m_EditorClassIdentifier: 
   UnitPrefab: {fileID: 2273362963227822532, guid: 97f786ec149ef0b4b9906bf2bc95c633, type: 3}
-  MaxHp: 100
+  MaxHp: 160
   MovementSpeed: 1
   AttackSpeed: 1

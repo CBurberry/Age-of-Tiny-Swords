@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Archer_Blue
   m_EditorClassIdentifier: 
   UnitPrefab: {fileID: 8343267594577661981, guid: 25f41f64aac38b64399665407485bdf8, type: 3}
-  MaxHp: 100
+  MaxHp: 130
   MovementSpeed: 1
   AttackSpeed: 1

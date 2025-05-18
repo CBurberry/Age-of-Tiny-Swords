@@ -10,7 +10,7 @@ public class UnitData : ScriptableObject
     public GameObject UnitPrefab;
 
     [Header("Settings")]
-    public float MaxHp = 100f;
+    public int MaxHp = 100;
     public float MovementSpeed = 1f;
     public float AttackSpeed = 1f;
 }

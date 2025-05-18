@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: TNT_Red
   m_EditorClassIdentifier: 
   UnitPrefab: {fileID: 6396419846726414733, guid: 9f03516f3f09195498ce823ba134f43e, type: 3}
-  MaxHp: 100
+  MaxHp: 150
   MovementSpeed: 1
   AttackSpeed: 1

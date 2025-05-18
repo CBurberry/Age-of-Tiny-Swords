@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -20,9 +21,10 @@ public class SimpleUnit : MonoBehaviour
     private DeadUnit deadPrefab;
 
     protected float moveSpeed => data.MovementSpeed;
-    protected float maxHp => data.MaxHp;
+    protected float hpPercent => (float)currentHp / maxHp;
+    protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
-    protected float currentHp;
+    protected int currentHp;
 
     //These components should be on the prefab root, along with this script
     protected Animator animator;
@@ -89,7 +91,7 @@ public class SimpleUnit : MonoBehaviour
         return true;
     }
 
-    public void TakeDamage(float value)
+    public void TakeDamage(int value)
     {
         if (value == 0f) 
         {
@@ -98,7 +100,7 @@ public class SimpleUnit : MonoBehaviour
 
         //NOTE: Should there be some kind of 'took damage' animation or effect? If so, play here.
 
-        currentHp = Mathf.Clamp(currentHp - value, 0f, maxHp);
+        currentHp = Math.Clamp(currentHp - value, 0, maxHp);
 
         //Update health bar
         bool shouldShow = currentHp < maxHp && currentHp > 0f;
