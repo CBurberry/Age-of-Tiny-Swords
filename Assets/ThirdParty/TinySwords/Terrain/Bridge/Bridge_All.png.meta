@@ -101,9 +101,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 17
+        y: 192
         width: 64
-        height: 158
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,9 +121,9 @@ TextureImporter:
       name: Bridge_All_1
       rect:
         serializedVersion: 2
-        x: 18
+        x: 64
         y: 192
-        width: 156
+        width: 64
         height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -142,10 +142,10 @@ TextureImporter:
       name: Bridge_All_2
       rect:
         serializedVersion: 2
-        x: 64
-        y: 129
-        width: 65
-        height: 65
+        x: 128
+        y: 192
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,10 +163,10 @@ TextureImporter:
       name: Bridge_All_4
       rect:
         serializedVersion: 2
-        x: 130
-        y: 129
-        width: 62
-        height: 62
+        x: 64
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +184,10 @@ TextureImporter:
       name: Bridge_All_5
       rect:
         serializedVersion: 2
-        x: 64
-        y: 64
-        width: 65
-        height: 65
+        x: 128
+        y: 128
+        width: 64
+        height: 64
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -205,8 +205,8 @@ TextureImporter:
       name: Bridge_All_6
       rect:
         serializedVersion: 2
-        x: 128
-        y: 0
+        x: 0
+        y: 64
         width: 64
         height: 64
       alignment: 0
@@ -218,6 +218,90 @@ TextureImporter:
       bones: []
       spriteID: c4f1bf0d1fbe6594a95640b09fd7e994
       internalID: -1910052786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge_All_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 128
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0872285eab941944395f8a329ec02645
+      internalID: 137590209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge_All_7
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 64
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 604629274da20d346bc7db280a2b4c1f
+      internalID: 1400450740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge_All_8
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28da25b4966b9304a98c767212c0a91a
+      internalID: -1976916152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Bridge_All_9
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a57ff6b5bbf9aa4db2cf24cd2eb43ec
+      internalID: 401091577
       vertices: []
       indices: 
       edges: []
@@ -240,6 +324,9 @@ TextureImporter:
       Bridge_All_4: -1825482455
       Bridge_All_5: -1825086247
       Bridge_All_6: -1910052786
+      Bridge_All_7: 1400450740
+      Bridge_All_8: -1976916152
+      Bridge_All_9: 401091577
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
