@@ -1,5 +1,4 @@
 using NaughtyAttributes;
-using System;
 using UnityEngine;
 
 /// <summary>
@@ -16,6 +15,9 @@ public class SimpleUnit : MonoBehaviour
 
     [SerializeField]
     private UnitHealthBar healthBar;
+
+    [SerializeField]
+    private DeadUnit deadPrefab;
 
     protected float moveSpeed => data.MovementSpeed;
     protected float maxHp => data.MaxHp;
@@ -132,7 +134,12 @@ public class SimpleUnit : MonoBehaviour
     [Button("TriggerDeath (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void TriggerDeath()
     {
-        //TODO: Replace this prefab with a spawned instance of the death prefab
-        throw new NotImplementedException();
+        //Hide self
+        spriteRenderer.enabled = false;
+
+        //Replace this prefab with a spawned instance of the death prefab
+        DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
+        deadUnit.name = deadUnit.UnitName = name;
+        Destroy(gameObject);
     }
 }

@@ -94,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 7324d65afbb8ba143b7d6390b9852191, type: 2}
   healthBar: {fileID: 2397718731887030654}
+  deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
   moveToTargetTransform: {fileID: 0}
 --- !u!4 &9089608904007219320 stripped
 Transform:
