@@ -28,7 +28,7 @@ public class ResourceManager : MonoBehaviour
     private int gold;
 
     [SerializeField]
-    [ProgressBar("Stamina", "maxWoodCount", EColor.Green)]
+    [ProgressBar("Wood", "maxWoodCount", EColor.Green)]
     private int wood;
 #endif
 
