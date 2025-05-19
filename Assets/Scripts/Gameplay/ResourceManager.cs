@@ -24,7 +24,7 @@ public class ResourceManager : MonoBehaviour
     private int food;
 
     [SerializeField]
-    [ProgressBar("Gold", "maxGoldCount", EColor.Blue)]
+    [ProgressBar("Gold", "maxGoldCount", EColor.Yellow)]
     private int gold;
 
     [SerializeField]
