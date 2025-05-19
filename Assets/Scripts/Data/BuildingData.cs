@@ -8,6 +8,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewBuildingData", menuName = "TinyWorld/BuildingData")]
 public class BuildingData : ScriptableObject
 {
+    public const string PreviewColorString = "#999999";
+
     public int MaxHp;
     public bool HasAnimatedPrefab;
 
@@ -23,9 +25,19 @@ public class BuildingData : ScriptableObject
     /// Get the sprite that shows the visual of the constructed building
     /// </summary>
     /// <returns></returns>
-    public static Sprite GetConstructedPreview(BuildingData data)
+    public Sprite GetConstructedPreview()
     {
-        return data.BuildingSpriteVisuals[BuildingStates.Constructed];
+        return BuildingSpriteVisuals[BuildingStates.Constructed];
+    }
+
+    /// <summary>
+    /// Get the color tint for preview visuals
+    /// </summary>
+    /// <returns></returns>
+    public static Color GetPreviewColor()
+    {
+        ColorUtility.TryParseHtmlString(PreviewColorString, out var previewColor);
+        return previewColor;
     }
 }
 

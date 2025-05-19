@@ -20,21 +20,50 @@ public class SimpleBuilding : MonoBehaviour
     [ShowNonSerializedField]
     protected int currentHp;
 
+    [SerializeField]
     protected GameObject visuals;
     protected GameObject animatedPrefabInstance;
-    protected SpriteRenderer spriteRenderer;
+    protected SpriteRenderer spriteRenderer => visuals.GetComponent<SpriteRenderer>();
     protected BuildingStates state;
+
+    [SerializeField]
+    protected bool buildOnStart;
 
     private const float damageVisualThreshold = 0.75f;
 
+    private void Awake()
+    {
+        if (visuals == null)
+        {
+            visuals = new GameObject("Visuals", typeof(SpriteRenderer));
+            visuals.transform.parent = transform;
+            visuals.transform.localPosition = Vector3.zero;
+            visuals.transform.localRotation = Quaternion.identity;
+            visuals.transform.localScale = Vector3.one;
+            spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
+        }
+    }
+
     private void Start()
     {
-        visuals = new GameObject("Visuals", typeof(SpriteRenderer));
-        visuals.transform.localPosition = Vector3.zero;
-        visuals.transform.localRotation = Quaternion.identity;
-        visuals.transform.localScale = Vector3.one;
-        visuals.transform.parent = transform;
-        spriteRenderer = visuals.GetComponent<SpriteRenderer>();
+        if (buildOnStart) 
+        {
+            HidePreview();
+            Construct();
+            Build(maxHp);
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (buildOnStart)
+        {
+            ShowPreview();
+        }
+        else 
+        {
+            HidePreview();
+        }
     }
 
     /// <summary>
@@ -141,6 +170,18 @@ public class SimpleBuilding : MonoBehaviour
     protected virtual void RemoveDamagedVisual()
     {
         //TODO: Remove VFX
+    }
+
+    private void ShowPreview()
+    {
+        spriteRenderer.color = BuildingData.GetPreviewColor();
+        spriteRenderer.sprite = data.GetConstructedPreview();
+    }
+
+    private void HidePreview()
+    {
+        spriteRenderer.color = Color.white;
+        spriteRenderer.sprite = null;
     }
 
     private void DestroyBuilding()
