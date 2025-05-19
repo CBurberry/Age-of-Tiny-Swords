@@ -39,7 +39,7 @@ public class ResourceManager : MonoBehaviour
     }
 
     public int GetResourceLimit(ResourceType type) => resourceLimits[type];
-    public int GetResourceCount(ResourceType type) => currentResources.Count;
+    public int GetResourceCount(ResourceType type) => currentResources[type];
 
     public void AddResource(ResourceType type, int amount)
     {
