@@ -1,5 +1,4 @@
 using NaughtyAttributes;
-using RuntimeStatics;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -7,15 +6,10 @@ using UnityEngine;
 /// <summary>
 /// Base class governing behaviours that all buildings share e.g. Construction, Destruction.
 /// </summary>
-public class SimpleBuilding : MonoBehaviour, IUnitInteractable
+public class SimpleBuilding : ABaseUnitInteractable, IBuilding
 {
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
-
-    [SerializeField]
-    [Tooltip("If a unit interacts with this building what can it do?")]
-    [EnumFlags]
-    private UnitInteractContexts interactableContexts;
 
     [SerializeField]
     [Expandable]
@@ -78,25 +72,17 @@ public class SimpleBuilding : MonoBehaviour, IUnitInteractable
         }
     }
 
-    public virtual UnitInteractContexts GetContexts() => interactableContexts;
-
-    public virtual bool CanInteract(SimpleUnit unit, UnitInteractContexts contexts, out UnitInteractContexts interactableContexts)
-    {
-        interactableContexts = contexts & GetApplicableContexts(unit);
-        return interactableContexts != UnitInteractContexts.None;
-    }
-
-    public virtual UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
+    public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
     {
         if (state == BuildingStates.Destroyed)
         {
             return UnitInteractContexts.None;
         }
 
-        //TODO: Check unit faction to determine if can be attacked or not, for now just set to be attackable
+        //TODO: Check unit faction to determine if can be attacked or not, for now just set to not be attackable
 
         UnitInteractContexts contexts = UnitInteractContexts.None;
-        contexts |= UnitInteractContexts.Attack;
+        //contexts |= UnitInteractContexts.Attack;
 
         if (state == BuildingStates.PreConstruction)
         {
@@ -116,7 +102,7 @@ public class SimpleBuilding : MonoBehaviour, IUnitInteractable
     /// Initial placement of a building
     /// </summary>
     [Button("Construct (PlayMode)", EButtonEnableMode.Playmode)]
-    protected virtual void Construct()
+    public virtual void Construct()
     {
         if (currentHp > 0) 
         {
@@ -142,7 +128,7 @@ public class SimpleBuilding : MonoBehaviour, IUnitInteractable
     /// </summary>
     /// <param name="amount"></param>
     /// <returns>Boolean indicating completion</returns>
-    protected virtual bool Build(int amount)
+    public virtual bool Build(int amount)
     {
         currentHp = Math.Clamp(currentHp + amount, currentHp, maxHp);
         if (currentHp == maxHp)
@@ -161,7 +147,7 @@ public class SimpleBuilding : MonoBehaviour, IUnitInteractable
     /// e.g. Removing any fire vfx
     /// </summary>
     /// <param name="amount"></param>
-    protected void Repair(int amount)
+    public void Repair(int amount)
     {
         if (currentHp == 0) 
         {
@@ -175,7 +161,11 @@ public class SimpleBuilding : MonoBehaviour, IUnitInteractable
         }
     }
 
-    protected void TakeDamage(int amount)
+    /// <summary>
+    /// Apply damage to building e.g. when attacked
+    /// </summary>
+    /// <param name="amount"></param>
+    public void TakeDamage(int amount)
     {
         //Note: maybe make this two tier of intensity when damaged?
         currentHp = Math.Clamp(currentHp - amount, 0, maxHp);

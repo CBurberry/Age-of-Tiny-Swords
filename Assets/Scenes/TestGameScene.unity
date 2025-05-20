@@ -377,18 +377,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pawn_Blue
       objectReference: {fileID: 0}
-    - target: {fileID: 2886253106962404507, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6389501109577059899, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
-      propertyPath: m_ApplyRootMotion
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9058295651442061741, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
-      propertyPath: moveToTargetTransform
-      value: 
-      objectReference: {fileID: 1887072036}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -618,6 +606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1063126528}
   - component: {fileID: 1063126529}
+  - component: {fileID: 1063126530}
   m_Layer: 0
   m_Name: SpriteRenderer
   m_TagString: Untagged
@@ -681,7 +670,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: db3b0be3c0be2624f8f923e06e040a93, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d028f240952a7f54f8fcb9e98febd9df, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -692,6 +681,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1063126530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063126527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95ff6ff942edf8e4fac301826b9e0901, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1377303300
 GameObject:
   m_ObjectHideFlags: 0
@@ -1086,9 +1087,41 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Size.x
+      value: 1.28
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Size.y
+      value: 1.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4025139759726112872, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4111850848302177695, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
+      propertyPath: buildOnStart
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7144979900995264031, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 2.4
       objectReference: {fileID: 0}
     - target: {fileID: 7144979900995264031, guid: 6ea37423ca3f02c46b07673139054e04, type: 3}
       propertyPath: m_LocalPosition.y

@@ -49,7 +49,6 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 73eb4df1140bc5e4db04f261ca9697c2, type: 2}
   visuals: {fileID: 8382499713719440887}
   buildOnStart: 0
-  testInteractionContexts: 0
 --- !u!1 &8382499713719440887
 GameObject:
   m_ObjectHideFlags: 0

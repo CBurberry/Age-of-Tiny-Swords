@@ -133,4 +133,3 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 64a9c79d9214cf94882df05474a88b5f, type: 2}
   visuals: {fileID: 4016681619413240150}
   buildOnStart: 0
-  testInteractionContexts: 0

@@ -1,5 +1,7 @@
 using NaughtyAttributes;
+using RuntimeStatics;
 using System;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -10,9 +12,16 @@ using UnityEngine;
 /// </summary>
 public class SimpleUnit : MonoBehaviour
 {
+    protected const string ANIMATION_BOOL_MOVING = "IsMoving";
+
     [SerializeField]
     [Expandable]
     protected UnitData data;
+
+    [SerializeField]
+    [Tooltip("What interactable contexts does this unit support?")]
+    [EnumFlags]
+    private UnitInteractContexts interactableContexts;
 
     [SerializeField]
     private UnitHealthBar healthBar;
@@ -25,6 +34,8 @@ public class SimpleUnit : MonoBehaviour
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
     protected int currentHp;
+    protected bool isMoving => moveToTargetPosition != null;
+    protected ABaseUnitInteractable interactionTarget;
 
     //These components should be on the prefab root, along with this script
     protected Animator animator;
@@ -33,7 +44,7 @@ public class SimpleUnit : MonoBehaviour
     [SerializeField]
     [Tooltip("FOR TESTING PURPOSES, BUTTON BELOW")]
     private Transform moveToTargetTransform;    //FOR TESTING PURPOSES
-
+    private Action onMoveToComplete;
     private Vector3? moveToStartingPosition;
     private Vector3? moveToTargetPosition;      //Reference to the target position
     private float startTime;                    //Time when the movement started.
@@ -50,33 +61,36 @@ public class SimpleUnit : MonoBehaviour
 
     protected virtual void Update()
     {
-        //MoveTo update
-        if (moveToTargetPosition != null) 
-        {
-            //Distance moved equals elapsed time times speed..
-            float distCovered = (Time.time - startTime) * moveSpeed;
+        UpdateMoveTo();
+    }
 
-            //Fraction of journey completed equals current distance divided by total distance.
-            float fractionOfJourney = distCovered / journeyLength;
+    public bool MoveTo(Transform target, Action onComplete = null)
+    {
+        //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
+        var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
 
-            //Set our position as a fraction of the distance between the markers.
-            transform.position = Vector3.Lerp((Vector3)moveToStartingPosition, (Vector3)moveToTargetPosition, fractionOfJourney);
-            if (transform.position == moveToTargetPosition) 
-            {
-                EndMoveTo();
-            }
-        }
+        //Smelly code I know. We assume bottom center pivot (or similarily defined custom pivot)
+        var spriteRenderer = spriteRenderers.First(x => x.gameObject.name == "Visuals");
+        Bounds bounds = spriteRenderer.bounds;
+
+        //Set to bottom of bounds for simplicity
+        bounds.center = new Vector3(bounds.center.x, bounds.center.y - bounds.extents.y, spriteRenderer.transform.position.z);
+        bounds.extents = new Vector3(bounds.extents.x, 0f, 0f);
+        return MoveTo(bounds.ClosestPoint(transform.position), onComplete);
     }
 
     //TODO: Use A* Pathfinding, return false when can't path
-    public bool MoveTo(Transform target) => MoveTo(target.position);
-    public bool MoveTo(Vector3 worldPosition)
+    public bool MoveTo(Vector3 worldPosition, Action onComplete = null)
     {
+        //Clear the interaction target as we may be cancelling another action
+        interactionTarget = null;
+
         if (worldPosition == transform.position) 
         {
             return true;
         }
 
+        onMoveToComplete = onComplete;
         startTime = Time.time;
         journeyLength = Vector3.Distance(transform.position, worldPosition);
         moveToStartingPosition = transform.position;
@@ -87,13 +101,41 @@ public class SimpleUnit : MonoBehaviour
 
         //Set/Unset the required boolean flags for animator (also sprite renderer flip X-axis)
         spriteRenderer.flipX = directionUnitVector.x < 0f;
-        animator.SetBool("IsMoving", true);
+        animator.SetBool(ANIMATION_BOOL_MOVING, true);
         return true;
+    }
+
+    /// <summary>
+    /// Get this unit to interact with a given target.
+    /// </summary>
+    /// <param name="target">Target entity</param>
+    /// <param name="context">Singular context</param>
+    /// <returns>Success/Failure</returns>
+    public virtual void Interact(ABaseUnitInteractable target, UnitInteractContexts context)
+    {
+        if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts)) 
+        {
+            return;
+        }
+
+        if (BitwiseHelpers.GetSetBitCount((long)availableContexts) != 1) 
+        {
+            throw new ArgumentException($"[{nameof(SimpleUnit)}.{nameof(Interact)}]: Cannot resolve more than 1 interaction context at once!");
+        }
+
+        if (target is IBuilding)
+        {
+            ResolveBuildingInteraction(target, availableContexts);
+        }
+        else 
+        {
+            throw new NotImplementedException("TODO: define interaction behaviour with non-building classes");
+        }
     }
 
     public void TakeDamage(int value)
     {
-        if (value == 0f) 
+        if (value == 0f)
         {
             return;
         }
@@ -107,9 +149,33 @@ public class SimpleUnit : MonoBehaviour
         healthBar.SetValue(currentHp / maxHp);
         healthBar.gameObject.SetActive(shouldShow);
 
-        if (currentHp <= 0f) 
+        if (currentHp <= 0f)
         {
             TriggerDeath();
+        }
+    }
+
+    protected virtual void ResolveBuildingInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
+    protected virtual void UpdateMoveTo()
+    {
+        if (moveToTargetPosition != null)
+        {
+            //Distance moved equals elapsed time times speed..
+            float distCovered = (Time.time - startTime) * moveSpeed;
+
+            //Fraction of journey completed equals current distance divided by total distance.
+            float fractionOfJourney = distCovered / journeyLength;
+
+            //Set our position as a fraction of the distance between the markers.
+            transform.position = Vector3.Lerp((Vector3)moveToStartingPosition, (Vector3)moveToTargetPosition, fractionOfJourney);
+            if (transform.position == moveToTargetPosition)
+            {
+                EndMoveTo();
+            }
         }
     }
 
@@ -117,7 +183,14 @@ public class SimpleUnit : MonoBehaviour
     {
         moveToStartingPosition = null;
         moveToTargetPosition = null;
-        animator.SetBool("IsMoving", false);
+        animator.SetBool(ANIMATION_BOOL_MOVING, false);
+        onMoveToComplete?.Invoke();
+    }
+
+    [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
+    protected virtual void InteractWith()
+    {
+        Interact(moveToTargetTransform.gameObject.GetComponent<ABaseUnitInteractable>(), UnitInteractContexts.Build | UnitInteractContexts.Repair);
     }
 
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]
