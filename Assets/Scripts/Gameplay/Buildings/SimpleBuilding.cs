@@ -1,4 +1,5 @@
 using NaughtyAttributes;
+using RuntimeStatics;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -6,10 +7,15 @@ using UnityEngine;
 /// <summary>
 /// Base class governing behaviours that all buildings share e.g. Construction, Destruction.
 /// </summary>
-public class SimpleBuilding : MonoBehaviour
+public class SimpleBuilding : MonoBehaviour, IUnitInteractable
 {
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
+
+    [SerializeField]
+    [Tooltip("If a unit interacts with this building what can it do?")]
+    [EnumFlags]
+    private UnitInteractContexts interactableContexts;
 
     [SerializeField]
     [Expandable]
@@ -24,6 +30,8 @@ public class SimpleBuilding : MonoBehaviour
     protected GameObject visuals;
     protected GameObject animatedPrefabInstance;
     protected SpriteRenderer spriteRenderer => visuals.GetComponent<SpriteRenderer>();
+
+    [ShowNonSerializedField]
     protected BuildingStates state;
 
     [SerializeField]
@@ -46,11 +54,15 @@ public class SimpleBuilding : MonoBehaviour
 
     private void Start()
     {
-        if (buildOnStart) 
+        if (buildOnStart)
         {
             HidePreview();
             Construct();
             Build(maxHp);
+        }
+        else 
+        {
+            state = BuildingStates.PreConstruction;
         }
     }
 
@@ -64,6 +76,40 @@ public class SimpleBuilding : MonoBehaviour
         {
             HidePreview();
         }
+    }
+
+    public virtual UnitInteractContexts GetContexts() => interactableContexts;
+
+    public virtual bool CanInteract(SimpleUnit unit, UnitInteractContexts contexts, out UnitInteractContexts interactableContexts)
+    {
+        interactableContexts = contexts & GetApplicableContexts(unit);
+        return interactableContexts != UnitInteractContexts.None;
+    }
+
+    public virtual UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
+    {
+        if (state == BuildingStates.Destroyed)
+        {
+            return UnitInteractContexts.None;
+        }
+
+        //TODO: Check unit faction to determine if can be attacked or not, for now just set to be attackable
+
+        UnitInteractContexts contexts = UnitInteractContexts.None;
+        contexts |= UnitInteractContexts.Attack;
+
+        if (state == BuildingStates.PreConstruction)
+        {
+            contexts |= UnitInteractContexts.Build;
+        }
+        else if (state == BuildingStates.Constructed && currentHp < maxHp) 
+        {
+            contexts |= UnitInteractContexts.Repair;
+        }
+
+        //TODO: implement garrison context check (perhaps in derived class e.g. garrisonbuilding)
+
+        return contexts;
     }
 
     /// <summary>
@@ -96,7 +142,7 @@ public class SimpleBuilding : MonoBehaviour
     /// </summary>
     /// <param name="amount"></param>
     /// <returns>Boolean indicating completion</returns>
-    public virtual bool Build(int amount)
+    protected virtual bool Build(int amount)
     {
         currentHp = Math.Clamp(currentHp + amount, currentHp, maxHp);
         if (currentHp == maxHp)
@@ -115,7 +161,7 @@ public class SimpleBuilding : MonoBehaviour
     /// e.g. Removing any fire vfx
     /// </summary>
     /// <param name="amount"></param>
-    public void Repair(int amount)
+    protected void Repair(int amount)
     {
         if (currentHp == 0) 
         {
@@ -129,7 +175,7 @@ public class SimpleBuilding : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int amount)
+    protected void TakeDamage(int amount)
     {
         //Note: maybe make this two tier of intensity when damaged?
         currentHp = Math.Clamp(currentHp - amount, 0, maxHp);
@@ -158,8 +204,6 @@ public class SimpleBuilding : MonoBehaviour
         {
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
-
-        //TODO: Enable interactions
     }
 
     protected virtual void ApplyDamagedVisual()
@@ -200,8 +244,6 @@ public class SimpleBuilding : MonoBehaviour
         }
 
         spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
-
-        //TODO: Disable interactions
     }
 
     [Button("Build 100% (PlayMode)", EButtonEnableMode.Playmode)]

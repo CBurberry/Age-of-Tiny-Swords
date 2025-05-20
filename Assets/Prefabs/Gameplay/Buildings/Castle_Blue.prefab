@@ -129,6 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe026d4db3b1d940b33f61d53022556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactableContexts: 0
   data: {fileID: 11400000, guid: dd528f34d855aed42b0d622c359be8dd, type: 2}
   visuals: {fileID: 1829964203892140398}
   buildOnStart: 0
+  testInteractionContexts: 0
