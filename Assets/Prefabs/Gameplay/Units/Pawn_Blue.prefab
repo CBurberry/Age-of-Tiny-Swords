@@ -243,11 +243,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.615896
+      value: 9.14
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.696
+      value: 2.95
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.z
@@ -321,7 +321,7 @@ MonoBehaviour:
   moveToTargetTransform: {fileID: 0}
   buildAmountPerSecond: 10
   repairAmountPerSecond: 12
-  gatherAmountPerSecond: 2
+  gatherAmountPerSecond: 1
   maxHeldResourceCount: 30
   currentResources:
     _serializedList:

@@ -1,6 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
 
 public class PawnUnit : SimpleUnit
@@ -111,7 +112,12 @@ public class PawnUnit : SimpleUnit
             MoveTo(target.transform, StartChoppingTree);
             interactionTarget = target;
         }
-        else 
+        else if (target is GoldMine) 
+        {
+            MoveTo(target.transform, EnterMine);
+            interactionTarget = target;
+        }
+        else
         {
             throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
         }
@@ -184,6 +190,34 @@ public class PawnUnit : SimpleUnit
         }
 
         animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
+    }
+
+    private void EnterMine()
+    {
+        ClearAllAnimationActionFlags();
+        spriteRenderer.enabled = false;
+        (interactionTarget as GoldMine).EnterMine(this);
+        StartCoroutine(Mining());
+    }
+
+    private IEnumerator Mining()
+    {
+        GoldMine mine = interactionTarget as GoldMine;
+        int overflow = 0;
+        Func<bool> condition = () => mine != null && !mine.IsDepleted && overflow == 0 && !isMoving;
+        while (condition.Invoke())
+        {
+            AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);
+            if (overflow > 0)
+            {
+                Debug.LogWarning("TODO: Overflow from mining gold. Need to drop excess as a new gold prefab!");
+                break;
+            }
+            yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f, () => !condition.Invoke());
+        }
+
+        mine.ExitMine(this);
+        spriteRenderer.enabled = true;
     }
 
     private void Gather()

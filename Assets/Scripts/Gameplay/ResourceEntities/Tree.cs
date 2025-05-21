@@ -1,4 +1,3 @@
-using NaughtyAttributes;
 using UnityEngine;
 
 public class Tree : ABaseUnitInteractable, IResourceSource
@@ -11,7 +10,7 @@ public class Tree : ABaseUnitInteractable, IResourceSource
     [SerializeField]
     private int maxWood = 100;
 
-    [ShowNonSerializedField]
+    [SerializeField]
     private int currentWood;
 
     private const string ANIMATION_BOOL_DEAD = "IsDead";

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 /// <summary>
 /// Bunch of static helper functions to be used at editor/runtime. In no particular order.
@@ -34,6 +35,48 @@ namespace RuntimeStatics
 
             //Return the count
             return iCount;
+        }
+    }
+
+    public static class BoundsExtensions
+    {
+        //Source: https://discussions.unity.com/t/pick-random-point-inside-box-collider/708849
+        public static Vector3 GetRandomPointInside(this Bounds bounds)
+        {
+            return new Vector3(
+                Random.Range(bounds.min.x, bounds.max.x),
+                Random.Range(bounds.min.y, bounds.max.y),
+                Random.Range(bounds.min.z, bounds.max.z)
+            );
+        }
+
+        //AI generated
+        public static Vector3 GetRandomPointOnEdge(this Bounds bounds)
+        {
+            // 1. Determine the dimensions of the bounding box
+            float xMin = bounds.min.x;
+            float xMax = bounds.max.x;
+            float yMin = bounds.min.y;
+            float yMax = bounds.max.y;
+            float zMin = bounds.min.z;
+            float zMax = bounds.max.z;
+
+            // 2. Choose a random side
+            int side = Random.Range(0, 4);  // 0: Front, 1: Back, 2: Left, 3: Right
+                                            // 3. Generate a random point on the chosen side
+            switch (side)
+            {
+                case 0: // Front
+                    return new Vector3(xMin, yMin + Random.Range(0f, yMax - yMin), zMax);
+                case 1: // Back
+                    return new Vector3(xMax, yMin + Random.Range(0f, yMax - yMin), zMin);
+                case 2: // Left
+                    return new Vector3(xMin, yMin + Random.Range(0f, yMax - yMin), zMin);
+                case 3: // Right
+                    return new Vector3(xMax, yMin + Random.Range(0f, yMax - yMin), zMax);
+                default:
+                    throw new InvalidOperationException("Unreachable Code");
+            }
         }
     }
 
