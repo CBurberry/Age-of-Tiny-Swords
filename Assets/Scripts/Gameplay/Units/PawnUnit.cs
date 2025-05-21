@@ -112,7 +112,7 @@ public class PawnUnit : SimpleUnit
             MoveTo(target.transform, StartChoppingTree);
             interactionTarget = target;
         }
-        else if (target is GoldMine) 
+        else if (target is GoldMine)
         {
             MoveTo(target.transform, EnterMine);
             interactionTarget = target;
@@ -121,6 +121,53 @@ public class PawnUnit : SimpleUnit
         {
             throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
         }
+    }
+
+    protected override void ResolveDamagableInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    {
+        if (target is Sheep)
+        {
+            MoveTo(target.transform, StartAttacking);
+            interactionTarget = target;
+        }
+        else
+        {
+            throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
+        }
+    }
+
+    //Start a cycle of MoveTo unit until close and attack (using chop animation as no alternative)
+    private void StartAttacking()
+    {
+        ClearAllAnimationActionFlags();
+        StartCoroutine(Attacking());
+    }
+
+    //TODO: Time the hit with the animation connecting the hit
+    private IEnumerator Attacking()
+    {
+        IDamageable damageTarget = interactionTarget as IDamageable;
+        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
+        while (condition.Invoke())
+        {
+            //Check we are at the target (proximity check? bounds?)
+            Vector3 closestPosition = damageTarget.GetClosestPosition(transform.position);
+            float magnitude = (closestPosition - transform.position).magnitude;
+            if (magnitude > data.AttackDistance)
+            {
+                animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
+                MoveTo(interactionTarget.transform, StartAttacking, false);
+                yield break;
+            }
+            else 
+            {
+                animator.SetBool(ANIMATION_BOOL_CHOPPING, true);
+                damageTarget.ApplyDamage(data.BaseAttackDamage);
+                yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
+            }
+        }
+
+        animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
     }
 
     //Start a cycle of building until 100%
@@ -192,6 +239,7 @@ public class PawnUnit : SimpleUnit
         animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
     }
 
+    //Start a cycle of mining until full or mine depleted
     private void EnterMine()
     {
         ClearAllAnimationActionFlags();

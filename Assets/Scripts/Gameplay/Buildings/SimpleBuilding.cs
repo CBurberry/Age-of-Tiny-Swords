@@ -10,12 +10,12 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
 {
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
+    public float HpAlpha => (float)currentHp / maxHp;
 
     [SerializeField]
     [Expandable]
     protected BuildingData data;
 
-    protected float hpPercent => (float)currentHp / maxHp;
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
     protected int currentHp;
@@ -33,7 +33,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
 
     private const float damageVisualThreshold = 0.75f;
 
-    private void Awake()
+    protected void Awake()
     {
         if (visuals == null)
         {
@@ -46,7 +46,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
         }
     }
 
-    private void Start()
+    protected void Start()
     {
         if (buildOnStart)
         {
@@ -60,7 +60,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
         }
     }
 
-    private void OnValidate()
+    protected void OnValidate()
     {
         if (buildOnStart)
         {
@@ -147,7 +147,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
     /// e.g. Removing any fire vfx
     /// </summary>
     /// <param name="amount"></param>
-    public void Repair(int amount)
+    public virtual void Repair(int amount)
     {
         if (currentHp == 0) 
         {
@@ -161,11 +161,14 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
         }
     }
 
+    public virtual Vector3 GetClosestPosition(Vector3 position)
+    => spriteRenderer.bounds.ClosestPoint(position);
+
     /// <summary>
     /// Apply damage to building e.g. when attacked
     /// </summary>
     /// <param name="amount"></param>
-    public void TakeDamage(int amount)
+    public virtual void ApplyDamage(int amount)
     {
         //Note: maybe make this two tier of intensity when damaged?
         currentHp = Math.Clamp(currentHp - amount, 0, maxHp);
@@ -176,7 +179,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
             return;
         }
 
-        if (state == BuildingStates.Constructed && hpPercent < damageVisualThreshold) 
+        if (state == BuildingStates.Constructed && HpAlpha < damageVisualThreshold) 
         {
             ApplyDamagedVisual();
         }
@@ -248,7 +251,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
     [Button("Damage 10% (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void ApplyDamage()
     {
-        TakeDamage(maxHp / 10);
+        ApplyDamage(maxHp / 10);
     }
 
     [Button("Repair 10% (PlayMode)", EButtonEnableMode.Playmode)]
@@ -260,6 +263,6 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
     [Button("Trigger Destruction (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void TriggerDestroy()
     {
-        TakeDamage(maxHp);
+        ApplyDamage(maxHp);
     }
 }

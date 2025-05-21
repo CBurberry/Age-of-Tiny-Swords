@@ -1,7 +1,7 @@
 /// <summary>
 /// Interface shared by all building types
 /// </summary>
-public interface IBuilding
+public interface IBuilding : IDamageable
 {
     BuildingStates State { get; }
     bool IsDamaged { get; }
@@ -24,10 +24,4 @@ public interface IBuilding
     /// </summary>
     /// <param name="amount"></param>
     void Repair(int amount);
-
-    /// <summary>
-    /// Apply damage to building e.g. when attacked
-    /// </summary>
-    /// <param name="amount"></param>
-    void TakeDamage(int amount);
 }

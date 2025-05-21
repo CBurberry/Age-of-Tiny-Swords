@@ -10,9 +10,11 @@ using UnityEngine;
 /// This class should coordinate between the prefab's Animator, setting triggers, and processing Movement control 
 /// (TODO: Incorporate Pathfinding rather than direct movement).
 /// </summary>
-public class SimpleUnit : MonoBehaviour
+public class SimpleUnit : MonoBehaviour, IDamageable
 {
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
+
+    public float HpAlpha => (float)currentHp / maxHp;
 
     [SerializeField]
     [Expandable]
@@ -30,11 +32,11 @@ public class SimpleUnit : MonoBehaviour
     private DeadUnit deadPrefab;
 
     protected float moveSpeed => data.MovementSpeed;
-    protected float hpPercent => (float)currentHp / maxHp;
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
     protected int currentHp;
-    protected bool isMoving => moveToTargetPosition != null;
+    protected bool isMoving => moveToTargetPosition != null;    
+
     protected ABaseUnitInteractable interactionTarget;
 
     //These components should be on the prefab root, along with this script
@@ -64,7 +66,7 @@ public class SimpleUnit : MonoBehaviour
         UpdateMoveTo();
     }
 
-    public bool MoveTo(Transform target, Action onComplete = null)
+    public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true)
     {
         //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
         var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
@@ -82,14 +84,17 @@ public class SimpleUnit : MonoBehaviour
         //Set to bottom of bounds for simplicity
         bounds.center = new Vector3(bounds.center.x, bounds.center.y - bounds.extents.y, spriteRenderer.transform.position.z);
         bounds.extents = new Vector3(bounds.extents.x, 0f, 0f);
-        return MoveTo(bounds.ClosestPoint(transform.position), onComplete);
+        return MoveTo(bounds.ClosestPoint(transform.position), onComplete, clearTarget);
     }
 
     //TODO: Use A* Pathfinding, return false when can't path
-    public bool MoveTo(Vector3 worldPosition, Action onComplete = null)
+    public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true)
     {
-        //Clear the interaction target as we may be cancelling another action
-        interactionTarget = null;
+        if (clearTarget) 
+        {
+            //Clear the interaction target as we may be cancelling another action
+            interactionTarget = null;
+        }
 
         if (worldPosition == transform.position) 
         {
@@ -138,13 +143,21 @@ public class SimpleUnit : MonoBehaviour
         {
             ResolveResourceInteraction(target, availableContexts);
         }
+        else if (target is IDamageable /*&& Not Allied Faction*/) 
+        {
+            //TODO: Check target is not an allied faction unit or building!
+            ResolveDamagableInteraction(target, availableContexts);
+        }
         else
         {
             throw new NotImplementedException("TODO: define interaction behaviour with non-building classes");
         }
     }
 
-    public void TakeDamage(int value)
+    public virtual Vector3 GetClosestPosition(Vector3 position)
+        => spriteRenderer.bounds.ClosestPoint(position);
+
+    public virtual void ApplyDamage(int value)
     {
         if (value == 0f)
         {
@@ -157,7 +170,7 @@ public class SimpleUnit : MonoBehaviour
 
         //Update health bar
         bool shouldShow = currentHp < maxHp && currentHp > 0f;
-        healthBar.SetValue(currentHp / maxHp);
+        healthBar.SetValue(HpAlpha);
         healthBar.gameObject.SetActive(shouldShow);
 
         if (currentHp <= 0f)
@@ -169,6 +182,11 @@ public class SimpleUnit : MonoBehaviour
     protected virtual void ResolveBuildingInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
     {
         throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
+    protected virtual void ResolveDamagableInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
     }
 
     protected virtual void ResolveResourceInteraction(ABaseUnitInteractable target, UnitInteractContexts context)

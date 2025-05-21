@@ -46,8 +46,11 @@ public class ResourceItem : MonoBehaviour
             return;
         }
 
+        //TODO: Add some vfx to make the spawning a bit less strange
+
         gameObject.name = "ResourceStack_" + type;
 
+        spriteRenderer.sprite = null;
         spriteRenderer.enabled = true;
         animator.StopPlayback();
         animator.runtimeAnimatorController = animationControllers[type];
