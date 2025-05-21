@@ -243,11 +243,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 11.615896
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 3.696
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalPosition.z
@@ -259,15 +259,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -319,3 +319,15 @@ MonoBehaviour:
   healthBar: {fileID: 1210667256455917646}
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
   moveToTargetTransform: {fileID: 0}
+  buildAmountPerSecond: 10
+  repairAmountPerSecond: 12
+  gatherAmountPerSecond: 2
+  maxHeldResourceCount: 30
+  currentResources:
+    _serializedList:
+    - Key: 0
+      Value: 0
+    - Key: 1
+      Value: 0
+    - Key: 2
+      Value: 0
