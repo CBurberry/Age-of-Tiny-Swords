@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using UnityEngine;
 
 /// <summary>
 /// Bunch of static helper functions to be used at editor/runtime. In no particular order.
@@ -31,6 +34,29 @@ namespace RuntimeStatics
 
             //Return the count
             return iCount;
+        }
+    }
+
+    public static class CoroutineUtilities
+    {
+        public static IEnumerator WaitForSecondsWithInterrupt(float seconds, [DisallowNull] Func<bool> interruptPredicate)
+        {
+            float timer = seconds;
+            while (timer > 0f && !interruptPredicate())
+            {
+                yield return null;
+                timer -= Time.deltaTime;
+            }
+        }
+
+        public static IEnumerator WaitForSecondsWithInterrupt<T>(float seconds, [DisallowNull] Func<T, bool> interruptPredicate, T arg)
+        {
+            float timer = seconds;
+            while (timer > 0f && !interruptPredicate(arg))
+            {
+                yield return null;
+                timer -= Time.deltaTime;
+            }
         }
     }
 

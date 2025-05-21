@@ -70,7 +70,13 @@ public class SimpleUnit : MonoBehaviour
         var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
 
         //Smelly code I know. We assume bottom center pivot (or similarily defined custom pivot)
-        var spriteRenderer = spriteRenderers.First(x => x.gameObject.name == "Visuals");
+        var spriteRenderer = spriteRenderers.FirstOrDefault(x => x.gameObject.name == "Visuals");
+        if (spriteRenderer == null) 
+        {
+            //Backup check for non-conforming objects
+            spriteRenderer = spriteRenderers.FirstOrDefault();
+        }
+
         Bounds bounds = spriteRenderer.bounds;
 
         //Set to bottom of bounds for simplicity
@@ -115,6 +121,7 @@ public class SimpleUnit : MonoBehaviour
     {
         if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts)) 
         {
+            Debug.Log("Could not interact");
             return;
         }
 
@@ -127,7 +134,11 @@ public class SimpleUnit : MonoBehaviour
         {
             ResolveBuildingInteraction(target, availableContexts);
         }
-        else 
+        else if (target is IResourceSource)
+        {
+            ResolveResourceInteraction(target, availableContexts);
+        }
+        else
         {
             throw new NotImplementedException("TODO: define interaction behaviour with non-building classes");
         }
@@ -160,6 +171,11 @@ public class SimpleUnit : MonoBehaviour
         throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
     }
 
+    protected virtual void ResolveResourceInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
     protected virtual void UpdateMoveTo()
     {
         if (moveToTargetPosition != null)
@@ -190,7 +206,7 @@ public class SimpleUnit : MonoBehaviour
     [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void InteractWith()
     {
-        Interact(moveToTargetTransform.gameObject.GetComponent<ABaseUnitInteractable>(), UnitInteractContexts.Build | UnitInteractContexts.Repair);
+        Interact(moveToTargetTransform.gameObject.GetComponent<ABaseUnitInteractable>(), interactableContexts);
     }
 
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]
