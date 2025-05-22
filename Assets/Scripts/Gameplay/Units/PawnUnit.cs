@@ -1,4 +1,5 @@
 using AYellowpaper.SerializedCollections;
+using Pathfinding;
 using System;
 using System.Collections;
 using System.Linq;

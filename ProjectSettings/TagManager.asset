@@ -16,7 +16,7 @@ TagManager:
   - WaterObjects
   - WaterArea
   - LandArea
-  - 
+  - PathfindingObstacle
   - 
   - 
   - 

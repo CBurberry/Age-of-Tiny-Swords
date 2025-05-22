@@ -1,9 +1,14 @@
 using NaughtyAttributes;
+using Pathfinding;
 using RuntimeStatics;
 using System;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 
+
+[RequireComponent(typeof(Seeker))]
+[RequireComponent(typeof(AILerp))]
 /// <summary>
 /// Base class governing behaviours that all units share e.g. Movement & Death.
 /// 
@@ -51,6 +56,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private Vector3? moveToTargetPosition;      //Reference to the target position
     private float startTime;                    //Time when the movement started.
     private float journeyLength;                //Total distance between the markers.
+    private CompositeDisposable disposables = new();
+    private AILerp _pathfinder;
 
     protected virtual void Awake()
     {
@@ -59,6 +66,37 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         currentHp = maxHp;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        _pathfinder = GetComponent<AILerp>();
+        _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
+        {
+            if (direction != Vector3.zero)
+            {
+                spriteRenderer.flipX = direction.normalized.x < 0f;
+                animator.SetBool(ANIMATION_BOOL_MOVING, true);
+            }
+            else
+            {
+                onMoveToComplete?.Invoke();
+                animator.SetBool(ANIMATION_BOOL_MOVING, false);
+            }
+
+        }).AddTo(disposables);
+
+        if (_pathfinder != null && moveToTargetPosition != null)
+        {
+            _pathfinder.onSearchPath += () =>
+            {
+                if (moveToTargetPosition != null)
+                {
+                    _pathfinder.destination = moveToTargetPosition.Value;
+                }
+            };
+        }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        disposables.Clear();
     }
 
     protected virtual void Update()
@@ -230,14 +268,15 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void MoveToTransform()
     {
-        if (moveToTargetTransform != null)
-        {
-            MoveTo(moveToTargetTransform);
-        }
-        else 
-        {
-            Debug.LogWarning("Transform reference is not set!");
-        }
+        _pathfinder.SearchPath();
+        //if (moveToTargetTransform != null)
+        //{
+        //    MoveTo(moveToTargetTransform);
+        //}
+        //else 
+        //{
+        //    Debug.LogWarning("Transform reference is not set!");
+        //}
     }
 
     [Button("TriggerDeath (PlayMode)", EButtonEnableMode.Playmode)]
