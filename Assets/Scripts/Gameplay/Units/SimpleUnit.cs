@@ -3,6 +3,7 @@ using RuntimeStatics;
 using System;
 using System.Linq;
 using UnityEngine;
+using static Player;
 
 /// <summary>
 /// Base class governing behaviours that all units share e.g. Movement & Death.
@@ -14,6 +15,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 {
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
 
+    public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
 
     [SerializeField]
@@ -31,11 +33,12 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [SerializeField]
     private DeadUnit deadPrefab;
 
+    private Faction faction;
     protected float moveSpeed => data.MovementSpeed;
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
     protected int currentHp;
-    protected bool isMoving => moveToTargetPosition != null;    
+    protected bool isMoving => moveToTargetPosition != null;
 
     protected ABaseUnitInteractable interactionTarget;
 
@@ -59,6 +62,9 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         currentHp = maxHp;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        //To allow for later overriding if needed
+        faction = data.Faction;
     }
 
     protected virtual void Update()
@@ -143,14 +149,13 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             ResolveResourceInteraction(target, availableContexts);
         }
-        else if (target is IDamageable /*&& Not Allied Faction*/) 
+        else if (target is IDamageable && (target as IDamageable).Faction != Faction) 
         {
-            //TODO: Check target is not an allied faction unit or building!
             ResolveDamagableInteraction(target, availableContexts);
         }
         else
         {
-            throw new NotImplementedException("TODO: define interaction behaviour with non-building classes");
+            throw new NotImplementedException("TODO: define interaction behaviour with '" + target.name + "'");
         }
     }
 

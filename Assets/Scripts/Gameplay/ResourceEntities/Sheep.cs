@@ -1,10 +1,12 @@
 using NaughtyAttributes;
 using System;
 using UnityEngine;
+using static Player;
 using Random = UnityEngine.Random;
 
 public class Sheep : ABaseUnitInteractable, IDamageable
 {
+    public Faction Faction => Faction.None;
     public float HpAlpha => (float)currentHp / maxHp;
 
     [SerializeField]
@@ -99,7 +101,6 @@ public class Sheep : ABaseUnitInteractable, IDamageable
         //Hide self
         spriteRenderer.enabled = false;
 
-        //Replace this prefab with a spawned instance of the resource prefab
         GameObject gameObject = Instantiate(resourcePrefab, transform.position, Quaternion.identity, transform.parent);
         ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
         resourceItem.Spawn(ResourceType.Food, foodAmount);

@@ -1,4 +1,5 @@
 using AYellowpaper.SerializedCollections;
+using RuntimeStatics;
 using System;
 using System.Collections;
 using System.Linq;
@@ -19,6 +20,9 @@ public class PawnUnit : SimpleUnit
 
     [SerializeField]
     private HeldResourcesVisual heldResourcesVisual;
+
+    [SerializeField]
+    private GameObject resourcePrefab;
 
     [SerializeField]
     private int buildAmountPerSecond = 10;
@@ -158,6 +162,48 @@ public class PawnUnit : SimpleUnit
         else
         {
             throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
+        }
+    }
+
+    protected override void TriggerDeath()
+    {
+        base.TriggerDeath();
+
+        //TODO: Add some flair for when these appear
+        //Spawn resource items corresponding to carried items, slightly offset their positions from the death prefab
+        foreach (var kvp in currentResources)
+        {
+            if (kvp.Value > 0) 
+            {
+                //Get a random position within a sphere of a given radius around a point
+                Vector3 basePosition = transform.position;
+                float radius = UnityEngine.Random.Range(0.5f, 1f);
+                Vector3 randomPosition = basePosition + (UnityEngine.Random.insideUnitSphere * radius);
+
+                GameObject gameObject = Instantiate(resourcePrefab, randomPosition, Quaternion.identity, transform.parent);
+                ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
+                resourceItem.Spawn(kvp.Key, kvp.Value);
+            }
+        }
+    }
+
+    //TODO: Use A* to find the closest rather than linear distance using transform.position
+    private void MoveToNearestBuilding(Action onMoveComplete = null)
+    {
+        var buildings = FindObjectsOfType<MonoBehaviour>().Where(x => x is IBuilding && (x as IBuilding).Faction == Faction);
+        var target = transform.GetClosestTransform(buildings.Select(x => x.transform));
+        MoveTo(target, onMoveComplete);
+    }
+
+    private void DepositResources()
+    {
+        ResourceManager resourceManager = GameManager.GetPlayer(Faction).Resources;
+        foreach (var kvp in currentResources) 
+        {
+            if (kvp.Value > 0) 
+            {
+                resourceManager.AddResource(kvp.Key, kvp.Value);
+            }
         }
     }
 
