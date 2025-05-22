@@ -44,8 +44,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [ShowNonSerializedField]
     protected int currentHp;
     protected bool isMoving { get; private set; }
-    public bool IsMovingTest;
-
     protected ABaseUnitInteractable interactionTarget;
 
     //These components should be on the prefab root, along with this script
@@ -238,14 +236,12 @@ public class SimpleUnit : MonoBehaviour, IDamageable
                 onMoveToComplete?.Invoke();
                 animator.SetBool(ANIMATION_BOOL_MOVING, false);
                 isMoving = false;
-                IsMovingTest = false;
             }
             else
             {
                 spriteRenderer.flipX = direction.x < 0f;
                 animator.SetBool(ANIMATION_BOOL_MOVING, true);
                 isMoving = true;
-                IsMovingTest = true;
             }
         }).AddTo(_disposables);
     }

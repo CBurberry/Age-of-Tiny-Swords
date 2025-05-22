@@ -792,6 +792,79 @@ MonoBehaviour:
     pivotPointRoot: {fileID: 0}
     spreadOutCount: 1
   showGraphs: 1
+--- !u!1001 &774470617
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 227814922504763671, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: traversableTags
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2599030650891800530, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: moveToTargetTransform
+      value: 
+      objectReference: {fileID: 351048456}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2730304418780757246, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2886253106962404507, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: m_Name
+      value: Water_Pawn_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: 4213157742796290445, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 351048456}
+    - target: {fileID: 7209824905724049042, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
+      propertyPath: orientation
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
 --- !u!1 &957771537
 GameObject:
   m_ObjectHideFlags: 0
@@ -1921,6 +1994,7 @@ SceneRoots:
   - {fileID: 957771540}
   - {fileID: 1725357457}
   - {fileID: 227004932}
+  - {fileID: 774470617}
   - {fileID: 1887310973}
   - {fileID: 286779812}
   - {fileID: 5402379322001964165}
