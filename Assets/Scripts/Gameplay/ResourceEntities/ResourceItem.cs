@@ -7,12 +7,14 @@ using UnityEngine;
 /// Represents a resource item stack in the world. When dropped by pawns or other entities.
 /// When picked up by an entity, it should be destroyed when empty.
 /// </summary>
-public class ResourceItem : MonoBehaviour
+public class ResourceItem : ABaseUnitInteractable, IResourceSource
 {
     //Maximum amount of a resource that this one item can hold
     public const int MaxResourceAmount = 10;
     public int ResourceCount => currentResourceAmount;
     public ResourceType ResourceType => resourceType;
+
+    public bool IsDepleted => currentResourceAmount == 0;
 
     [OnValueChanged("Inspector_OnResourceTypeChanged")]
     [SerializeField]
@@ -37,6 +39,26 @@ public class ResourceItem : MonoBehaviour
     {
         spriteRenderer.enabled = false;
         animator.runtimeAnimatorController = null;
+    }
+
+    public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
+    {
+        if (unit is not PawnUnit)
+        {
+            return UnitInteractContexts.None;
+        }
+        else
+        {
+            PawnUnit pawn = unit as PawnUnit;
+            if (!pawn.CanCarryResources)
+            {
+                return UnitInteractContexts.None;
+            }
+            else
+            {
+                return UnitInteractContexts.Gather;
+            }
+        }
     }
 
     public void Spawn(ResourceType type, int amount)

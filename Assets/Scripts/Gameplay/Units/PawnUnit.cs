@@ -117,6 +117,11 @@ public class PawnUnit : SimpleUnit
             MoveTo(target.transform, EnterMine);
             interactionTarget = target;
         }
+        else if (target is ResourceItem) 
+        {
+            MoveTo(target.transform, PickupResource);
+            interactionTarget = target;
+        }
         else
         {
             throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
@@ -268,14 +273,17 @@ public class PawnUnit : SimpleUnit
         spriteRenderer.enabled = true;
     }
 
-    private void Gather()
+    private void PickupResource()
     {
         if (!CanCarryResources) 
         {
             return;
         }
 
-        throw new NotImplementedException();
+        //POLISH/TODO: Still in the moving animation when this occurs, looks janky
+        ResourceItem item = interactionTarget as ResourceItem;
+        int collectedAmount = item.Collect(maxHeldResourceCount - GetHeldResourcesCount());
+        currentResources[item.ResourceType] += collectedAmount;
     }
 
     private void ClearAllAnimationActionFlags()
