@@ -1,4 +1,5 @@
 using UnityEngine;
+using static Player;
 
 /// <summary>
 /// Common settings for all units that share this data.
@@ -10,6 +11,7 @@ public class UnitData : ScriptableObject
     public GameObject UnitPrefab;
 
     [Header("Settings")]
+    public Faction Faction;
     public int MaxHp = 100;
     public float MovementSpeed = 1f;
     public float AttackSpeed = 1f;          //Calculated as 1 / attackspeed per tick

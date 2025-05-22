@@ -1,7 +1,9 @@
 using NaughtyAttributes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static Player;
 
 /// <summary>
 /// Base class governing behaviours that all buildings share e.g. Construction, Destruction.
@@ -10,6 +12,7 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
 {
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
+    public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
 
     [SerializeField]
@@ -31,6 +34,8 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
     [SerializeField]
     protected bool buildOnStart;
 
+    protected Faction faction;
+
     private const float damageVisualThreshold = 0.75f;
 
     protected void Awake()
@@ -44,6 +49,9 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
             visuals.transform.localScale = Vector3.one;
             spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
         }
+
+        //To allow for later overriding if needed
+        faction = data.Faction;
     }
 
     protected void Start()
@@ -72,6 +80,10 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
         }
     }
 
+    public static IEnumerable<GameObject> GetAllBuildings(Faction faction)
+        => GameObject.FindGameObjectsWithTag("Building")
+            .Where(x => x.TryGetComponent(out IBuilding building) && building.Faction == faction);
+
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
     {
         if (state == BuildingStates.Destroyed)
@@ -79,10 +91,8 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
             return UnitInteractContexts.None;
         }
 
-        //TODO: Check unit faction to determine if can be attacked or not, for now just set to not be attackable
-
-        UnitInteractContexts contexts = UnitInteractContexts.None;
-        //contexts |= UnitInteractContexts.Attack;
+        //Check unit faction to determine if can be attacked or not, for now just set to not be attackable
+        UnitInteractContexts contexts = unit.Faction != Faction ? UnitInteractContexts.Attack : UnitInteractContexts.None;
 
         if (state == BuildingStates.PreConstruction)
         {

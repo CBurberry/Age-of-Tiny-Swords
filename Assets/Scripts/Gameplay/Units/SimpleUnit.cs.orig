@@ -69,9 +69,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         currentHp = maxHp;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
-        //To allow for later overriding if needed
-        faction = data.Faction;
+<<<<<<< HEAD
         _pathfinder = GetComponent<AILerp>();
         _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
         {
@@ -103,6 +101,11 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     protected virtual void OnDestroy()
     {
         disposables.Clear();
+=======
+
+        //To allow for later overriding if needed
+        faction = data.Faction;
+>>>>>>> 7a4f035577267995b3e04a9d198d0c8a2f8c48fd
     }
 
     protected virtual void Update()

@@ -155,4 +155,27 @@ namespace RuntimeStatics
             }
         }
     }
+
+    public static class TransformExtensions
+    {
+        //Source: https://discussions.unity.com/t/clean-est-way-to-find-nearest-object-of-many-c/409917/4
+        public static Transform GetClosestTransform(this Transform transform, IEnumerable<Transform> otherTransforms)
+        {
+            Transform bestTarget = null;
+            float closestDistanceSqr = Mathf.Infinity;
+            Vector3 currentPosition = transform.position;
+            foreach (Transform potentialTarget in otherTransforms)
+            {
+                Vector3 directionToTarget = potentialTarget.position - currentPosition;
+                float dSqrToTarget = directionToTarget.sqrMagnitude;
+                if (dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    bestTarget = potentialTarget;
+                }
+            }
+
+            return bestTarget;
+        }
+    }
 }

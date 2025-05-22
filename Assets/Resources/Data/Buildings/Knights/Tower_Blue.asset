@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxHp: 1000
   HasAnimatedPrefab: 0
+  Faction: 1
   BuildingSpriteVisuals:
     _serializedList:
     - Key: 0
@@ -22,9 +23,4 @@ MonoBehaviour:
       Value: {fileID: 21300000, guid: e1b4ba76c7a31264ea8d630bf9ce1a28, type: 3}
     - Key: 2
       Value: {fileID: 21300000, guid: 072c8d5c612fbfe45940276a90c25ea4, type: 3}
-  ConstructedVariants:
-  - {fileID: 21300000, guid: f7d709d9b356c644b830aab8146eaf2a, type: 3}
-  - {fileID: 21300000, guid: 1c8e2deae8f8d04449ccdbde9cc84fac, type: 3}
-  - {fileID: 21300000, guid: 41b3e316c7df29d48a850b694d68e0e7, type: 3}
   ConstructedAnimatedPrefab: {fileID: 0}
-  ConstructedAnimatedVariantPrefabs: []

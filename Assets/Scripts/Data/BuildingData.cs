@@ -1,6 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
 using UnityEngine;
+using static Player;
 
 /// <summary>
 /// Common settings for all buildings that share this data.
@@ -12,6 +13,7 @@ public class BuildingData : ScriptableObject
 
     public int MaxHp;
     public bool HasAnimatedPrefab;
+    public Faction Faction;
 
     [Tooltip("All the visual states of the building type")]
     public SerializedDictionary<BuildingStates, Sprite> BuildingSpriteVisuals;
