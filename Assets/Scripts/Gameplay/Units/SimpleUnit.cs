@@ -43,7 +43,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
     protected int currentHp;
-    protected bool isMoving => moveToTargetPosition != null;
+    protected bool isMoving { get; private set; }
+    public bool IsMovingTest;
 
     protected ABaseUnitInteractable interactionTarget;
 
@@ -55,59 +56,27 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [Tooltip("FOR TESTING PURPOSES, BUTTON BELOW")]
     private Transform moveToTargetTransform;    //FOR TESTING PURPOSES
     private Action onMoveToComplete;
-    private Vector3? moveToStartingPosition;
-    private Vector3? moveToTargetPosition;      //Reference to the target position
-    private float startTime;                    //Time when the movement started.
-    private float journeyLength;                //Total distance between the markers.
-    private CompositeDisposable disposables = new();
+    private CompositeDisposable _disposables = new();
     private AILerp _pathfinder;
 
     protected virtual void Awake()
     {
-        moveToStartingPosition = null;
-        moveToTargetPosition = null;
         currentHp = maxHp;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         //To allow for later overriding if needed
         faction = data.Faction;
-        _pathfinder = GetComponent<AILerp>();
-        _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
-        {
-            if (direction != Vector3.zero)
-            {
-                spriteRenderer.flipX = direction.normalized.x < 0f;
-                animator.SetBool(ANIMATION_BOOL_MOVING, true);
-            }
-            else
-            {
-                onMoveToComplete?.Invoke();
-                animator.SetBool(ANIMATION_BOOL_MOVING, false);
-            }
-
-        }).AddTo(disposables);
-
-        if (_pathfinder != null && moveToTargetPosition != null)
-        {
-            _pathfinder.onSearchPath += () =>
-            {
-                if (moveToTargetPosition != null)
-                {
-                    _pathfinder.destination = moveToTargetPosition.Value;
-                }
-            };
-        }
+        SetupPathfinder();
     }
 
     protected virtual void OnDestroy()
     {
-        disposables.Clear();
+        _disposables.Clear();
     }
 
     protected virtual void Update()
     {
-        UpdateMoveTo();
     }
 
     public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true)
@@ -146,17 +115,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         }
 
         onMoveToComplete = onComplete;
-        startTime = Time.time;
-        journeyLength = Vector3.Distance(transform.position, worldPosition);
-        moveToStartingPosition = transform.position;
-        moveToTargetPosition = worldPosition;
-
-        //Calculate direction vector between target and this to check if we need to flip the X-axis
-        Vector3 directionUnitVector = ((Vector3)(moveToTargetPosition - transform.position)).normalized;
-
-        //Set/Unset the required boolean flags for animator (also sprite renderer flip X-axis)
-        spriteRenderer.flipX = directionUnitVector.x < 0f;
-        animator.SetBool(ANIMATION_BOOL_MOVING, true);
+        _pathfinder.destination = worldPosition;
+        _pathfinder.SearchPath();
         return true;
     }
 
@@ -237,33 +197,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
     }
 
-    protected virtual void UpdateMoveTo()
-    {
-        if (moveToTargetPosition != null)
-        {
-            //Distance moved equals elapsed time times speed..
-            float distCovered = (Time.time - startTime) * moveSpeed;
-
-            //Fraction of journey completed equals current distance divided by total distance.
-            float fractionOfJourney = distCovered / journeyLength;
-
-            //Set our position as a fraction of the distance between the markers.
-            transform.position = Vector3.Lerp((Vector3)moveToStartingPosition, (Vector3)moveToTargetPosition, fractionOfJourney);
-            if (transform.position == moveToTargetPosition)
-            {
-                EndMoveTo();
-            }
-        }
-    }
-
-    protected virtual void EndMoveTo()
-    {
-        moveToStartingPosition = null;
-        moveToTargetPosition = null;
-        animator.SetBool(ANIMATION_BOOL_MOVING, false);
-        onMoveToComplete?.Invoke();
-    }
-
     [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void InteractWith()
     {
@@ -273,15 +206,14 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void MoveToTransform()
     {
-        _pathfinder.SearchPath();
-        //if (moveToTargetTransform != null)
-        //{
-        //    MoveTo(moveToTargetTransform);
-        //}
-        //else 
-        //{
-        //    Debug.LogWarning("Transform reference is not set!");
-        //}
+        if (moveToTargetTransform != null)
+        {
+            MoveTo(moveToTargetTransform);
+        }
+        else
+        {
+            Debug.LogWarning("Transform reference is not set!");
+        }
     }
 
     [Button("TriggerDeath (PlayMode)", EButtonEnableMode.Playmode)]
@@ -294,5 +226,27 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
         deadUnit.name = deadUnit.UnitName = name;
         Destroy(gameObject);
+    }
+
+    private void SetupPathfinder()
+    {
+        _pathfinder = GetComponent<AILerp>();
+        _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
+        {
+            if (direction.sqrMagnitude < 0.0001f)
+            {
+                onMoveToComplete?.Invoke();
+                animator.SetBool(ANIMATION_BOOL_MOVING, false);
+                isMoving = false;
+                IsMovingTest = false;
+            }
+            else
+            {
+                spriteRenderer.flipX = direction.x < 0f;
+                animator.SetBool(ANIMATION_BOOL_MOVING, true);
+                isMoving = true;
+                IsMovingTest = true;
+            }
+        }).AddTo(_disposables);
     }
 }

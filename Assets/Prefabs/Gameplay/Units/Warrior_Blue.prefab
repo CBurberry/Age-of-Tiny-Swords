@@ -159,6 +159,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: e916cedcd5f0fe44d9e0c7189955cb48, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2077172353190842483}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: e916cedcd5f0fe44d9e0c7189955cb48, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2945140083663398138}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: e916cedcd5f0fe44d9e0c7189955cb48, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2183410689690001153}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: e916cedcd5f0fe44d9e0c7189955cb48, type: 3}
 --- !u!4 &1324446548695638433 stripped
 Transform:
@@ -183,6 +189,65 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 8adc38c229e7b42499309828e8a81f8d, type: 2}
+  interactableContexts: 0
   healthBar: {fileID: 170102803610834911}
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
+  IsMovingTest: 0
   moveToTargetTransform: {fileID: 0}
+--- !u!114 &2945140083663398138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2273362963227822532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
+--- !u!114 &2183410689690001153
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2273362963227822532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 847a14d4dc9cc43679ab34fc78e0182f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 4
+  autoRepath:
+    mode: 1
+    interval: 0.5
+    sensitivity: 10
+    maximumInterval: 2
+    visualizeSensitivity: 0
+  canMove: 1
+  speed: 3
+  orientation: 0
+  enableRotation: 0
+  rotationSpeed: 10
+  interpolatePathSwitches: 1
+  switchPathInterpolationSpeed: 5
+  targetCompatibility: {fileID: 0}
+  repathRateCompatibility: NaN
+  canSearchCompability: 0
