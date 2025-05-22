@@ -231,9 +231,13 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             if (direction.sqrMagnitude < 0.0001f)
             {
-                onMoveToComplete?.Invoke();
                 animator.SetBool(ANIMATION_BOOL_MOVING, false);
                 isMoving = false;
+                if (onMoveToComplete != null)
+                {
+                    onMoveToComplete?.Invoke();
+                    onMoveToComplete = null;
+                }
             }
             else
             {
