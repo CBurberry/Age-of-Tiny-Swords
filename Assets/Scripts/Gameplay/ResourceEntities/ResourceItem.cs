@@ -1,5 +1,6 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
+using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -21,6 +22,9 @@ public class ResourceItem : ABaseUnitInteractable, IResourceSource
     private ResourceType resourceType;
 
     [SerializeField]
+    private bool spawnOnStart;
+
+    [SerializeField]
     private SerializedDictionary<ResourceType, AnimatorController> animationControllers;
 
     [SerializeField]
@@ -39,6 +43,14 @@ public class ResourceItem : ABaseUnitInteractable, IResourceSource
     {
         spriteRenderer.enabled = false;
         animator.runtimeAnimatorController = null;
+    }
+
+    private void Start()
+    {
+        if (spawnOnStart) 
+        {
+            Spawn(resourceType, MaxResourceAmount);
+        }
     }
 
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)

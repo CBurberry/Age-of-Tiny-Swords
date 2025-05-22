@@ -1,7 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using System;
 using System.Collections;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using System.Linq;
 using UnityEngine;
 
 public class PawnUnit : SimpleUnit
@@ -13,6 +13,12 @@ public class PawnUnit : SimpleUnit
 
     //TODO: Implement flag use
     private const string ANIMATION_BOOL_CARRYING = "IsCarrying";
+
+    private const string ANIMSTATE_CARRYING_IDLE = "Carry_Idle";
+    private const string ANIMSTATE_CARRYING_RUN = "Carry_Run";
+
+    [SerializeField]
+    private HeldResourcesVisual heldResourcesVisual;
 
     [SerializeField]
     private int buildAmountPerSecond = 10;
@@ -39,7 +45,21 @@ public class PawnUnit : SimpleUnit
         }
 
         //TODO: Set the resource prefab visual being set above the unit's head.
-        animator.SetBool(ANIMATION_BOOL_CARRYING, GetHeldResourcesCount() > 0);
+        bool isCarryingResources = GetHeldResourcesCount() > 0;
+        animator.SetBool(ANIMATION_BOOL_CARRYING, isCarryingResources);
+
+        if (isCarryingResources)
+        {
+            heldResourcesVisual.SetResource(GetMostHeldType());
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            heldResourcesVisual.gameObject.SetActive(stateInfo.IsName(ANIMSTATE_CARRYING_IDLE) || stateInfo.IsName(ANIMSTATE_CARRYING_RUN));
+        }
+        else 
+        {
+            heldResourcesVisual.gameObject.SetActive(false);
+        }
+
+        //TODO: If full of resources after a gathering task, move to deposit the resources
 
         base.Update();
     }
@@ -296,4 +316,11 @@ public class PawnUnit : SimpleUnit
     {
         return animator.GetBool(ANIMATION_BOOL_BUILDING) || animator.GetBool(ANIMATION_BOOL_CHOPPING);
     }
+
+    /// <summary>
+    /// Get the resource type that this unit is holding the most of
+    /// </summary>
+    /// <returns></returns>
+    private ResourceType GetMostHeldType()
+        => currentResources.OrderByDescending(x => x.Value).FirstOrDefault().Key;
 }
