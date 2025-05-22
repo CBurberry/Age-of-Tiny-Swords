@@ -2,6 +2,7 @@ using AYellowpaper.SerializedCollections;
 using RuntimeStatics;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Player;
@@ -59,7 +60,8 @@ public class PawnUnit : SimpleUnit
         {
             heldResourcesVisual.SetResource(GetMostHeldType());
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            heldResourcesVisual.gameObject.SetActive(stateInfo.IsName(ANIMSTATE_CARRYING_IDLE) || stateInfo.IsName(ANIMSTATE_CARRYING_RUN));
+            heldResourcesVisual.gameObject.SetActive(spriteRenderer.enabled 
+                && stateInfo.IsName(ANIMSTATE_CARRYING_IDLE) || stateInfo.IsName(ANIMSTATE_CARRYING_RUN));
         }
         else 
         {
@@ -197,8 +199,11 @@ public class PawnUnit : SimpleUnit
             return;
         }
 
-        MoveToNearestBuilding(DepositResources, false);
-        MoveTo(interactionTarget.transform, onMoveComplete, false);
+        MoveToNearestBuilding(() => 
+        {
+            DepositResources();
+            MoveTo(interactionTarget.transform, onMoveComplete, false);
+        }, false);
     }
 
     //TODO: Use A* to find the closest rather than linear distance using transform.position
@@ -217,11 +222,13 @@ public class PawnUnit : SimpleUnit
     private void DepositResources()
     {
         ResourceManager resourceManager = GameManager.GetPlayer(Faction).Resources;
-        foreach (var kvp in currentResources) 
+        var keys = new List<ResourceType>(currentResources.Keys);
+        foreach (var key in keys) 
         {
-            if (kvp.Value > 0) 
+            if (currentResources[key] > 0) 
             {
-                resourceManager.AddResource(kvp.Key, kvp.Value);
+                resourceManager.AddResource(key, currentResources[key]);
+                currentResources[key] = 0;
             }
         }
     }
@@ -432,6 +439,8 @@ public class PawnUnit : SimpleUnit
 
     private void OnSheepKill()
     {
+        //POLISH/TODO: Loop this until all resources collected 
+
         var nearbyResourceItem = FindObjectsOfType<ResourceItem>()
                 .FirstOrDefault(x => x.ResourceType == ResourceType.Food
                     && Vector3.Distance(transform.position, x.transform.position) <= resourceItemSeekDistance);
