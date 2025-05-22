@@ -177,7 +177,7 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0.25}
-  m_Size: {x: 1.73, y: 0.94}
+  m_Size: {x: 1.3, y: 0.54}
   m_Direction: 1
 --- !u!114 &8492151704724357129
 MonoBehaviour:
@@ -192,6 +192,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  uniqueID: 6986512258510662889
+  uniqueID: 995900099046249383
   updateError: 1
   checkTime: 0.2

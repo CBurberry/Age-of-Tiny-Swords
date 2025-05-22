@@ -1,12 +1,10 @@
 using AYellowpaper.SerializedCollections;
-using Pathfinding;
 using RuntimeStatics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static Player;
 
 public class PawnUnit : SimpleUnit
 {
@@ -207,7 +205,6 @@ public class PawnUnit : SimpleUnit
         }, false);
     }
 
-    //TODO: Use A* to find the closest rather than linear distance using transform.position
     private void MoveToNearestBuilding(Action onMoveComplete = null, bool clearTarget = true)
     {
         var buildings = SimpleBuilding.GetAllBuildings(Faction);

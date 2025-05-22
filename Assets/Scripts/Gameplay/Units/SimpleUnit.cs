@@ -14,7 +14,6 @@ using static Player;
 /// Base class governing behaviours that all units share e.g. Movement & Death.
 /// 
 /// This class should coordinate between the prefab's Animator, setting triggers, and processing Movement control 
-/// (TODO: Incorporate Pathfinding rather than direct movement).
 /// </summary>
 public class SimpleUnit : MonoBehaviour, IDamageable
 {
@@ -98,7 +97,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         return MoveTo(bounds.ClosestPoint(transform.position), onComplete, clearTarget);
     }
 
-    //TODO: Use A* Pathfinding, return false when can't path
     public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true)
     {
         if (clearTarget) 
