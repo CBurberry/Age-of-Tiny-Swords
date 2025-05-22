@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static Player;
@@ -78,6 +79,10 @@ public class SimpleBuilding : ABaseUnitInteractable, IBuilding
             HidePreview();
         }
     }
+
+    public static IEnumerable<GameObject> GetAllBuildings(Faction faction)
+        => GameObject.FindGameObjectsWithTag("Building")
+            .Where(x => x.TryGetComponent(out IBuilding building) && building.Faction == faction);
 
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
     {

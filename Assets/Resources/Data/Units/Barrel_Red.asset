@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: Barrel_Red
   m_EditorClassIdentifier: 
   UnitPrefab: {fileID: 513694697890398105, guid: 1e34cbae0f62287419c70e795df305a0, type: 3}
+  Faction: 2
   MaxHp: 80
   MovementSpeed: 1
   AttackSpeed: 1
+  AttackDistance: 2
+  BaseAttackDamage: 5

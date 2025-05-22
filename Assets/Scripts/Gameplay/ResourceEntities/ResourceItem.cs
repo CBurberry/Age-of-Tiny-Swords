@@ -95,6 +95,11 @@ public class ResourceItem : ABaseUnitInteractable, IResourceSource
 
     public int Collect(int requestedAmount)
     {
+        if (!spriteRenderer.enabled) 
+        {
+            return 0;
+        }
+
         if (requestedAmount >= currentResourceAmount)
         {
             spriteRenderer.enabled = false;

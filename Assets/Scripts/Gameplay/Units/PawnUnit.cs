@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
+using static Player;
 
 public class PawnUnit : SimpleUnit
 {
@@ -17,6 +18,8 @@ public class PawnUnit : SimpleUnit
 
     private const string ANIMSTATE_CARRYING_IDLE = "Carry_Idle";
     private const string ANIMSTATE_CARRYING_RUN = "Carry_Run";
+
+    private const float resourceItemSeekDistance = 3f;
 
     [SerializeField]
     private HeldResourcesVisual heldResourcesVisual;
@@ -187,12 +190,28 @@ public class PawnUnit : SimpleUnit
         }
     }
 
-    //TODO: Use A* to find the closest rather than linear distance using transform.position
-    private void MoveToNearestBuilding(Action onMoveComplete = null)
+    private void MoveToNearestBuildingDepositAndReturn(Action onMoveComplete = null)
     {
-        var buildings = FindObjectsOfType<MonoBehaviour>().Where(x => x is IBuilding && (x as IBuilding).Faction == Faction);
+        if (SimpleBuilding.GetAllBuildings(Faction).Count() == 0) 
+        {
+            return;
+        }
+
+        MoveToNearestBuilding(DepositResources, false);
+        MoveTo(interactionTarget.transform, onMoveComplete, false);
+    }
+
+    //TODO: Use A* to find the closest rather than linear distance using transform.position
+    private void MoveToNearestBuilding(Action onMoveComplete = null, bool clearTarget = true)
+    {
+        var buildings = SimpleBuilding.GetAllBuildings(Faction);
+        if (buildings.Count() == 0) 
+        {
+            return;
+        }
+
         var target = transform.GetClosestTransform(buildings.Select(x => x.transform));
-        MoveTo(target, onMoveComplete);
+        MoveTo(target, onMoveComplete, clearTarget);
     }
 
     private void DepositResources()
@@ -217,12 +236,13 @@ public class PawnUnit : SimpleUnit
     //TODO: Time the hit with the animation connecting the hit
     private IEnumerator Attacking()
     {
+        Vector3 closestPosition;
         IDamageable damageTarget = interactionTarget as IDamageable;
         Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            Vector3 closestPosition = damageTarget.GetClosestPosition(transform.position);
+            closestPosition = damageTarget.GetClosestPosition(transform.position);
             float magnitude = (closestPosition - transform.position).magnitude;
             if (magnitude > data.AttackDistance)
             {
@@ -239,6 +259,13 @@ public class PawnUnit : SimpleUnit
         }
 
         animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
+
+        //If the target was a sheep, its dead, and there is some meat on the floor, pick it up and bring it back
+        //NOTE: HANDLE CASE WHERE MULTIPLE PAWNS MAY BE TRYING TO ACCESS THE SAME ITEM!
+        if (interactionTarget is Sheep)
+        {
+            OnSheepKill();
+        }
     }
 
     //Start a cycle of building until 100%
@@ -301,13 +328,25 @@ public class PawnUnit : SimpleUnit
             AddResource(ResourceType.Wood, tree.Chopped(gatherAmountPerSecond), out overflow);
             if (overflow > 0) 
             {
-                Debug.LogWarning("TODO: Overflow from tree chopped. Need to drop excess as a new wood prefab!");
+                //Debug.LogWarning("TODO: Overflow from tree chopped. Need to drop excess as a new wood prefab!");
                 break;
             }
             yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f, () => !condition.Invoke());
         }
 
         animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
+
+        if (overflow > 0 || tree.IsDepleted && GetHeldResourcesCount() > 0) 
+        {
+            if (tree.IsDepleted) 
+            {
+                MoveToNearestBuilding(DepositResources);
+            }
+            else 
+            {
+                MoveToNearestBuildingDepositAndReturn(StartChoppingTree);
+            }
+        }
     }
 
     //Start a cycle of mining until full or mine depleted
@@ -329,7 +368,7 @@ public class PawnUnit : SimpleUnit
             AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);
             if (overflow > 0)
             {
-                Debug.LogWarning("TODO: Overflow from mining gold. Need to drop excess as a new gold prefab!");
+                //Debug.LogWarning("TODO: Overflow from mining gold. Need to drop excess as a new gold prefab!");
                 break;
             }
             yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f, () => !condition.Invoke());
@@ -337,6 +376,18 @@ public class PawnUnit : SimpleUnit
 
         mine.ExitMine(this);
         spriteRenderer.enabled = true;
+
+        if (overflow > 0 || mine.IsDepleted && GetHeldResourcesCount() > 0)
+        {
+            if (mine.IsDepleted)
+            {
+                MoveToNearestBuilding(DepositResources);
+            }
+            else
+            {
+                MoveToNearestBuildingDepositAndReturn(EnterMine);
+            }
+        }
     }
 
     private void PickupResource()
@@ -348,8 +399,17 @@ public class PawnUnit : SimpleUnit
 
         //POLISH/TODO: Still in the moving animation when this occurs, looks janky
         ResourceItem item = interactionTarget as ResourceItem;
+
+        if (item == null)
+        {
+            return;
+        }
+
         int collectedAmount = item.Collect(maxHeldResourceCount - GetHeldResourcesCount());
-        currentResources[item.ResourceType] += collectedAmount;
+        if (collectedAmount > 0)
+        {
+            currentResources[item.ResourceType] += collectedAmount;
+        }
     }
 
     private void ClearAllAnimationActionFlags()
@@ -369,4 +429,28 @@ public class PawnUnit : SimpleUnit
     /// <returns></returns>
     private ResourceType GetMostHeldType()
         => currentResources.OrderByDescending(x => x.Value).FirstOrDefault().Key;
+
+    private void OnSheepKill()
+    {
+        var nearbyResourceItem = FindObjectsOfType<ResourceItem>()
+                .FirstOrDefault(x => x.ResourceType == ResourceType.Food
+                    && Vector3.Distance(transform.position, x.transform.position) <= resourceItemSeekDistance);
+
+        if (nearbyResourceItem == null)
+        {
+            return;
+        }
+        else
+        {
+            interactionTarget = nearbyResourceItem;
+            MoveTo(interactionTarget.transform, () =>
+            {
+                PickupResource();
+                if (GetHeldResourcesCount() > 0)
+                {
+                    MoveToNearestBuilding(DepositResources);
+                }
+            }, false);
+        }
+    }
 }
