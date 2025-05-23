@@ -3,7 +3,7 @@ using RuntimeStatics;
 using System;
 using UnityEngine;
 
-public abstract class AUnitInteractableUnit : SimpleUnit
+public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
 {
     [SerializeField]
     [Tooltip("What interaction types can this unit trigger?")]
