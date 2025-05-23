@@ -28,6 +28,8 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
     /// <returns>Success/Failure</returns>
     public virtual void Interact(IUnitInteractable target, UnitInteractContexts context)
     {
+        Debug.Log($"Selected Unit '{this.name}', target to interact with '{(target as MonoBehaviour)?.name}', param contexts '{context}'");
+
         if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts))
         {
             Debug.Log("Could not interact");

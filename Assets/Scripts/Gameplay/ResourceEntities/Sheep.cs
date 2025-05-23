@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class Sheep : AUnitInteractableUnit, IDamageable
+public class Sheep : AUnitInteractableUnit
 {
     [SerializeField]
     private GameObject resourcePrefab;
