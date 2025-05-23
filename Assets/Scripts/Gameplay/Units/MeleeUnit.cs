@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class MeleeUnit : AUnitInteractableUnit, IDamageable
+public class MeleeUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
 
@@ -55,11 +55,18 @@ public class MeleeUnit : AUnitInteractableUnit, IDamageable
         }
 
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-        OnEnemyUnitKill();
+        OnUnitKill();
     }
 
-    private void OnEnemyUnitKill()
+    private void OnUnitKill()
     {
-        throw new NotImplementedException();
+        Debug.Log("OnEnemyUnitKill");
+        
+        /* Was the target that was killed an enemy unit?
+           - If so, look for another unit within an aggression range to engage combat in
+           - Otherwise do nothing
+         */
+
+        //POLISH/TODO: Add a setting that prevents units from following an enemy unit too far or to return to a guarding / patrol position
     }
 }

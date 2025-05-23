@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa599e77e1070945b67a57019d31245, type: 3}
   m_Name: Pawn_Blue
   m_EditorClassIdentifier: 
-  UnitPrefab: {fileID: 2886253106962404507, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}
   Faction: 1
   MaxHp: 100
   MovementSpeed: 1
   AttackSpeed: 1
   AttackDistance: 2
-  BaseAttackDamage: 4
+  BaseAttackDamage: 5

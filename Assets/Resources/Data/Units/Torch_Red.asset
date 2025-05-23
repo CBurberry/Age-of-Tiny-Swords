@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa599e77e1070945b67a57019d31245, type: 3}
   m_Name: Torch_Red
   m_EditorClassIdentifier: 
-  UnitPrefab: {fileID: 1876556815319399697, guid: 5ef5414478e1b4e42943dc912be01ff9, type: 3}
   Faction: 2
   MaxHp: 175
   MovementSpeed: 1
   AttackSpeed: 1
-  AttackDistance: 2
+  AttackDistance: 10
   BaseAttackDamage: 30

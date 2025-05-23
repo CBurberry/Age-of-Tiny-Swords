@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa599e77e1070945b67a57019d31245, type: 3}
   m_Name: Warrior_Blue
   m_EditorClassIdentifier: 
-  UnitPrefab: {fileID: 2273362963227822532, guid: 97f786ec149ef0b4b9906bf2bc95c633, type: 3}
   Faction: 1
   MaxHp: 160
   MovementSpeed: 1
   AttackSpeed: 1
-  AttackDistance: 2
-  BaseAttackDamage: 20
+  AttackDistance: 10
+  BaseAttackDamage: 24

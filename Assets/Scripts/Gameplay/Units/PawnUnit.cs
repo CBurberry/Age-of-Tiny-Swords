@@ -12,8 +12,6 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
     private const string ANIMATION_BOOL_CHOPPING = "IsChopping";
     private const string ANIMATION_BOOL_BUILDING = "IsBuilding";
-
-    //TODO: Implement flag use
     private const string ANIMATION_BOOL_CARRYING = "IsCarrying";
 
     private const string ANIMSTATE_CARRYING_IDLE = "Carry_Idle";
@@ -51,12 +49,12 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             ClearAllAnimationActionFlags();
         }
 
-        //TODO: Set the resource prefab visual being set above the unit's head.
         bool isCarryingResources = GetHeldResourcesCount() > 0;
         animator.SetBool(ANIMATION_BOOL_CARRYING, isCarryingResources);
 
         if (isCarryingResources)
         {
+            //Set the resource prefab visual being set above the unit's head.
             heldResourcesVisual.SetResource(GetMostHeldType());
             AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             heldResourcesVisual.gameObject.SetActive(spriteRenderer.enabled 
@@ -66,8 +64,6 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         {
             heldResourcesVisual.gameObject.SetActive(false);
         }
-
-        //TODO: If full of resources after a gathering task, move to deposit the resources
 
         base.Update();
     }
@@ -162,7 +158,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
     protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
-        if (target is Sheep)
+        if (target is AUnitInteractableUnit)
         {
             interactionTarget = target;
             MoveTo((target as MonoBehaviour).transform, StartAttacking, false);
@@ -337,7 +333,6 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             AddResource(ResourceType.Wood, tree.Chopped(gatherAmountPerSecond), out overflow);
             if (overflow > 0) 
             {
-                //Debug.LogWarning("TODO: Overflow from tree chopped. Need to drop excess as a new wood prefab!");
                 break;
             }
             yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f, () => !condition.Invoke());
@@ -377,7 +372,6 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);
             if (overflow > 0)
             {
-                //Debug.LogWarning("TODO: Overflow from mining gold. Need to drop excess as a new gold prefab!");
                 break;
             }
             yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f, () => !condition.Invoke());
