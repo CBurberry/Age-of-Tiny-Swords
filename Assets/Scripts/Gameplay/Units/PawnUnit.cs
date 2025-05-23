@@ -241,15 +241,12 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     //TODO: Time the hit with the animation connecting the hit
     private IEnumerator Attacking()
     {
-        Vector3 closestPosition;
         IDamageable damageTarget = interactionTarget as IDamageable;
         Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            closestPosition = damageTarget.GetClosestPosition(transform.position);
-            float magnitude = (closestPosition - transform.position).magnitude;
-            if (magnitude > data.AttackDistance)
+            if (!IsTargetWithinDistance(damageTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
                 MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);

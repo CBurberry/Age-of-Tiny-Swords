@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class MeleeUnit : AUnitInteractableUnit
+public class RangedUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
 
@@ -15,7 +16,7 @@ public class MeleeUnit : AUnitInteractableUnit
         }
         else
         {
-            throw new NotImplementedException($"[{nameof(MeleeUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(MeleeUnit)} & {context}!");
+            throw new NotImplementedException($"[{nameof(RangedUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(RangedUnit)} & {context}!");
         }
     }
 
@@ -58,7 +59,7 @@ public class MeleeUnit : AUnitInteractableUnit
     private void OnUnitKill()
     {
         Debug.Log("OnEnemyUnitKill");
-        
+
         /* Was the target that was killed an enemy unit?
            - If so, look for another unit within an aggression range to engage combat in
            - Otherwise do nothing

@@ -74,6 +74,13 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
         throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
     }
 
+    protected bool IsTargetWithinDistance(IDamageable target, out Vector3 closestPosition)
+    {
+        closestPosition = target.GetClosestPosition(transform.position);
+        float magnitude = (closestPosition - transform.position).magnitude;
+        return magnitude <= data.AttackDistance;
+    }
+
     [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void InteractWith()
     {

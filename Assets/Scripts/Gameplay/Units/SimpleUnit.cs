@@ -67,6 +67,10 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         SetupPathfinder();
     }
 
+    protected virtual void Start()
+    { 
+    }
+
     protected virtual void OnDestroy()
     {
         _disposables.Clear();
