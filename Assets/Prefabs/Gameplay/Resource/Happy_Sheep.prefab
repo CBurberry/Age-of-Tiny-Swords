@@ -251,15 +251,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -289,6 +289,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2573232247873704511}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3584642875059808161}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
 --- !u!1 &2783806017645427391 stripped
 GameObject:
@@ -307,7 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59bb9266b58951b45b629c7a9bbd4966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 551e653cd48000e40b0fd48642c8d53c, type: 2}
+  data: {fileID: 0}
   healthBar: {fileID: 8467280940562667729}
   deadPrefab: {fileID: 0}
   moveToTargetTransform: {fileID: 0}
@@ -374,6 +377,41 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   repathRateCompatibility: NaN
   canSearchCompability: 0
+--- !u!58 &3584642875059808161
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2783806017645427391}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.004999995, y: 0.61}
+  serializedVersion: 2
+  m_Radius: 0.215
 --- !u!4 &3120970753875251930 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
