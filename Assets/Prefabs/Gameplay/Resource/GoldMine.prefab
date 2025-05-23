@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1874140673955982674}
   - component: {fileID: 1725714606418054804}
   - component: {fileID: 1946196805893751521}
+  - component: {fileID: 6816098164274361066}
   m_Layer: 0
   m_Name: GoldMine
   m_TagString: Untagged
@@ -111,6 +112,41 @@ MonoBehaviour:
     - Key: 2
       Value: {fileID: 21300000, guid: 949e742bdd3d01b4eb0fe747e80e3699, type: 3}
   spriteRenderer: {fileID: 1725714606418054804}
+--- !u!70 &6816098164274361066
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3097041159531500194}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.31}
+  m_Size: {x: 1.67, y: 1.22}
+  m_Direction: 1
 --- !u!1 &8709230110310324313
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,6 +228,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  uniqueID: 995900099046249383
+  uniqueID: 5741864487620217776
   updateError: 1
   checkTime: 0.2

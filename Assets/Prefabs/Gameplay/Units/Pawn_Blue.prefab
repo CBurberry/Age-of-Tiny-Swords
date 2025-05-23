@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 245672806094408766}
   - component: {fileID: 5754352839933446786}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 1544610740765312706}
   - component: {fileID: 5678445151092955581}
   - component: {fileID: 1302539024338910977}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HeldResourcesStackVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1508797772145369554}
   - component: {fileID: 4069274279202807776}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286,7 +286,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4500946042510406843}
   - component: {fileID: 1210667256455917646}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HealthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -336,6 +336,10 @@ PrefabInstance:
     - target: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_Name
       value: Pawn_Blue
+      objectReference: {fileID: 0}
+    - target: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       propertyPath: m_IsActive
@@ -404,6 +408,9 @@ PrefabInstance:
       addedObject: {fileID: 1544610740765312706}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 9142217408843156586}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2599030650891800530}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
@@ -412,6 +419,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7209824905724049042}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6688211950727827974}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
 --- !u!4 &2730304418780757246 stripped
 Transform:
@@ -423,6 +433,18 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -2253911629886400664, guid: cbffc79c35e32de4693c62ebee38f504, type: 3}
   m_PrefabInstance: {fileID: 5239507951871542259}
   m_PrefabAsset: {fileID: 0}
+--- !u!210 &9142217408843156586
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2886253106962404507}
+  m_Enabled: 1
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!114 &2599030650891800530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,11 +458,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 34a46e9e43f0d564abd99b7d98a1039a, type: 2}
-  interactableContexts: -1
   healthBar: {fileID: 1210667256455917646}
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
-  IsMovingTest: 0
   moveToTargetTransform: {fileID: 0}
+  interactableContexts: -1
   heldResourcesVisual: {fileID: 1302539024338910977}
   resourcePrefab: {fileID: 1401573855155755980, guid: f3a45b427f1c4a04bb6d86cef956aac2, type: 3}
   buildAmountPerSecond: 10
@@ -512,3 +533,38 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   repathRateCompatibility: NaN
   canSearchCompability: 0
+--- !u!58 &6688211950727827974
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2886253106962404507}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.295}
+  serializedVersion: 2
+  m_Radius: 0.295

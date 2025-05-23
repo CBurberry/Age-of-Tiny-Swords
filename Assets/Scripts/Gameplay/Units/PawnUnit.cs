@@ -125,12 +125,12 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         switch (context)
         {
             case UnitInteractContexts.Build:
-                MoveTo((target as MonoBehaviour).transform, StartBuilding);
                 interactionTarget = target;
+                MoveTo((target as MonoBehaviour).transform, StartBuilding, false);
                 break;
             case UnitInteractContexts.Repair:
-                MoveTo((target as MonoBehaviour).transform, StartRepairing);
                 interactionTarget = target;
+                MoveTo((target as MonoBehaviour).transform, StartRepairing, false);
                 break;
             default:
                 throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
@@ -141,18 +141,18 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         if (target is Tree)
         {
-            MoveTo((target as MonoBehaviour).transform, StartChoppingTree);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartChoppingTree, false);
         }
         else if (target is GoldMine)
         {
-            MoveTo((target as MonoBehaviour).transform, EnterMine);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, EnterMine, false);
         }
         else if (target is ResourceItem) 
         {
-            MoveTo((target as MonoBehaviour).transform, PickupResource);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, PickupResource, false);
         }
         else
         {
@@ -164,8 +164,8 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         if (target is Sheep)
         {
-            MoveTo((target as MonoBehaviour).transform, StartAttacking);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false);
         }
         else
         {
@@ -454,6 +454,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         else
         {
             interactionTarget = nearbyResourceItem;
+
             MoveTo((interactionTarget as MonoBehaviour).transform, () =>
             {
                 PickupResource();

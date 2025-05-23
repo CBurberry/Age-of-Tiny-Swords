@@ -19,6 +19,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 {
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
 
+    BehaviorSubject<Vector3?> _targetPos = new(null);
+
     public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
 
@@ -51,6 +53,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private Action onMoveToComplete;
     private CompositeDisposable _disposables = new();
     private AILerp _pathfinder;
+
+    public IObservable<Vector3?> ObserveTargetPos() => _targetPos;
 
     protected virtual void Awake()
     {
@@ -103,11 +107,13 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
         if (worldPosition == transform.position) 
         {
+            onComplete?.Invoke();
             return true;
         }
 
         onMoveToComplete = onComplete;
         _pathfinder.destination = worldPosition;
+        _targetPos.OnNext(worldPosition);
         _pathfinder.SearchPath();
         return true;
     }
@@ -165,17 +171,23 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private void SetupPathfinder()
     {
         _pathfinder = GetComponent<AILerp>();
+        _pathfinder.speed = data.MovementSpeed;
         _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
         {
             if (direction.sqrMagnitude < 0.0001f)
             {
                 animator.SetBool(ANIMATION_BOOL_MOVING, false);
-                isMoving = false;
-                if (onMoveToComplete != null)
+                if (isMoving)
                 {
-                    onMoveToComplete?.Invoke();
-                    onMoveToComplete = null;
+                    isMoving = false;
+                    if (onMoveToComplete != null)
+                    {
+                        var tempAction = onMoveToComplete;
+                        onMoveToComplete = null;
+                        tempAction?.Invoke();
+                    }
                 }
+                _targetPos.OnNext(null);
             }
             else
             {
