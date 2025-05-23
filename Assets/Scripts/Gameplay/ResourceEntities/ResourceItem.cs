@@ -1,6 +1,5 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
-using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ using UnityEngine;
 /// Represents a resource item stack in the world. When dropped by pawns or other entities.
 /// When picked up by an entity, it should be destroyed when empty.
 /// </summary>
-public class ResourceItem : ABaseUnitInteractable, IResourceSource
+public class ResourceItem : AUnitInteractableNonUnit, IResourceSource
 {
     //Maximum amount of a resource that this one item can hold
     public const int MaxResourceAmount = 10;

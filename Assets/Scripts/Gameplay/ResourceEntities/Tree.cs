@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Tree : ABaseUnitInteractable, IResourceSource
+public class Tree : AUnitInteractableNonUnit, IResourceSource
 {
     public bool IsDepleted => currentWood == 0;
 

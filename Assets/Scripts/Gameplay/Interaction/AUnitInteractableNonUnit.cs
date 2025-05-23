@@ -1,7 +1,11 @@
 using NaughtyAttributes;
 using UnityEngine;
 
-public abstract class ABaseUnitInteractable : MonoBehaviour, IUnitInteractable
+/// <summary>
+/// Abstract class to represent a Monobehaviour that is NOT a unit type.
+/// N.B. Use AUnitInteractableUnit if you want something that a unit can interact with that is also a unit.
+/// </summary>
+public abstract class AUnitInteractableNonUnit : MonoBehaviour, IUnitInteractable
 {
     [SerializeField]
     [Tooltip("If a unit interacts with this what can it do?")]

@@ -8,7 +8,7 @@ using static Player;
 /// <summary>
 /// Base class governing behaviours that all buildings share e.g. Construction, Destruction.
 /// </summary>
-public class SimpleBuilding : ABaseUnitInteractable, IBuilding
+public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;

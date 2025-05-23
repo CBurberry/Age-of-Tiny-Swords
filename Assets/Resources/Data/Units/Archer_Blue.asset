@@ -18,4 +18,4 @@ MonoBehaviour:
   MovementSpeed: 1
   AttackSpeed: 1
   AttackDistance: 2
-  BaseAttackDamage: 5
+  BaseAttackDamage: 12

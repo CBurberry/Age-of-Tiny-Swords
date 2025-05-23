@@ -27,11 +27,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     protected UnitData data;
 
     [SerializeField]
-    [Tooltip("What interactable contexts does this unit support?")]
-    [EnumFlags]
-    private UnitInteractContexts interactableContexts;
-
-    [SerializeField]
     private UnitHealthBar healthBar;
 
     [SerializeField]
@@ -43,7 +38,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [ShowNonSerializedField]
     protected int currentHp;
     protected bool isMoving { get; private set; }
-    protected ABaseUnitInteractable interactionTarget;
+    protected IUnitInteractable interactionTarget;
 
     //These components should be on the prefab root, along with this script
     protected Animator animator;
@@ -51,7 +46,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     [SerializeField]
     [Tooltip("FOR TESTING PURPOSES, BUTTON BELOW")]
-    private Transform moveToTargetTransform;    //FOR TESTING PURPOSES
+    protected Transform moveToTargetTransform;    //FOR TESTING PURPOSES
+
     private Action onMoveToComplete;
     private CompositeDisposable _disposables = new();
     private AILerp _pathfinder;
@@ -116,43 +112,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         return true;
     }
 
-    /// <summary>
-    /// Get this unit to interact with a given target.
-    /// </summary>
-    /// <param name="target">Target entity</param>
-    /// <param name="context">Singular context</param>
-    /// <returns>Success/Failure</returns>
-    public virtual void Interact(ABaseUnitInteractable target, UnitInteractContexts context)
-    {
-        if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts)) 
-        {
-            Debug.Log("Could not interact");
-            return;
-        }
-
-        if (BitwiseHelpers.GetSetBitCount((long)availableContexts) != 1) 
-        {
-            throw new ArgumentException($"[{nameof(SimpleUnit)}.{nameof(Interact)}]: Cannot resolve more than 1 interaction context at once!");
-        }
-
-        if (target is IBuilding)
-        {
-            ResolveBuildingInteraction(target, availableContexts);
-        }
-        else if (target is IResourceSource)
-        {
-            ResolveResourceInteraction(target, availableContexts);
-        }
-        else if (target is IDamageable && (target as IDamageable).Faction != Faction) 
-        {
-            ResolveDamagableInteraction(target, availableContexts);
-        }
-        else
-        {
-            throw new NotImplementedException("TODO: define interaction behaviour with '" + target.name + "'");
-        }
-    }
-
     public virtual Vector3 GetClosestPosition(Vector3 position)
         => spriteRenderer.bounds.ClosestPoint(position);
 
@@ -176,27 +135,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             TriggerDeath();
         }
-    }
-
-    protected virtual void ResolveBuildingInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
-    {
-        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
-    }
-
-    protected virtual void ResolveDamagableInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
-    {
-        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
-    }
-
-    protected virtual void ResolveResourceInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
-    {
-        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
-    }
-
-    [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
-    protected virtual void InteractWith()
-    {
-        Interact(moveToTargetTransform.gameObject.GetComponent<ABaseUnitInteractable>(), interactableContexts);
     }
 
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]

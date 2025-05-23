@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PawnUnit : SimpleUnit
+public class PawnUnit : AUnitInteractableUnit, IDamageable
 {
     public bool CanCarryResources => GetHeldResourcesCount() < maxHeldResourceCount;
 
@@ -72,6 +72,10 @@ public class PawnUnit : SimpleUnit
         base.Update();
     }
 
+    //Other units can only attack this unit or do nothing
+    public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
+        => unit.Faction != Faction ? UnitInteractContexts.Attack : UnitInteractContexts.None;
+
     public void AddResource(ResourceType resource, int amount, out int overflow)
     {
         int heldCount = GetHeldResourcesCount();
@@ -116,16 +120,16 @@ public class PawnUnit : SimpleUnit
     public int GetHeldResourcesCount()
         => currentResources[ResourceType.Food] + currentResources[ResourceType.Gold] + currentResources[ResourceType.Wood];
 
-    protected override void ResolveBuildingInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         switch (context)
         {
             case UnitInteractContexts.Build:
-                MoveTo(target.transform, StartBuilding);
+                MoveTo((target as MonoBehaviour).transform, StartBuilding);
                 interactionTarget = target;
                 break;
             case UnitInteractContexts.Repair:
-                MoveTo(target.transform, StartRepairing);
+                MoveTo((target as MonoBehaviour).transform, StartRepairing);
                 interactionTarget = target;
                 break;
             default:
@@ -133,21 +137,21 @@ public class PawnUnit : SimpleUnit
         }
     }
 
-    protected override void ResolveResourceInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         if (target is Tree)
         {
-            MoveTo(target.transform, StartChoppingTree);
+            MoveTo((target as MonoBehaviour).transform, StartChoppingTree);
             interactionTarget = target;
         }
         else if (target is GoldMine)
         {
-            MoveTo(target.transform, EnterMine);
+            MoveTo((target as MonoBehaviour).transform, EnterMine);
             interactionTarget = target;
         }
         else if (target is ResourceItem) 
         {
-            MoveTo(target.transform, PickupResource);
+            MoveTo((target as MonoBehaviour).transform, PickupResource);
             interactionTarget = target;
         }
         else
@@ -156,11 +160,11 @@ public class PawnUnit : SimpleUnit
         }
     }
 
-    protected override void ResolveDamagableInteraction(ABaseUnitInteractable target, UnitInteractContexts context)
+    protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         if (target is Sheep)
         {
-            MoveTo(target.transform, StartAttacking);
+            MoveTo((target as MonoBehaviour).transform, StartAttacking);
             interactionTarget = target;
         }
         else
@@ -201,7 +205,7 @@ public class PawnUnit : SimpleUnit
         MoveToNearestBuilding(() => 
         {
             DepositResources();
-            MoveTo(interactionTarget.transform, onMoveComplete, false);
+            MoveTo((interactionTarget as MonoBehaviour).transform, onMoveComplete, false);
         }, false);
     }
 
@@ -252,7 +256,7 @@ public class PawnUnit : SimpleUnit
             if (magnitude > data.AttackDistance)
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
-                MoveTo(interactionTarget.transform, StartAttacking, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);
                 yield break;
             }
             else 
@@ -450,7 +454,7 @@ public class PawnUnit : SimpleUnit
         else
         {
             interactionTarget = nearbyResourceItem;
-            MoveTo(interactionTarget.transform, () =>
+            MoveTo((interactionTarget as MonoBehaviour).transform, () =>
             {
                 PickupResource();
                 if (GetHeldResourcesCount() > 0)

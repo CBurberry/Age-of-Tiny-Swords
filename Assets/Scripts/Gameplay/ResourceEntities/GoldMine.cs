@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GoldMine : ABaseUnitInteractable, IResourceSource
+public class GoldMine : AUnitInteractableNonUnit, IResourceSource
 {
     public enum Status
     {

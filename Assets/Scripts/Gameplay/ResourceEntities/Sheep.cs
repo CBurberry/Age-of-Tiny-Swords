@@ -1,31 +1,12 @@
 using NaughtyAttributes;
 using System;
 using UnityEngine;
-using static Player;
 using Random = UnityEngine.Random;
 
-public class Sheep : ABaseUnitInteractable, IDamageable
+public class Sheep : AUnitInteractableUnit, IDamageable
 {
-    public Faction Faction => Faction.None;
-    public float HpAlpha => (float)currentHp / maxHp;
-
-    [SerializeField]
-    private UnitHealthBar healthBar;
-
-    [SerializeField]
-    private SpriteRenderer spriteRenderer;
-
     [SerializeField]
     private GameObject resourcePrefab;
-
-    [SerializeField]
-    private float moveSpeed;
-
-    [SerializeField]
-    private int maxHp;
-
-    [SerializeField]
-    private int currentHp;
 
     [SerializeField]
     private bool randomizeMaxFoodAmount;
@@ -42,13 +23,13 @@ public class Sheep : ABaseUnitInteractable, IDamageable
     [MinMaxSlider(80, 200)]
     private Vector2Int maxFoundAmountRange;
 
-    private void Awake()
+    protected override void Awake()
     {
         currentHp = maxHp;
         foodAmount = randomizeMaxFoodAmount ? Random.Range(maxFoundAmountRange.x, maxFoundAmountRange.y) : maxFoodAmount;
     }
 
-    private void Update()
+    protected override void Update()
     {
         //TODO: Add a movement routine such that sheeps randomly pick a point near them to move to every so often
         //      Also to move away from an attacker when attacked
@@ -57,9 +38,6 @@ public class Sheep : ABaseUnitInteractable, IDamageable
     //Sheep drops a food prefab(s) when killed
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
         => UnitInteractContexts.Attack;
-
-    public Vector3 GetClosestPosition(Vector3 position)
-        => spriteRenderer.bounds.ClosestPoint(position);
 
     //POLISH/TODO: Sheep should randmly decide to move about short distances
     public void RandomMove()
@@ -73,30 +51,8 @@ public class Sheep : ABaseUnitInteractable, IDamageable
         throw new NotImplementedException();
     }
 
-    public void ApplyDamage(int value)
-    {
-        if (value == 0f)
-        {
-            return;
-        }
-
-        //NOTE: Should there be some kind of 'took damage' animation or effect? If so, play here.
-
-        currentHp = Math.Clamp(currentHp - value, 0, maxHp);
-
-        //Update health bar
-        bool shouldShow = currentHp < maxHp && currentHp > 0f;
-        healthBar.SetValue(HpAlpha);
-        healthBar.gameObject.SetActive(shouldShow);
-
-        if (currentHp <= 0f)
-        {
-            TriggerDeath();
-        }
-    }
-
-    [Button("TriggerDeath (PlayMode)", EButtonEnableMode.Playmode)]
-    private void TriggerDeath()
+    [Button("TriggerDeath - Sheep (PlayMode)", EButtonEnableMode.Playmode)]
+    protected override void TriggerDeath()
     {
         //Hide self
         spriteRenderer.enabled = false;

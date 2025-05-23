@@ -1,0 +1,80 @@
+using NaughtyAttributes;
+using RuntimeStatics;
+using System;
+using UnityEngine;
+
+public abstract class AUnitInteractableUnit : SimpleUnit
+{
+    [SerializeField]
+    [Tooltip("What interaction types can this unit trigger?")]
+    [EnumFlags]
+    private UnitInteractContexts interactableContexts;
+
+    public UnitInteractContexts GetContexts() => interactableContexts;
+
+    public abstract UnitInteractContexts GetApplicableContexts(SimpleUnit unit);
+
+    public virtual bool CanInteract(SimpleUnit unit, UnitInteractContexts contexts, out UnitInteractContexts interactableContexts)
+    {
+        interactableContexts = contexts & GetApplicableContexts(unit);
+        return interactableContexts != UnitInteractContexts.None;
+    }
+
+    /// <summary>
+    /// Get this unit to interact with a given target.
+    /// </summary>
+    /// <param name="target">Target entity</param>
+    /// <param name="context">Singular context</param>
+    /// <returns>Success/Failure</returns>
+    public virtual void Interact(IUnitInteractable target, UnitInteractContexts context)
+    {
+        if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts))
+        {
+            Debug.Log("Could not interact");
+            return;
+        }
+
+        if (BitwiseHelpers.GetSetBitCount((long)availableContexts) != 1)
+        {
+            throw new ArgumentException($"[{nameof(SimpleUnit)}.{nameof(Interact)}]: Cannot resolve more than 1 interaction context at once!");
+        }
+
+        if (target is IBuilding)
+        {
+            ResolveBuildingInteraction(target, availableContexts);
+        }
+        else if (target is IResourceSource)
+        {
+            ResolveResourceInteraction(target, availableContexts);
+        }
+        else if (target is IDamageable && (target as IDamageable).Faction != Faction)
+        {
+            ResolveDamagableInteraction(target, availableContexts);
+        }
+        else
+        {
+            throw new NotImplementedException("TODO: define interaction behaviour with '" + (target as MonoBehaviour)?.name + "'");
+        }
+    }
+
+    protected virtual void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
+    protected virtual void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveDamagableInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
+    protected virtual void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        throw new NotImplementedException($"[{nameof(SimpleUnit)}.{nameof(ResolveResourceInteraction)}]: Context resolution not implemented for {nameof(SimpleUnit)}!");
+    }
+
+    [Button("Interact with target (PlayMode)", EButtonEnableMode.Playmode)]
+    protected virtual void InteractWith()
+    {
+        Interact(moveToTargetTransform.gameObject.GetComponent<IUnitInteractable>(), interactableContexts);
+    }
+}

@@ -7,9 +7,6 @@ using static Player;
 [CreateAssetMenu(fileName = "NewUnitData", menuName = "TinyWorld/UnitData")]
 public class UnitData : ScriptableObject
 {
-    [Header("References")]
-    public GameObject UnitPrefab;
-
     [Header("Settings")]
     public Faction Faction;
     public int MaxHp = 100;
