@@ -25,6 +25,7 @@ public class Sheep : AUnitInteractableUnit
 
     protected override void Awake()
     {
+        base.Awake();
         currentHp = maxHp;
         foodAmount = randomizeMaxFoodAmount ? Random.Range(maxFoundAmountRange.x, maxFoundAmountRange.y) : maxFoodAmount;
     }
