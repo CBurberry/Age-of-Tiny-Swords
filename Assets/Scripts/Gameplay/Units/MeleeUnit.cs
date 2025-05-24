@@ -24,8 +24,8 @@ public class MeleeUnit : AUnitInteractableUnit
     {
         if (target is IDamageable)
         {
-            MoveTo((target as MonoBehaviour).transform, StartAttacking, stopAtAttackDistance: true);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
         }
         else
         {
@@ -48,6 +48,7 @@ public class MeleeUnit : AUnitInteractableUnit
     {
         IDamageable damageTarget = interactionTarget as IDamageable;
         Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
+
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
