@@ -8,6 +8,7 @@ public class PlayerInteractionManager : MonoBehaviour
 {
     [Inject] InputManager _inputManager;
     [SerializeField] GameObject _targetIndicator;
+    [SerializeField] bool _allowSelectingEnemies;
 
     CompositeDisposable _disposables = new();
     CompositeDisposable _selectedUnitDisposable = new();
@@ -83,7 +84,7 @@ public class PlayerInteractionManager : MonoBehaviour
         foreach (RaycastHit2D hit in _hits)
         {
             if (hit.transform.TryGetComponent<AUnitInteractableUnit>(out var unit) 
-                && unit.Faction == GameManager.Instance.CurrentPlayerFaction)
+                && (_allowSelectingEnemies || unit.Faction == GameManager.Instance.CurrentPlayerFaction))
             {
                 return unit;
             }
