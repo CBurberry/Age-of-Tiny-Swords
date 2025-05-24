@@ -14,6 +14,9 @@ public class ExplodingUnit : AUnitInteractableUnit
     private const string ANIMSTATE_PRIMED = "Fired";
 
     [SerializeField]
+    private GameObject explosionPrefab;
+
+    [SerializeField]
     private bool shouldExplodeOnDeath;
 
     [SerializeField]
@@ -158,6 +161,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     private void Explode()
     {
         hasExploded = true;
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform.parent);
 
         //Get all enemies in a radius around this unit and apply damage to them
         var damageables = Physics2D.OverlapCircleAll(transform.position, explosionRadius)
@@ -168,8 +172,5 @@ public class ExplodingUnit : AUnitInteractableUnit
         {
             element.ApplyDamage(data.BaseAttackDamage);
         }
-
-        //TODO: Play VFX on self
-        Debug.Log("Boom");
     }
 }

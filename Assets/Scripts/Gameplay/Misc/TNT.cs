@@ -8,6 +8,9 @@ public class TNT : AProjectile
     public float ExplosionRadius;
 
     [SerializeField]
+    private Explosion explosionPrefab;
+
+    [SerializeField]
     private float rotationSpeed;
 
     [SerializeField]
@@ -41,7 +44,8 @@ public class TNT : AProjectile
 
     public void Explode()
     {
-        //TODO: Play explosion animation, scale to the damage radius
+        //Play explosion animation
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform.parent);
 
         //Get all enemies in a radius around this unit and apply damage to them
         var damageables = Physics2D.OverlapCircleAll(transform.position, ExplosionRadius)

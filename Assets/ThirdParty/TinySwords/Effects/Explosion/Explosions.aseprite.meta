@@ -2,7 +2,12 @@ fileFormatVersion: 2
 guid: b8fbbe86cdebfe844818852e86b525e9
 ScriptedImporter:
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Explosion
+    second: {fileID: 7400000, guid: 81a33ef643d25ce4bbe295133a32bb8f, type: 2}
   serializedVersion: 2
   userData: 
   assetBundleName: 
@@ -98,7 +103,7 @@ ScriptedImporter:
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 0
+  platformSettingsDirtyTick: 638836984568663546
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -124,7 +129,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Frame_0
     originalName: 
-    pivot: {x: 0.49999997, y: -0.78873235}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -144,12 +149,12 @@ ScriptedImporter:
     uvTransform: {x: 116, y: 201}
   - name: Frame_1
     originalName: 
-    pivot: {x: 0.5, y: -0.8333334}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 116
+      x: 117
       y: 121
       width: 72
       height: 72
@@ -164,7 +169,7 @@ ScriptedImporter:
     uvTransform: {x: 116, y: 121}
   - name: Frame_2
     originalName: 
-    pivot: {x: 0.4938272, y: -0.73417723}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -184,7 +189,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 351}
   - name: Frame_3
     originalName: 
-    pivot: {x: 0.49999997, y: -0.51}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -204,7 +209,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 243}
   - name: Frame_4
     originalName: 
-    pivot: {x: 0.49523807, y: -0.43119267}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -224,7 +229,7 @@ ScriptedImporter:
     uvTransform: {x: 116, y: 4}
   - name: Frame_5
     originalName: 
-    pivot: {x: 0.49999997, y: -0.38053095}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -244,7 +249,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 4}
   - name: Frame_6
     originalName: 
-    pivot: {x: 0.52040815, y: -0.4090909}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -264,7 +269,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 125}
   - name: Frame_7
     originalName: 
-    pivot: {x: 0.3833333, y: -1.7333335}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -284,12 +289,12 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 438}
   - name: Frame_8
     originalName: 
-    pivot: {x: 0.49999997, y: -3.6799998}
+    pivot: {x: 0.5, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
-      x: 72
+      x: 73
       y: 438
       width: 34
       height: 25
@@ -399,6 +404,42 @@ ScriptedImporter:
     overridden: 0
     ignorePlatformSupport: 0
     maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: DefaultTexturePlatform
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: Standalone
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    androidETC2FallbackOverride: 0
+  - name: WebGL
+    overridden: 0
+    ignorePlatformSupport: 0
+    maxTextureSize: 16384
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0

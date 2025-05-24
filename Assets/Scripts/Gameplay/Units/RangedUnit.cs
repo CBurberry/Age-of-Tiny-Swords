@@ -76,7 +76,7 @@ public class RangedUnit : AUnitInteractableUnit
     protected virtual void RangedAttack()
     {
         //FOR TESTING
-        if (interactionTarget == null) 
+        if (interactionTarget == null && moveToTargetTransform != null) 
         {
             interactionTarget = moveToTargetTransform.GetComponent<IUnitInteractable>();
         }
@@ -87,9 +87,15 @@ public class RangedUnit : AUnitInteractableUnit
             return;
         }
 
-        Transform targetTransform = (interactionTarget as MonoBehaviour).transform;
-        if (targetTransform == null) 
+        Transform targetTransform = null;
+        try 
         {
+            targetTransform = (interactionTarget as MonoBehaviour)?.transform;
+        }
+        catch 
+        {
+            interactionTarget = null;
+            Debug.LogWarning("Target invalid!");
             return;
         }
 

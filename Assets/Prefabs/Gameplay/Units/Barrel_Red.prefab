@@ -189,8 +189,10 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 5893e4008103e9140b0ee2641ff9a78e, type: 2}
   healthBar: {fileID: 7065364595478177787}
   deadPrefab: {fileID: 0}
+  unitSelectedMarker: {fileID: 0}
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
+  explosionPrefab: {fileID: 0}
   shouldExplodeOnDeath: 1
   timeToExplode: 5
   explosionRadius: 1.5
