@@ -2,6 +2,9 @@ using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
+using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Player;
 
@@ -12,14 +15,17 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
     public static event Action<Faction> OnAnyBuildingBuilt;
     public static event Action<Faction> OnAnyBuildingDestroyed;
+    public static readonly int MAX_UNITS_QUEUE = 5;
+
 
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
     public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
+    public IReadOnlyList<UnitCost> SpawnableUnits => data.SpawnableUnits;
 
     [SerializeField]
-    [Expandable]
+    //[Expandable] Naughty Attributes can't handle this data
     protected BuildingData data;
 
     protected int maxHp => data.MaxHp;
@@ -37,9 +43,30 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     [SerializeField]
     protected bool buildOnStart;
 
+    [SerializeField]
+    protected Transform unitsParent;
+
+    [SerializeField]
+    protected Transform spawnPoint;
+
     protected Faction faction;
 
     private const float damageVisualThreshold = 0.75f;
+
+    BehaviorSubject<List<UnitCost>> _buildQueue = new(new List<UnitCost>());
+    BehaviorSubject<float> _currentBuildTime = new(0f);
+    public IObservable<List<UnitCost>> ObserveUnitBuildQueue() => _buildQueue;
+    public IObservable<float> ObserveUnitBuildProgress() => _currentBuildTime.Select(x =>
+    {
+        if (_buildQueue.Value.Count > 0f)
+        {
+            return x / _buildQueue.Value[0].BuildTime;
+        }
+        else
+        {
+            return 0f;
+        }
+    });
 
     protected void Awake()
     {
@@ -80,6 +107,27 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         else 
         {
             HidePreview();
+        }
+    }
+
+    protected void Update()
+    {
+        var buildQueue = _buildQueue.Value;
+        var currentBuildTime = _currentBuildTime.Value;
+        if (buildQueue.Count > 0)
+        {
+            currentBuildTime += Time.deltaTime;
+            if (currentBuildTime >= buildQueue[0].BuildTime)
+            {
+                var newUnit = Instantiate(buildQueue[0].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, unitsParent);
+                _currentBuildTime.OnNext(0f);
+                buildQueue.RemoveAt(0);
+                _buildQueue.OnNext(buildQueue);
+            }
+            else
+            {
+                _currentBuildTime.OnNext(currentBuildTime);
+            }
         }
     }
 
@@ -201,6 +249,48 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             ApplyDamagedVisual();
         }
+    }
+
+    public bool TryAddUnitToQueue(UnitCost unitCost)
+    {
+        var buildQueue = _buildQueue.Value;
+        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
+
+        if (_buildQueue.Value.Count >=  MAX_UNITS_QUEUE)
+        {
+            return false;
+        }
+        if (!resourceManager.HaveResources(unitCost.Cost))
+        {
+            return false;
+        }
+
+        resourceManager.RemoveResources(unitCost.Cost);
+        buildQueue.Add(unitCost);
+        _buildQueue.OnNext(buildQueue);
+
+        return true;
+    }
+
+    public bool TryRemoveUnitFromQueue(int i)
+    {
+        var buildQueue = _buildQueue.Value;
+        if (i >= buildQueue.Count)
+        {
+            return false;
+        }
+
+        if (i == 0)
+        {
+            _currentBuildTime.OnNext(0f);
+        }
+        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
+
+        resourceManager.AddResources(buildQueue[i].Cost);
+
+        buildQueue.RemoveAt(i);
+        _buildQueue.OnNext(buildQueue);
+        return true;
     }
 
     protected virtual void CompleteConstruction()

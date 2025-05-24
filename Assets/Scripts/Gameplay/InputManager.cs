@@ -1,13 +1,15 @@
 using System;
 using UniRx;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class InputManager : MonoBehaviour
 {
     const string SCROLL_INPUT = "Mouse ScrollWheel";
 
-    [SerializeField] float _panEdgePerc = 0.1f;
+    [SerializeField] float _topOffset = 100;
+    [SerializeField] float _panEdgePerc = 0.15f;
     [SerializeField] float _dragTriggerScreenDistance = 30;
     [SerializeField] InputActionReference _mouseScrollRef;
 
@@ -49,7 +51,7 @@ public class InputManager : MonoBehaviour
 
     void HandleMouseButtons()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             _mouseStartPos = Input.mousePosition;
             _isDragging = false;
@@ -84,6 +86,12 @@ public class InputManager : MonoBehaviour
         var mousePos = Input.mousePosition;
         Vector2 panDirection = Vector2.zero;
 
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            _panDirection.OnNext(panDirection);
+            return;
+        }
+
         if (mousePos.x < 0 || mousePos.y < 0 
             || mousePos.x > Screen.width || mousePos.y > Screen.height)
         {
@@ -94,7 +102,7 @@ public class InputManager : MonoBehaviour
 
         float panEdge = Screen.width * _panEdgePerc;
      
-        if (mousePos.x < panEdge || mousePos.x > Screen.width - panEdge 
+        if (mousePos.x < panEdge || mousePos.x > Screen.width - panEdge - _topOffset
             || mousePos.y < panEdge || mousePos.y > Screen.height - panEdge) 
         {
             panDirection = new Vector2(mousePos.x - Screen.width * 0.5f, mousePos.y - Screen.height * 0.5f).normalized;

@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public Faction CurrentPlayerFaction => Faction.Knights;
     public Player Knights;
     public Player Goblins;
 
