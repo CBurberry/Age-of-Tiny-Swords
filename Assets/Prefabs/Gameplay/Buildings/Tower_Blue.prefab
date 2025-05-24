@@ -129,7 +129,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe026d4db3b1d940b33f61d53022556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableContexts: 0
+  interactableContexts: 15
   data: {fileID: 11400000, guid: 64a9c79d9214cf94882df05474a88b5f, type: 2}
   visuals: {fileID: 4016681619413240150}
   buildOnStart: 0
+  unitsParent: {fileID: 0}
+  spawnPoint: {fileID: 0}

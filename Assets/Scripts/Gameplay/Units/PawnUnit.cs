@@ -118,11 +118,12 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
     protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
+        IBuilding building = target as IBuilding;
         switch (context)
         {
             case UnitInteractContexts.Attack:
-                IDamageable damagableTarget = target as IDamageable;
-                if (damagableTarget != null && damagableTarget.HpAlpha > 0f && damagableTarget.Faction != Faction) 
+                
+                if (building != null && building.HpAlpha > 0f && building.Faction != Faction) 
                 {
                     interactionTarget = target;
                     MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
@@ -135,6 +136,15 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             case UnitInteractContexts.Repair:
                 interactionTarget = target;
                 MoveTo((target as MonoBehaviour).transform, StartRepairing, false);
+                break;
+            case UnitInteractContexts.Gather:
+                //Deliver held resources
+                if (GetHeldResourcesCount() > 0)
+                {
+                    interactionTarget = target;
+                    MoveTo((target as MonoBehaviour).transform, DepositResources, true);
+                    break;
+                }
                 break;
             default:
                 throw new NotImplementedException($"[{nameof(PawnUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(PawnUnit)} & {context}!");
