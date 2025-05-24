@@ -45,10 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe026d4db3b1d940b33f61d53022556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableContexts: 0
+  interactableContexts: 15
   data: {fileID: 11400000, guid: 73eb4df1140bc5e4db04f261ca9697c2, type: 2}
   visuals: {fileID: 8382499713719440887}
   buildOnStart: 0
+  unitsParent: {fileID: 0}
+  spawnPoint: {fileID: 0}
 --- !u!1 &8382499713719440887
 GameObject:
   m_ObjectHideFlags: 0

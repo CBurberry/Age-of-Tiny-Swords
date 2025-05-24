@@ -88,7 +88,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bbfd98db96586e4fb94c9b3b8c32423, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableContexts: 0
+  interactableContexts: 8
   resourceType: 0
   spawnOnStart: 0
   animationControllers:

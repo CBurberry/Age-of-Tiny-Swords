@@ -142,16 +142,26 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             return UnitInteractContexts.None;
         }
 
-        //Check unit faction to determine if can be attacked or not, for now just set to not be attackable
-        UnitInteractContexts contexts = unit.Faction != Faction ? UnitInteractContexts.Attack : UnitInteractContexts.None;
+        //Check unit faction to determine if can be attacked or used as a resource deposit
+        UnitInteractContexts contexts = UnitInteractContexts.None;
 
-        if (state == BuildingStates.PreConstruction)
+        if (unit.Faction != Faction)
         {
-            contexts |= UnitInteractContexts.Build;
+            //ABe able to attack any enemy building
+            contexts = UnitInteractContexts.Attack;
         }
-        else if (state == BuildingStates.Constructed && currentHp < maxHp) 
+        else 
         {
-            contexts |= UnitInteractContexts.Repair;
+            //Allow deposit resource to any building
+            contexts = UnitInteractContexts.Gather;
+            if (state == BuildingStates.PreConstruction)
+            {
+                contexts |= UnitInteractContexts.Build;
+            }
+            else if (state == BuildingStates.Constructed && currentHp < maxHp)
+            {
+                contexts |= UnitInteractContexts.Repair;
+            }
         }
 
         //TODO: implement garrison context check (perhaps in derived class e.g. garrisonbuilding)
