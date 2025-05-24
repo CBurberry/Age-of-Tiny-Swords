@@ -26,6 +26,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
+    public bool IsRendererActive => spriteRenderer.enabled;
 
     [SerializeField]
     [Expandable]
@@ -139,6 +140,26 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public virtual Vector3 GetClosestPosition(Vector3 position)
         => spriteRenderer.bounds.ClosestPoint(position);
+
+    public virtual void EnterBuilding()
+    {
+        var collider = GetComponent<Collider2D>();
+        if (collider != null) 
+        {
+            collider.enabled = false;
+        }
+        spriteRenderer.enabled = false;
+    }
+
+    public virtual void ExitBuilding()
+    {
+        var collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = true;
+        }
+        spriteRenderer.enabled = true;
+    }
 
     public virtual void ApplyDamage(int value)
     {

@@ -374,8 +374,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     private void EnterMine()
     {
         ClearAllAnimationActionFlags();
-        spriteRenderer.enabled = false;
-        GetComponent<Collider2D>().enabled = false;
+        EnterBuilding();
         (interactionTarget as GoldMine).EnterMine(this);
         StartCoroutine(Mining());
     }
@@ -384,7 +383,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         GoldMine mine = interactionTarget as GoldMine;
         int overflow = 0;
-        Func<bool> condition = () => mine != null && !mine.IsDepleted && overflow == 0 && !isMoving;
+        Func<bool> condition = () => mine != null && !mine.IsDepleted && mine.IsBeingMined && overflow == 0 && !isMoving;
         while (condition.Invoke())
         {
             AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);
@@ -396,8 +395,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         }
 
         mine.ExitMine(this);
-        GetComponent<Collider2D>().enabled = true;
-        spriteRenderer.enabled = true;
+        ExitBuilding();
 
         if (overflow > 0 || mine.IsDepleted && GetHeldResourcesCount() > 0)
         {

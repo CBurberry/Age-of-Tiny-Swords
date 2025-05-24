@@ -188,6 +188,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 5893e4008103e9140b0ee2641ff9a78e, type: 2}
   healthBar: {fileID: 7065364595478177787}
+  spawnDeadPrefab: 0
   deadPrefab: {fileID: 0}
   unitSelectedMarker: {fileID: 0}
   moveToTargetTransform: {fileID: 0}
@@ -197,6 +198,7 @@ MonoBehaviour:
   timeToExplode: 5
   explosionRadius: 1.5
   timeBeforeIdleIn: 5
+  canDestroyMine: 1
 --- !u!114 &5724973367365759734
 MonoBehaviour:
   m_ObjectHideFlags: 0

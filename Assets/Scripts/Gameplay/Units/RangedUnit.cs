@@ -22,6 +22,22 @@ public class RangedUnit : AUnitInteractableUnit
         prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
     }
 
+    protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        //Only attackable if a goblin unit and the mine has pawns in it / is active
+        if (Faction != Player.Faction.Goblins && target is GoldMine)
+        {
+            return;
+        }
+
+        GoldMine goldMine = target as GoldMine;
+        if (goldMine.State == GoldMine.Status.Active)
+        {
+            interactionTarget = target;
+            MoveTo(goldMine.transform, StartAttackMine, false, stopAtAttackDistance: true);
+        }
+    }
+
     protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         IDamageable damagableTarget = target as IDamageable;
@@ -82,7 +98,39 @@ public class RangedUnit : AUnitInteractableUnit
         }
 
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-        OnUnitKill();
+    }
+
+    private void StartAttackMine()
+    {
+        StartCoroutine(AttackMine());
+    }
+
+    private IEnumerator AttackMine()
+    {
+        GoldMine mine = interactionTarget as GoldMine;
+        Vector3 closestPosition;
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active;
+        while (condition.Invoke())
+        {
+            closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);
+            float magnitude = (closestPosition - transform.position).magnitude;
+
+            //Check we are at the target (proximity check? bounds?)
+            if (magnitude > data.AttackDistance)
+            {
+                animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttackMine, false, stopAtAttackDistance: true);
+                yield break;
+            }
+            else
+            {
+                animator.SetBool(ANIMATION_BOOL_ATTACKING, true);
+                RangedAttack();
+                yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
+            }
+        }
+
+        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 
     //Trigger on animation event
@@ -93,12 +141,6 @@ public class RangedUnit : AUnitInteractableUnit
         if (interactionTarget == null && moveToTargetTransform != null) 
         {
             interactionTarget = moveToTargetTransform.GetComponent<IUnitInteractable>();
-        }
-
-        if (interactionTarget is not IDamageable) 
-        {
-            Debug.Log("target not damagable!");
-            return;
         }
 
         Transform targetTransform = null;

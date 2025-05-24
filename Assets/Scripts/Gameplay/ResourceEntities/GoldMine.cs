@@ -2,7 +2,9 @@ using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
 using RuntimeStatics;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GoldMine : AUnitInteractableNonUnit, IResourceSource
@@ -17,9 +19,10 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
     public event Action OnDepleted;
 
     public bool IsDepleted => currentGold == 0;
+    public bool IsBeingMined => state == Status.Active;
     public Status State => state;
 
-    public int MaxGatherers => throw new NotImplementedException();
+    public SpriteRenderer SpriteRenderer;
 
     [OnValueChanged("Inspector_OnStateChanged")]
     [SerializeField]
@@ -32,11 +35,14 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
     private int currentGold;
 
     [SerializeField]
-    private SerializedDictionary<Status, Sprite> sprites;
+    [Tooltip("How many times must the mine be hit to forcibly eject all pawns?")]
+    [MinValue(3)]
+    private int numberOfHitsToEjectPawns;
 
     [SerializeField]
-    private SpriteRenderer spriteRenderer;
+    private SerializedDictionary<Status, Sprite> sprites;
 
+    private int hitCount;
     private float miningCount => miners.Count;
     private List<SimpleUnit> miners;
 
@@ -49,14 +55,24 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
 
     private void Start()
     {
-        spriteRenderer.sprite = sprites[state];
+        hitCount = 0;
+        SpriteRenderer.sprite = sprites[state];
     }
 
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
     {
         if (unit is not PawnUnit)
         {
-            return UnitInteractContexts.None;
+            //Hardcoding goblins as only one faction can mine
+            if (unit.Faction == Player.Faction.Goblins && state == Status.Active)
+            {
+                //Attack to force exit of pawns
+                return UnitInteractContexts.Attack;
+            }
+            else 
+            {
+                return UnitInteractContexts.None;
+            }
         }
         else
         {
@@ -69,6 +85,18 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
             {
                 return UnitInteractContexts.Gather;
             }
+        }
+    }
+
+    public void Attack(int hitCount = 1)
+    {
+        this.hitCount += hitCount;
+        if (hitCount >= numberOfHitsToEjectPawns) 
+        {
+            DisplaceAllMiners();
+            state = IsDepleted ? Status.Destroyed : Status.Inactive;
+            SpriteRenderer.sprite = sprites[state];
+            hitCount = 0;
         }
     }
 
@@ -86,7 +114,7 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
 
         miners.Add(unit);
         state = Status.Active;
-        spriteRenderer.sprite = sprites[state];
+        SpriteRenderer.sprite = sprites[state];
     }
 
     public void ExitMine(SimpleUnit unit)
@@ -105,7 +133,7 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
         if (miningCount == 0 && !IsDepleted) 
         {
             state = Status.Inactive;
-            spriteRenderer.sprite = sprites[state];
+            SpriteRenderer.sprite = sprites[state];
         }
     }
 
@@ -131,25 +159,38 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
 
         if (IsDepleted)
         {
-            Depleted();
+            state = Status.Destroyed;
+            DisplaceAllMiners();
+            SpriteRenderer.sprite = sprites[state];
+            OnDepleted?.Invoke();
         }
 
         return gathered;
     }
 
-    private void Depleted()
+    [Button("DestroyMine (PlayMode)", EButtonEnableMode.Playmode)]
+    public void DestroyMine()
     {
         state = Status.Destroyed;
-        spriteRenderer.sprite = sprites[state];
         DisplaceAllMiners();
-        OnDepleted?.Invoke();
+        StartCoroutine(KillAllMinersInMineCollapse());
+        SpriteRenderer.sprite = sprites[state];
+    }
+
+    private IEnumerator KillAllMinersInMineCollapse()
+    {
+        yield return new WaitUntil(() => miners.All(x => x.IsRendererActive));
+        foreach (var miner in miners) 
+        {
+            miner.ApplyDamage(1000);
+        }
     }
 
     private void DisplaceAllMiners()
     {
         foreach (var unit in miners) 
         {
-            Vector3 randomPoint = spriteRenderer.bounds.GetRandomPointOnEdge();
+            Vector3 randomPoint = SpriteRenderer.bounds.GetRandomPointOnEdge();
 
             //N.B. Keep the same z position as we don't want to affect rendering
             unit.transform.position = new Vector3(randomPoint.x, randomPoint.y, unit.transform.position.z);
@@ -158,6 +199,6 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
 
     private void Inspector_OnStateChanged()
     {
-        spriteRenderer.sprite = sprites[state];
+        SpriteRenderer.sprite = sprites[state];
     }
 }

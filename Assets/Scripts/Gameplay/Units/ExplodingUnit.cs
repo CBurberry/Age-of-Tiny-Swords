@@ -28,6 +28,9 @@ public class ExplodingUnit : AUnitInteractableUnit
     [SerializeField]
     private float timeBeforeIdleIn;
 
+    [SerializeField]
+    private bool canDestroyMine;
+
     private bool hasExploded;
     private float elapsedIdleTime;
 
@@ -57,6 +60,22 @@ public class ExplodingUnit : AUnitInteractableUnit
         }
 
         //TODO: Add a check for an enemy nearby, if so - set active bool and start attacking
+    }
+
+    protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        //Only attackable if a goblin unit and the mine has pawns in it / is active
+        if (Faction != Player.Faction.Goblins && target is GoldMine)
+        {
+            return;
+        }
+
+        GoldMine goldMine = target as GoldMine;
+        if (goldMine.State == GoldMine.Status.Active)
+        {
+            interactionTarget = target;
+            MoveTo(goldMine.transform, StartAttackMine, false, stopAtAttackDistance: true);
+        }
     }
 
     protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
@@ -161,6 +180,56 @@ public class ExplodingUnit : AUnitInteractableUnit
         animator.SetBool(ANIMATION_BOOL_ACTIVE, false);
     }
 
+    private void StartAttackMine()
+    {
+        animator.SetBool(ANIMATION_BOOL_ACTIVE, true);
+        StartCoroutine(AttackMine());
+    }
+
+    private IEnumerator AttackMine()
+    {
+        GoldMine mine = interactionTarget as GoldMine;
+        Vector3 closestPosition;
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active;
+        while (condition.Invoke())
+        {
+            closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);
+            float magnitude = (closestPosition - transform.position).magnitude;
+
+            //Check we are at the target (proximity check? bounds?)
+            if (magnitude > data.AttackDistance)
+            {
+                //Disarm and move
+                if (IsPrimedToExplode())
+                {
+                    animator.SetTrigger(ANIMATION_TRIG_DISARM);
+                }
+
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttackMine, false, stopAtAttackDistance: true);
+                yield break;
+            }
+            else
+            {
+                //Arm, set timer and explode after another check
+                animator.SetTrigger(ANIMATION_TRIG_FIRE);
+                float time = Time.time;
+                yield return new WaitForEndOfFrame();
+                yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(timeToExplode, () => !condition.Invoke());
+
+                //If we broke early out of the check, the previous yield was interrupted
+                if (Time.time - time > timeToExplode)
+                {
+                    Explode();
+                    yield break;
+                }
+            }
+        }
+
+        //TODO: Seek another target or return to an idle routine
+        //For now just disarm if we lose a target
+        animator.SetBool(ANIMATION_BOOL_ACTIVE, false);
+    }
+
     //Disable skull prefab as we're blowing to bits when exploding
     protected override void TriggerDeath()
     {
@@ -177,14 +246,22 @@ public class ExplodingUnit : AUnitInteractableUnit
         hasExploded = true;
         Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform.parent);
 
-        //Get all enemies in a radius around this unit and apply damage to them
-        var damageables = Physics2D.OverlapCircleAll(transform.position, explosionRadius)
-            .Select(x => x.gameObject.GetComponent<IDamageable>())
-            .Where(x => x != null);
+        //Get all enemies (and structures) in a radius around this unit and apply damage to them
+        var hitTargets = Physics2D.OverlapCircleAll(transform.position, explosionRadius)
+            .Where(x => x != null && (x.gameObject.TryGetComponent<IDamageable>(out _) || x.gameObject.TryGetComponent<GoldMine>(out _)));
 
-        foreach (var element in damageables) 
+        foreach (var colliders in hitTargets)
         {
-            element.ApplyDamage(data.BaseAttackDamage);
+            if (colliders.gameObject.TryGetComponent(out IDamageable damageable))
+            {
+                damageable.ApplyDamage(data.BaseAttackDamage);
+            }
+
+            if (canDestroyMine && colliders.gameObject.TryGetComponent(out GoldMine mine))
+            {
+                //We'll just go ahead and be brutal here
+                mine.DestroyMine();
+            }
         }
     }
 }

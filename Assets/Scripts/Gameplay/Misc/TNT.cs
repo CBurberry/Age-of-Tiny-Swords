@@ -48,13 +48,24 @@ public class TNT : AProjectile
         Instantiate(explosionPrefab, transform.position, Quaternion.identity, transform.parent);
 
         //Get all enemies in a radius around this unit and apply damage to them
-        var damageables = Physics2D.OverlapCircleAll(transform.position, ExplosionRadius)
-            .Select(x => x.gameObject.GetComponent<IDamageable>())
-            .Where(x => x != null);
+        var hitTargets = Physics2D.OverlapCircleAll(transform.position, ExplosionRadius)
+            .Where(x => x != null && (x.gameObject.TryGetComponent<IDamageable>(out _) || x.gameObject.TryGetComponent<GoldMine>(out _)));
 
-        foreach (var element in damageables)
+        foreach (var colliders in hitTargets)
         {
-            element?.ApplyDamage(Damage);
+            if (colliders.gameObject.TryGetComponent(out IDamageable damageable))
+            {
+                damageable.ApplyDamage(Damage);
+            }
+
+            if (colliders.gameObject.TryGetComponent(out GoldMine mine))
+            {
+                if (mine.IsBeingMined) 
+                {
+                    //Setting a higher value to force miners out in one hit
+                    mine.Attack(5);
+                }
+            }
         }
     }
 }

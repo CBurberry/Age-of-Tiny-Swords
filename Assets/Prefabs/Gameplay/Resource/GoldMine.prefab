@@ -100,9 +100,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactableContexts: 8
+  SpriteRenderer: {fileID: 1725714606418054804}
   state: 0
   maxGold: 250
   currentGold: 0
+  numberOfHitsToEjectPawns: 4
   sprites:
     _serializedList:
     - Key: 0
@@ -111,7 +113,6 @@ MonoBehaviour:
       Value: {fileID: 21300000, guid: 9631b4362cdf60643a685ecf0d100338, type: 3}
     - Key: 2
       Value: {fileID: 21300000, guid: 949e742bdd3d01b4eb0fe747e80e3699, type: 3}
-  spriteRenderer: {fileID: 1725714606418054804}
 --- !u!70 &6816098164274361066
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
