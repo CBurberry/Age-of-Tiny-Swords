@@ -224,7 +224,12 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             if (direction.sqrMagnitude == 0f)
                 return;
-            spriteRenderer.flipX = direction.x < 0f;
+
+            // prevent weird flipping while walking
+            if (Mathf.Abs(direction.x) > 0.01f)
+            {
+                spriteRenderer.flipX = direction.x < 0f;
+            }
         }).AddTo(_disposables);
     }
 }
