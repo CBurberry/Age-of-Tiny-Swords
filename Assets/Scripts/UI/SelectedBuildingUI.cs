@@ -49,7 +49,7 @@ public class SelectedBuildingUI : MonoBehaviour
                     _queuedUnitUIItems[index].ObserveOnClick()
                         .Where(x => x != null)
                         .Subscribe(x => selectedBuilding.TryRemoveUnitFromQueue(index))
-                        .AddTo(this);
+                        .AddTo(_selectedBuildingDisposable);
                 }
 
                 selectedBuilding.ObserveUnitBuildQueue().Subscribe(queuedUnits =>
@@ -65,7 +65,7 @@ public class SelectedBuildingUI : MonoBehaviour
 
                         _queuedUnitUIItems[i].Setup(unitCost);
                     }
-                }).AddTo(_disposables);
+                }).AddTo(_selectedBuildingDisposable);
 
 
                 selectedBuilding.ObserveUnitBuildProgress().DistinctUntilChanged().Subscribe(x =>

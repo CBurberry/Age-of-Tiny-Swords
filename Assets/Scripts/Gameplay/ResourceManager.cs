@@ -69,6 +69,14 @@ public class ResourceManager : MonoBehaviour
         return resources.All(x => currentResources[x.Key] >= x.Value);
     }
 
+    public void AddResources(SerializedDictionary<ResourceType, int> resources)
+    {
+        foreach (var iter in resources)
+        {
+            AddResource(iter.Key, iter.Value);
+        }
+    }
+
     public void RemoveResources(SerializedDictionary<ResourceType, int> resources)
     {
         foreach (var iter in resources)

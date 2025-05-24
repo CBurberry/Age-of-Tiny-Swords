@@ -39,6 +39,7 @@ public class QueuedUnitUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 
     public void Setup(UnitCost cost)
     {
+        _removeImage.gameObject.SetActive(false);
         _fillBar.fillAmount = 1f;
         _unitCost = cost;
         if (cost == null)

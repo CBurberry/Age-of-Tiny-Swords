@@ -2,7 +2,9 @@ using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Player;
 
@@ -244,16 +246,18 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public bool TryAddUnitToQueue(UnitCost unitCost)
     {
         var buildQueue = _buildQueue.Value;
+        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
 
         if (_buildQueue.Value.Count >=  MAX_UNITS_QUEUE)
         {
             return false;
         }
-        if (!GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources.HaveResources(unitCost.Cost))
+        if (!resourceManager.HaveResources(unitCost.Cost))
         {
             return false;
         }
 
+        resourceManager.RemoveResources(unitCost.Cost);
         buildQueue.Add(unitCost);
         _buildQueue.OnNext(buildQueue);
 
@@ -272,6 +276,10 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             _currentBuildTime.OnNext(0f);
         }
+        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
+
+        resourceManager.AddResources(buildQueue[i].Cost);
+
         buildQueue.RemoveAt(i);
         _buildQueue.OnNext(buildQueue);
         return true;
