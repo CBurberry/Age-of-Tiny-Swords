@@ -26,11 +26,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 7.47
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -2.98
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       propertyPath: m_LocalPosition.z
@@ -73,7 +73,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6106493241299488236}
+      addedObject: {fileID: 7077059931901748619}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4951358432945013615}
@@ -94,7 +94,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -2253911629886400664, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
   m_PrefabInstance: {fileID: 4070368567707379429}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6106493241299488236
+--- !u!114 &7077059931901748619
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,7 +103,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6396419846726414733}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ee6ab762151f7f4e8148d6aa7a52aa2, type: 3}
+  m_Script: {fileID: 11500000, guid: 6f5a0e99b2c72104dbe8682ab5b8d5af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: a32ddd806d54eb244b639375c2151c5b, type: 2}
@@ -111,6 +111,8 @@ MonoBehaviour:
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
+  projectilePrefab: {fileID: 5329233954103935982, guid: 7c2968340e1bf5640817ebb37d00500a, type: 3}
+  projectileSpeed: 1.5
 --- !u!114 &4951358432945013615
 MonoBehaviour:
   m_ObjectHideFlags: 0

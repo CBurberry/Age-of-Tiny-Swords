@@ -12,9 +12,9 @@ public class RangedUnit : AUnitInteractableUnit
     private AProjectile projectilePrefab;
 
     [SerializeField]
-    private float projectileSpeed = 200f;
+    private float projectileSpeed;
 
-    private PrefabsPool<AProjectile> prefabsPool;
+    protected PrefabsPool<AProjectile> prefabsPool;
 
     protected override void Awake()
     {
@@ -41,13 +41,13 @@ public class RangedUnit : AUnitInteractableUnit
         => unit.Faction != Faction ? UnitInteractContexts.Attack : UnitInteractContexts.None;
 
     //Start a cycle of MoveTo unit until close and attack
-    private void StartAttacking()
+    protected virtual void StartAttacking()
     {
         StartCoroutine(Attacking());
     }
 
     //TODO: Time the hit with the animation connecting the hit
-    private IEnumerator Attacking()
+    protected virtual IEnumerator Attacking()
     {
         IDamageable damageTarget = interactionTarget as IDamageable;
         Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
@@ -74,7 +74,7 @@ public class RangedUnit : AUnitInteractableUnit
 
     //Trigger on animation event
     [Button("RangedAttack (PlayMode)", EButtonEnableMode.Playmode)]
-    private void RangedAttack()
+    protected virtual void RangedAttack()
     {
         //FOR TESTING
         if (interactionTarget == null) 
@@ -84,49 +84,26 @@ public class RangedUnit : AUnitInteractableUnit
 
         if (interactionTarget is not IDamageable) 
         {
+            Debug.Log("target not damagable!");
             return;
         }
 
         Transform targetTransform = (interactionTarget as MonoBehaviour).transform;
         float distance = Vector3.Distance(transform.position, targetTransform.position);
-        Vector3 direction = (targetTransform.position - transform.position).normalized;
+        Vector3 travelVector = targetTransform.position - transform.position;
+        Vector3 direction = travelVector.normalized;
 
         //Starts inactive
         AProjectile projectile = prefabsPool.Get();
-        TNT dynamite = projectile as TNT;
-        Arrow arrow = projectile as Arrow;
-        projectile.transform.position = transform.position;
-
-        //NOT ROTATING CORRECTLY!
-        //projectile.transform.LookAt(targetTransform.position);
-
-        //Calculate the time to live and speed based on the distance (T = D/S)
-        //Handle both arrows and TNT for now
-        if (dynamite != null)
-        {
-            dynamite.Damage = data.BaseAttackDamage;
-            dynamite.Direction = direction;
-            dynamite.Ttl = distance / projectileSpeed;
-            dynamite.Speed = projectileSpeed;
-            dynamite.OnComplete = () => prefabsPool.Release(projectile);
-        }
-        else if (arrow != null) 
-        {
-            //arrow
-            arrow.Direction = direction;
-            arrow.Ttl = distance / projectileSpeed;
-            arrow.Speed = projectileSpeed;
-            arrow.OnComplete = () => 
-            {
-                (interactionTarget as IDamageable).ApplyDamage(data.BaseAttackDamage);
-                prefabsPool.Release(projectile);
-            };
-        }
-
+        projectile.TravelVector = travelVector;
+        projectile.Speed = projectileSpeed;
+        SetProjectileSpawnPoint(projectile);
+        SetProjectileRotation(projectile, direction);
+        SetOtherProjectileProperties(projectile);
         projectile.gameObject.SetActive(true);
     }
 
-    private void OnUnitKill()
+    protected virtual void OnUnitKill()
     {
         Debug.Log("OnEnemyUnitKill");
 
@@ -136,5 +113,19 @@ public class RangedUnit : AUnitInteractableUnit
          */
 
         //POLISH/TODO: Add a setting that prevents units from following an enemy unit too far or to return to a guarding / patrol position
+    }
+
+    protected virtual void SetProjectileSpawnPoint(AProjectile projectile)
+        => projectile.transform.position = transform.position;
+
+    protected virtual void SetProjectileRotation(AProjectile projectile, Vector3 direction)
+    {
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        projectile.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    //Set properties like damage radius etc which aren't common to base projectile
+    protected virtual void SetOtherProjectileProperties(AProjectile projectile)
+    {
     }
 }

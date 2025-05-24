@@ -1,35 +1,27 @@
-using System;
 using UnityEngine;
 
 public class Arrow : AProjectile
 {
-    public float Ttl;
-    public Vector3 Direction;
-    public float Speed;
-
-    public Action OnComplete;
-
-    private float elapsedTime;
-
-    [SerializeField]
-    private SpriteRenderer spriteRenderer;
+    private Vector3 startPos;
+    private float alpha;
 
     private void OnEnable()
     {
-        elapsedTime = 0f;
-        spriteRenderer.enabled = true;
+        alpha = 0f;
+        startPos = transform.position;
+        SpriteRenderer.enabled = true;
     }
 
     private void Update()
     {
-        if (elapsedTime < Ttl)
+        if (alpha < 1f)
         {
-            transform.Translate(Direction * Speed * Time.deltaTime);
-            elapsedTime += Time.deltaTime;
+            alpha = Mathf.Clamp(alpha + (Time.deltaTime * Speed), 0f, 1f);
+            transform.position = startPos + (TravelVector * alpha);
         }
         else 
         {
-            spriteRenderer.enabled = false;
+            SpriteRenderer.enabled = false;
             OnComplete?.Invoke();
         }
     }

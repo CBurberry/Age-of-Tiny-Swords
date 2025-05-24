@@ -1,52 +1,45 @@
 using Animancer;
-using System;
 using System.Linq;
 using UnityEngine;
 
 public class TNT : AProjectile
 {
-    public float Ttl;
-    public Vector3 Direction;
-    public float Speed;
     public int Damage;
     public float ExplosionRadius;
-
-    public Action OnComplete;
-
-    private float elapsedTime;
 
     [SerializeField]
     private float rotationSpeed;
 
     [SerializeField]
-    private SpriteRenderer spriteRenderer;
-
-    [SerializeField]
     private SoloAnimation soloAnimation;
+
+    private Vector3 startPos;
+    private float alpha;
 
     private void OnEnable()
     {
-        elapsedTime = 0f;
-        spriteRenderer.enabled = true;
+        alpha = 0f;
+        startPos = transform.position;
+        SpriteRenderer.enabled = true;
         soloAnimation.Play();
     }
 
     private void Update()
     {
-        if (elapsedTime < Ttl)
+        if (alpha < 1f)
         {
-            transform.Rotate(new Vector3(0f, 0f, (spriteRenderer.flipX ? 1f : -1f)) * Time.deltaTime * rotationSpeed, Space.Self);
-            transform.Translate(Direction * Speed * Time.deltaTime, Space.World);
-            elapsedTime += Time.deltaTime;
+            transform.Rotate(new Vector3(0f, 0f, (SpriteRenderer.flipX ? 1f : -1f)) * Time.deltaTime * rotationSpeed, Space.Self);
+            alpha = Mathf.Clamp(alpha + (Time.deltaTime * Speed), 0f, 1f);
+            transform.position = startPos + (TravelVector * alpha);
         }
-        else if (spriteRenderer.enabled)
+        else
         {
-            Explode();
-            spriteRenderer.enabled = false;
+            OnComplete?.Invoke();
+            SpriteRenderer.enabled = false;
         }
     }
 
-    private void Explode()
+    public void Explode()
     {
         //TODO: Play explosion animation, scale to the damage radius
 
@@ -57,9 +50,7 @@ public class TNT : AProjectile
 
         foreach (var element in damageables)
         {
-            element.ApplyDamage(Damage);
+            element?.ApplyDamage(Damage);
         }
-
-        OnComplete?.Invoke();
     }
 }

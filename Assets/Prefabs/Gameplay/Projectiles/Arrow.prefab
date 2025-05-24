@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5140404578126434897}
-  - component: {fileID: 1878886315891202129}
+  - component: {fileID: 2898858692936868472}
   - component: {fileID: 1028177973677635333}
   m_Layer: 0
   m_Name: Arrow
@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5140404578126434897
 Transform:
   m_ObjectHideFlags: 0
@@ -33,7 +33,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &1878886315891202129
+--- !u!212 &2898858692936868472
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,7 +97,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea2b74cd8a87fb9438cc3e258153f968, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ttl: 0
-  Direction: {x: 0, y: 0, z: 0}
+  TravelVector: {x: 0, y: 0, z: 0}
   Speed: 0
-  spriteRenderer: {fileID: 1878886315891202129}
+  SpriteRenderer: {fileID: 2898858692936868472}

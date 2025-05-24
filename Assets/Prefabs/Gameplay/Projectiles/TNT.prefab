@@ -137,11 +137,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b8e783851219249b3d6e8dd9867586, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ttl: 3
-  Direction: {x: 1, y: 0, z: 0}
+  TravelVector: {x: 0, y: 0, z: 0}
   Speed: 2
+  SpriteRenderer: {fileID: 4780478217806906571}
   Damage: 75
   ExplosionRadius: 1
   rotationSpeed: 275
-  spriteRenderer: {fileID: 4780478217806906571}
   soloAnimation: {fileID: 842531538046405453}
