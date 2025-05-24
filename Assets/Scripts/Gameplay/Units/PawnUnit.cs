@@ -365,6 +365,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         ClearAllAnimationActionFlags();
         spriteRenderer.enabled = false;
+        GetComponent<Collider2D>().enabled = false;
         (interactionTarget as GoldMine).EnterMine(this);
         StartCoroutine(Mining());
     }
@@ -385,6 +386,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         }
 
         mine.ExitMine(this);
+        GetComponent<Collider2D>().enabled = true;
         spriteRenderer.enabled = true;
 
         if (overflow > 0 || mine.IsDepleted && GetHeldResourcesCount() > 0)
