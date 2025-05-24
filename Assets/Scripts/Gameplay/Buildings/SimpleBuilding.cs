@@ -44,6 +44,13 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     protected bool buildOnStart;
 
     [SerializeField]
+    private bool hasGarrisonedArchers;
+
+    [ShowIf("hasGarrisonedArchers")]
+    [SerializeField]
+    private GarrisonedArcher[] garrisonedArchers;
+
+    [SerializeField]
     protected Transform unitsParent;
 
     [SerializeField]
@@ -315,6 +322,15 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
+
+        if (hasGarrisonedArchers) 
+        {
+            foreach (var archer in garrisonedArchers) 
+            {
+                archer.gameObject.SetActive(true);
+            }
+        }
+
         OnAnyBuildingBuilt?.Invoke(faction);
     }
 
@@ -349,6 +365,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         //TODO: Play vfx e.g. smoke
         //TODO: Remove any fire vfx playing (if any)
+
+        if (hasGarrisonedArchers)
+        {
+            foreach (var archer in garrisonedArchers)
+            {
+                archer.gameObject.SetActive(false);
+            }
+        }
 
         //Replace visual with destroyed visual
         state = BuildingStates.Destroyed;
