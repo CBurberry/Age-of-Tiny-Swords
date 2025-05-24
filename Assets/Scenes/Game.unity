@@ -2595,6 +2595,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8085380566655357513, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
+      propertyPath: resourceLimits._serializedList.Array.data[0].Value
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085380566655357513, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
+      propertyPath: resourceLimits._serializedList.Array.data[1].Value
+      value: 1000000
+      objectReference: {fileID: 0}
+    - target: {fileID: 8085380566655357513, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
+      propertyPath: resourceLimits._serializedList.Array.data[2].Value
+      value: 1000000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
