@@ -2,7 +2,32 @@ fileFormatVersion: 2
 guid: f6933952bdbed83469b258bb5efd4c56
 ScriptedImporter:
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Dynamite
+    second: {fileID: 7400000, guid: 1c1b98dae1178cd4aa53579bde43ceaf, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Idle
+    second: {fileID: 7400000, guid: 976b699e0af0aa14ba40867b32accdea, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Original
+    second: {fileID: 7400000, guid: 191b622127f03ab45bf0901805c1a542, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Run
+    second: {fileID: 7400000, guid: a80d8bba07138fa41b5d3b78fc70ef83, type: 2}
+  - first:
+      type: UnityEngine:AnimationClip
+      assembly: UnityEngine.AnimationModule
+      name: Throw
+    second: {fileID: 7400000, guid: b018bc53956e0eb48a1fceb4918570ac, type: 2}
   serializedVersion: 2
   userData: 
   assetBundleName: 
@@ -98,7 +123,7 @@ ScriptedImporter:
     addSortingGroup: 1
     addShadowCasters: 0
   importFileNodeState: 1
-  platformSettingsDirtyTick: 638830947218855386
+  platformSettingsDirtyTick: 638836385507862153
   textureAssetName: 
   singleSpriteImportData:
   - name: 
@@ -524,8 +549,8 @@ ScriptedImporter:
     uvTransform: {x: 157, y: 311}
   - name: Frame_20
     originalName: 
-    pivot: {x: 0.44444445, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -544,8 +569,8 @@ ScriptedImporter:
     uvTransform: {x: 481, y: 164}
   - name: Frame_21
     originalName: 
-    pivot: {x: 0.44444445, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -564,8 +589,8 @@ ScriptedImporter:
     uvTransform: {x: 446, y: 164}
   - name: Frame_22
     originalName: 
-    pivot: {x: 0.46153846, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -584,8 +609,8 @@ ScriptedImporter:
     uvTransform: {x: 314, y: 311}
   - name: Frame_23
     originalName: 
-    pivot: {x: 0.48, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -604,8 +629,8 @@ ScriptedImporter:
     uvTransform: {x: 483, y: 81}
   - name: Frame_24
     originalName: 
-    pivot: {x: 0.44444445, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
@@ -624,8 +649,8 @@ ScriptedImporter:
     uvTransform: {x: 448, y: 81}
   - name: Frame_25
     originalName: 
-    pivot: {x: 0.42857143, y: 0}
-    alignment: 9
+    pivot: {x: 0.5, y: 0.5}
+    alignment: 0
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2

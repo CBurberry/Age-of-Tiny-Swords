@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,21 @@ using UnityEngine;
 public class RangedUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
+
+    [SerializeField]
+    private AProjectile projectilePrefab;
+
+    [SerializeField]
+    private float projectileSpeed = 200f;
+
+    private PrefabsPool<AProjectile> prefabsPool;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
+        prefabsPool.SetActiveOnGet = false;
+    }
 
     protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
@@ -54,6 +70,60 @@ public class RangedUnit : AUnitInteractableUnit
 
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
         OnUnitKill();
+    }
+
+    //Trigger on animation event
+    [Button("RangedAttack (PlayMode)", EButtonEnableMode.Playmode)]
+    private void RangedAttack()
+    {
+        //FOR TESTING
+        if (interactionTarget == null) 
+        {
+            interactionTarget = moveToTargetTransform.GetComponent<IUnitInteractable>();
+        }
+
+        if (interactionTarget is not IDamageable) 
+        {
+            return;
+        }
+
+        Transform targetTransform = (interactionTarget as MonoBehaviour).transform;
+        float distance = Vector3.Distance(transform.position, targetTransform.position);
+        Vector3 direction = (targetTransform.position - transform.position).normalized;
+
+        //Starts inactive
+        AProjectile projectile = prefabsPool.Get();
+        TNT dynamite = projectile as TNT;
+        Arrow arrow = projectile as Arrow;
+        projectile.transform.position = transform.position;
+
+        //NOT ROTATING CORRECTLY!
+        //projectile.transform.LookAt(targetTransform.position);
+
+        //Calculate the time to live and speed based on the distance (T = D/S)
+        //Handle both arrows and TNT for now
+        if (dynamite != null)
+        {
+            dynamite.Damage = data.BaseAttackDamage;
+            dynamite.Direction = direction;
+            dynamite.Ttl = distance / projectileSpeed;
+            dynamite.Speed = projectileSpeed;
+            dynamite.OnComplete = () => prefabsPool.Release(projectile);
+        }
+        else if (arrow != null) 
+        {
+            //arrow
+            arrow.Direction = direction;
+            arrow.Ttl = distance / projectileSpeed;
+            arrow.Speed = projectileSpeed;
+            arrow.OnComplete = () => 
+            {
+                (interactionTarget as IDamageable).ApplyDamage(data.BaseAttackDamage);
+                prefabsPool.Release(projectile);
+            };
+        }
+
+        projectile.gameObject.SetActive(true);
     }
 
     private void OnUnitKill()
