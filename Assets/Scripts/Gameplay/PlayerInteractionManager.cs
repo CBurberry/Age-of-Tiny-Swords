@@ -43,6 +43,10 @@ public class PlayerInteractionManager : MonoBehaviour
         {
             _selectedBuilding.OnNext(GetBuildingFromHits());
         }
+        else
+        {
+            _selectedBuilding.OnNext(null);
+        }
 
         SetSlectedUnitMarkerActive(true);
     }
