@@ -107,7 +107,7 @@ public class ResourceItem : AUnitInteractableNonUnit, IResourceSource
         }
         else 
         {
-            currentResourceAmount =- requestedAmount;
+            currentResourceAmount -= requestedAmount;
             return requestedAmount;
         }
     }
