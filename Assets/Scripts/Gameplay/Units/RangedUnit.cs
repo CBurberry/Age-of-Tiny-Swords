@@ -62,7 +62,7 @@ public class RangedUnit : AUnitInteractableUnit
             else
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, true);
-                damageTarget.ApplyDamage(data.BaseAttackDamage);
+                RangedAttack();
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
         }

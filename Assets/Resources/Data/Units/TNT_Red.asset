@@ -12,10 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffa599e77e1070945b67a57019d31245, type: 3}
   m_Name: TNT_Red
   m_EditorClassIdentifier: 
-  UnitPrefab: {fileID: 6396419846726414733, guid: 9f03516f3f09195498ce823ba134f43e, type: 3}
   Faction: 2
   MaxHp: 150
   MovementSpeed: 1
   AttackSpeed: 1
-  AttackDistance: 2
+  AttackDistance: 3.5
   BaseAttackDamage: 40
