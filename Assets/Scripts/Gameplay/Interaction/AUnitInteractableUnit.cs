@@ -26,14 +26,14 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
     /// <param name="target">Target entity</param>
     /// <param name="context">Singular context</param>
     /// <returns>Success/Failure</returns>
-    public virtual void Interact(IUnitInteractable target, UnitInteractContexts context)
+    public virtual bool Interact(IUnitInteractable target, UnitInteractContexts context)
     {
         Debug.Log($"Selected Unit '{this.name}', target to interact with '{(target as MonoBehaviour)?.name}', param contexts '{context}'");
 
         if (!target.CanInteract(this, context, out UnitInteractContexts availableContexts))
         {
             Debug.Log("Could not interact");
-            return;
+            return false;
         }
 
         if (BitwiseHelpers.GetSetBitCount((long)availableContexts) != 1)
@@ -57,6 +57,7 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
         {
             throw new NotImplementedException("TODO: define interaction behaviour with '" + (target as MonoBehaviour)?.name + "'");
         }
+        return true;
     }
 
     protected virtual void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)

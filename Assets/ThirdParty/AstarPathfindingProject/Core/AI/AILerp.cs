@@ -6,6 +6,7 @@ namespace Pathfinding {
 	using Pathfinding.Util;
     using System;
     using UniRx;
+    using static Codice.CM.Common.Merge.MergePathResolver;
 
     /// <summary>
     /// Linearly interpolating movement script.
@@ -36,24 +37,30 @@ namespace Pathfinding {
     ///
     /// \ingroup movementscripts
     /// </summary>
-    [RequireComponent(typeof(Seeker))]
+	[RequireComponent(typeof(Seeker))]
 	[AddComponentMenu("Pathfinding/AI/AILerp (2D,3D)")]
 	[HelpURL("http://arongranberg.com/astar/docs/class_pathfinding_1_1_a_i_lerp.php")]
 	public class AILerp : VersionedMonoBehaviour, IAstarAI {
 
-		BehaviorSubject<Vector3> _movementDirection = new(Vector3.zero);
+		public static readonly float DEFAULT_STOP_DISTANCE = 0.0001f;
+
+        BehaviorSubject<Vector3> _movementDirection = new(Vector3.zero);
+		BehaviorSubject<bool> _pathReached = new(true);
 
 		public IObservable<Vector3> ObserveMovementDirection() => _movementDirection;
+		public IObservable<bool> ObservePathReached() => _pathReached;
 
-		/// <summary>
-		/// Determines how often it will search for new paths.
-		/// If you have fast moving targets or AIs, you might want to set it to a lower value.
-		/// The value is in seconds between path requests.
-		///
-		/// Deprecated: This has been renamed to \reflink{autoRepath.interval}.
-		/// See: \reflink{AutoRepathPolicy}
-		/// </summary>
-		public float repathRate {
+		public float StopDistance { get; set; } = DEFAULT_STOP_DISTANCE;
+
+        /// <summary>
+        /// Determines how often it will search for new paths.
+        /// If you have fast moving targets or AIs, you might want to set it to a lower value.
+        /// The value is in seconds between path requests.
+        ///
+        /// Deprecated: This has been renamed to \reflink{autoRepath.interval}.
+        /// See: \reflink{AutoRepathPolicy}
+        /// </summary>
+        public float repathRate {
 			get {
 				return this.autoRepath.interval;
 			}
@@ -449,11 +456,13 @@ namespace Pathfinding {
 
 		/// <summary>Requests a path to the target.</summary>
 		public virtual void SearchPath () {
+			
 			if (float.IsPositiveInfinity(destination.x)) return;
 			if (onSearchPath != null) onSearchPath();
 
-			// This is where the path should start to search from
-			var currentPosition = GetFeetPosition();
+			_pathReached.OnNext(false);
+            // This is where the path should start to search from
+            var currentPosition = GetFeetPosition();
 
 			// If we are following a path, start searching from the node we will
 			// reach next this can prevent odd turns right at the start of the path
@@ -473,22 +482,26 @@ namespace Pathfinding {
 			SetPath(ABPath.Construct(currentPosition, destination, null));
 		}
 
-		/// <summary>
-		/// The end of the path has been reached.
-		/// If you want custom logic for when the AI has reached it's destination
-		/// add it here.
-		/// You can also create a new script which inherits from this one
-		/// and override the function in that script.
-		/// </summary>
-		public virtual void OnTargetReached () {
-		}
+        /// <summary>
+        /// The end of the path has been reached.
+        /// If you want custom logic for when the AI has reached it's destination
+        /// add it here.
+        /// You can also create a new script which inherits from this one
+        /// and override the function in that script.
+        /// </summary>
+		public virtual void OnTargetReached () 
+		{
+            destination = Vector3.positiveInfinity;
+            ClearPath();
+            _pathReached.OnNext(true);
+        }
 
-		/// <summary>
-		/// Called when a requested path has finished calculation.
-		/// A path is first requested by <see cref="SearchPath"/>, it is then calculated, probably in the same or the next frame.
-		/// Finally it is returned to the seeker which forwards it to this function.
-		/// </summary>
-		protected virtual void OnPathComplete (Path _p) {
+        /// <summary>
+        /// Called when a requested path has finished calculation.
+        /// A path is first requested by <see cref="SearchPath"/>, it is then calculated, probably in the same or the next frame.
+        /// Finally it is returned to the seeker which forwards it to this function.
+        /// </summary>
+        protected virtual void OnPathComplete (Path _p) {
 			ABPath p = _p as ABPath;
 
 			if (p == null) throw new System.Exception("This function only handles ABPaths, do not use special path types");
@@ -531,9 +544,9 @@ namespace Pathfinding {
 			// since the vectorPath list (which the interpolator uses) will be pooled.
 			if (oldPath != null) oldPath.Release(this);
 
-			if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
+			if (interpolator.remainingDistance < StopDistance && !reachedEndOfPath) {
 				reachedEndOfPath = true;
-				OnTargetReached();
+                OnTargetReached();
 			}
 		}
 
@@ -667,10 +680,12 @@ namespace Pathfinding {
 
 			interpolator.distance += deltaTime * speed;
 
-			if (interpolator.remainingDistance < 0.0001f && !reachedEndOfPath) {
-				reachedEndOfPath = true;
-				OnTargetReached();
-			}
+			//if (interpolator.remainingDistance < StopDistance && !reachedEndOfPath) {
+			//	reachedEndOfPath = true;
+			//	OnTargetReached();
+   //             direction = Vector3.zero;
+   //             return simulatedPosition;
+   //         }
 
 			direction = interpolator.tangent;
 			pathSwitchInterpolationTime += deltaTime;

@@ -27,8 +27,8 @@ public class RangedUnit : AUnitInteractableUnit
     {
         if (target is IDamageable)
         {
-            MoveTo((target as MonoBehaviour).transform, StartAttacking);
             interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
         }
         else
         {
@@ -57,7 +57,7 @@ public class RangedUnit : AUnitInteractableUnit
             if (!IsTargetWithinDistance(damageTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
                 yield break;
             }
             else
