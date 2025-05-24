@@ -20,7 +20,6 @@ public class RangedUnit : AUnitInteractableUnit
     {
         base.Awake();
         prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
-        prefabsPool.SetActiveOnGet = false;
     }
 
     protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
@@ -89,18 +88,23 @@ public class RangedUnit : AUnitInteractableUnit
         }
 
         Transform targetTransform = (interactionTarget as MonoBehaviour).transform;
+        if (targetTransform == null) 
+        {
+            return;
+        }
+
         float distance = Vector3.Distance(transform.position, targetTransform.position);
         Vector3 travelVector = targetTransform.position - transform.position;
         Vector3 direction = travelVector.normalized;
 
-        //Starts inactive
+        //NOTE: asuumes starts with component inactive
         AProjectile projectile = prefabsPool.Get();
         projectile.TravelVector = travelVector;
         projectile.Speed = projectileSpeed;
         SetProjectileSpawnPoint(projectile);
         SetProjectileRotation(projectile, direction);
         SetOtherProjectileProperties(projectile);
-        projectile.gameObject.SetActive(true);
+        projectile.enabled = true;
     }
 
     protected virtual void OnUnitKill()

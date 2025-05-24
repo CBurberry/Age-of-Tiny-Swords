@@ -83,7 +83,7 @@ PrefabInstance:
       addedObject: {fileID: 2585570151732470973}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 479347de55fadda498468346f3e0bfb0, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3179969619945240553}
+      addedObject: {fileID: 7275343823640596953}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 479347de55fadda498468346f3e0bfb0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7811432440885757724}
@@ -111,7 +111,7 @@ SortingGroup:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_SortAtRoot: 0
---- !u!114 &3179969619945240553
+--- !u!114 &7275343823640596953
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -120,7 +120,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8343267594577661981}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5ee6ab762151f7f4e8148d6aa7a52aa2, type: 3}
+  m_Script: {fileID: 11500000, guid: e22d422747b96844a81c478200d8215a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 7324d65afbb8ba143b7d6390b9852191, type: 2}
@@ -130,7 +130,7 @@ MonoBehaviour:
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
   projectilePrefab: {fileID: 1028177973677635333, guid: 87b9ada3686937442802e3c14c15df83, type: 3}
-  projectileSpeed: 200
+  projectileSpeed: 6
 --- !u!114 &7811432440885757724
 MonoBehaviour:
   m_ObjectHideFlags: 0

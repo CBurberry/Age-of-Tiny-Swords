@@ -10,7 +10,6 @@ public class PrefabsPool<T> where T : UnityEngine.Object
     List<T> _activeItems;
     ObjectPool<T> _pool;
 
-    public bool SetActiveOnGet;
     public List<T> ActiveItems => _activeItems;
 
     public PrefabsPool(T prefab, Transform parent, int capacity)
@@ -70,18 +69,15 @@ public class PrefabsPool<T> where T : UnityEngine.Object
 
     void OnGet(T objectToGet)
     {
-        if (SetActiveOnGet) 
+        if (objectToGet is Component component)
         {
-            if (objectToGet is Component component)
-            {
-                component.gameObject.SetActive(true);
-            }
-            else if (objectToGet is GameObject go)
-            {
-                go.SetActive(true);
-            }
+            component.gameObject.SetActive(true);
         }
-        
+        else if (objectToGet is GameObject go)
+        {
+            go.SetActive(true);
+        }
+
         _activeItems.Add(objectToGet);
     }
 

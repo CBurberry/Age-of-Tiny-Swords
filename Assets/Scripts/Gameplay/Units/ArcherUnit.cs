@@ -48,10 +48,10 @@ public class ArcherUnit : RangedUnit
             switch (animFacing)
             {
                 case FacingDirection.Down:
-                    offset = new Vector3(localBounds.center.x, transform.position.y - localBounds.extents.y, 0f);
+                    offset = new Vector3(localBounds.center.x, localBounds.center.y - localBounds.extents.y, 0f);
                     break;
                 case FacingDirection.Up:
-                    offset = new Vector3(localBounds.center.x, transform.position.y + localBounds.extents.y, 0f);
+                    offset = new Vector3(localBounds.center.x, localBounds.center.y + localBounds.extents.y, 0f);
                     break;
                 case FacingDirection.Front:
                     offset = new Vector3(localBounds.center.x - localBounds.extents.x, localBounds.center.y, 0f);
@@ -66,6 +66,7 @@ public class ArcherUnit : RangedUnit
         }
 
         projectile.transform.position = transform.position + offset;
+        Debug.Log("Arrow spawn position: " + projectile.transform.position);
     }
 
     //Set properties like damage radius etc which aren't common to base projectile
@@ -74,6 +75,7 @@ public class ArcherUnit : RangedUnit
         projectile.OnComplete = () =>
         {
             (interactionTarget as IDamageable)?.ApplyDamage(data.BaseAttackDamage);
+            projectile.enabled = false;
             prefabsPool.Release(projectile);
         };
     }

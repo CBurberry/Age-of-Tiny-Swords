@@ -31,6 +31,7 @@ public class TNTUnit : RangedUnit
         dynamite.OnComplete = () =>
         {
             dynamite.Explode();
+            dynamite.enabled = false;
             prefabsPool.Release(projectile);
         };
     }
