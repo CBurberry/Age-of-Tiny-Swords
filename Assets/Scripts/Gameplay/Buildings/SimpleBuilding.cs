@@ -249,6 +249,10 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             return false;
         }
+        if (!GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources.HaveResources(unitCost.Cost))
+        {
+            return false;
+        }
 
         buildQueue.Add(unitCost);
         _buildQueue.OnNext(buildQueue);
