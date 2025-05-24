@@ -60,7 +60,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         if (target is Sheep || target is MeleeUnit)
         {
-            MoveTo((target as MonoBehaviour).transform, StartAttacking);
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, stopAtAttackDistance: true);
             interactionTarget = target;
         }
         else
@@ -69,10 +69,10 @@ public class ExplodingUnit : AUnitInteractableUnit
         }
     }
 
-    public override bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true)
+    public override bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
         animator.SetBool(ANIMATION_BOOL_ACTIVE, true);
-        return base.MoveTo(worldPosition, onComplete, clearTarget);
+        return base.MoveTo(worldPosition, onComplete, clearTarget, stopAtAttackDistance);
     }
 
     public override void ApplyDamage(int value)
@@ -118,7 +118,7 @@ public class ExplodingUnit : AUnitInteractableUnit
                     animator.SetTrigger(ANIMATION_TRIG_DISARM);
                 }
 
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
                 yield break;
             }
             else

@@ -34,6 +34,9 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [SerializeField]
     private DeadUnit deadPrefab;
 
+    [SerializeField]
+    private GameObject unitSelectedMarker;
+
     private Faction faction;
     protected float moveSpeed => data.MovementSpeed;
     protected int maxHp => data.MaxHp;
@@ -54,6 +57,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private CompositeDisposable _disposables = new();
     private AILerp _pathfinder;
 
+    public GameObject UnitSelectedMarker => unitSelectedMarker;
     public IObservable<Vector3?> ObserveTargetPos() => _targetPos;
 
     protected virtual void Awake()
@@ -74,13 +78,14 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     protected virtual void OnDestroy()
     {
         _disposables.Clear();
+        _pathfinder.onSearchPath -= UpdateDestintation;
     }
 
     protected virtual void Update()
     {
     }
 
-    public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true)
+    public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
         //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
         var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
@@ -98,10 +103,10 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         //Set to bottom of bounds for simplicity
         bounds.center = new Vector3(bounds.center.x, bounds.center.y - bounds.extents.y, spriteRenderer.transform.position.z);
         bounds.extents = new Vector3(bounds.extents.x, 0f, 0f);
-        return MoveTo(bounds.ClosestPoint(transform.position), onComplete, clearTarget);
+        return MoveTo(bounds.ClosestPoint(transform.position), onComplete, clearTarget, stopAtAttackDistance);
     }
 
-    public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true)
+    public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
         if (clearTarget) 
         {
@@ -109,14 +114,16 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             interactionTarget = null;
         }
 
-        if (worldPosition == transform.position) 
+        if (worldPosition == transform.position || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance) 
         {
             onComplete?.Invoke();
             return true;
         }
 
+
         onMoveToComplete = onComplete;
         _pathfinder.destination = worldPosition;
+        _pathfinder.StopDistance = stopAtAttackDistance ? data.AttackDistance : AILerp.DEFAULT_STOP_DISTANCE;
         _targetPos.OnNext(worldPosition);
         _pathfinder.SearchPath();
         return true;
@@ -172,32 +179,56 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         Destroy(gameObject);
     }
 
-    private void SetupPathfinder()
+    void UpdateDestintation()
+    {
+        if (isMoving && interactionTarget != null)
+        {
+            _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
+            _pathfinder.destination = _targetPos.Value.Value;
+        }
+    }
+
+    void SetupPathfinder()
     {
         _pathfinder = GetComponent<AILerp>();
+        _pathfinder.onSearchPath += UpdateDestintation;
         _pathfinder.speed = data.MovementSpeed;
-        _pathfinder.ObserveMovementDirection().DistinctUntilChanged().Subscribe(direction =>
+
+        _pathfinder.ObservePathReached().Subscribe(pathReached =>
         {
-            if (direction.sqrMagnitude < 0.0001f)
+            if (pathReached)
             {
+                isMoving = false;
                 animator.SetBool(ANIMATION_BOOL_MOVING, false);
-                if (isMoving)
+                if (onMoveToComplete != null)
                 {
-                    isMoving = false;
-                    if (onMoveToComplete != null)
-                    {
-                        var tempAction = onMoveToComplete;
-                        onMoveToComplete = null;
-                        tempAction?.Invoke();
-                    }
+                    var tempAction = onMoveToComplete;
+                    onMoveToComplete = null;
+                    tempAction?.Invoke();
                 }
                 _targetPos.OnNext(null);
             }
             else
             {
-                spriteRenderer.flipX = direction.x < 0f;
-                animator.SetBool(ANIMATION_BOOL_MOVING, true);
                 isMoving = true;
+                animator.SetBool(ANIMATION_BOOL_MOVING, true);
+            }
+        }).AddTo(_disposables);
+
+        Observable.CombineLatest(
+            _pathfinder.ObservePathReached().DistinctUntilChanged(),
+            _pathfinder.ObserveMovementDirection().DistinctUntilChanged(),
+            (pathReached, moveDirection) => { return pathReached ? Vector3.zero : moveDirection; }
+        )
+        .DistinctUntilChanged().Subscribe(direction =>
+        {
+            if (direction.sqrMagnitude == 0f)
+                return;
+
+            // prevent weird flipping while walking
+            if (Mathf.Abs(direction.x) > 0.01f)
+            {
+                spriteRenderer.flipX = direction.x < 0f;
             }
         }).AddTo(_disposables);
     }

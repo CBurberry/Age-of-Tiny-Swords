@@ -10,7 +10,7 @@ public class MeleeUnit : AUnitInteractableUnit
     {
         if (target is IDamageable)
         {
-            MoveTo((target as MonoBehaviour).transform, StartAttacking);
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, stopAtAttackDistance: true);
             interactionTarget = target;
         }
         else
@@ -40,7 +40,7 @@ public class MeleeUnit : AUnitInteractableUnit
             if (!IsTargetWithinDistance(damageTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
                 yield break;
             }
             else

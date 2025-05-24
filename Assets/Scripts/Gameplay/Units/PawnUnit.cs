@@ -161,7 +161,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         if (target is AUnitInteractableUnit)
         {
             interactionTarget = target;
-            MoveTo((target as MonoBehaviour).transform, StartAttacking, false);
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
         }
         else
         {
@@ -198,11 +198,13 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             return;
         }
 
+        var cachedInteractionTarget = interactionTarget;
         MoveToNearestBuilding(() => 
         {
             DepositResources();
+            interactionTarget = cachedInteractionTarget;
             MoveTo((interactionTarget as MonoBehaviour).transform, onMoveComplete, false);
-        }, false);
+        }, true);
     }
 
     private void MoveToNearestBuilding(Action onMoveComplete = null, bool clearTarget = true)
@@ -249,7 +251,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             if (!IsTargetWithinDistance(damageTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false);
+                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
                 yield break;
             }
             else 

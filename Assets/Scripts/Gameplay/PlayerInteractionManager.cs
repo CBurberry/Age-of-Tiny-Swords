@@ -32,7 +32,17 @@ public class PlayerInteractionManager : MonoBehaviour
     void TrySelectUnit(Vector2 pos)
     {
         _hits = Physics2D.RaycastAll(pos, Vector2.zero);
+        SetSlectedUnitMarkerActive(false);
         _selectedUnit.OnNext(GetUnitFromHits());
+        SetSlectedUnitMarkerActive(true);
+    }
+
+    void SetSlectedUnitMarkerActive(bool active)
+    {
+        if (_selectedUnit.Value != null && _selectedUnit.Value.UnitSelectedMarker)
+        {
+            _selectedUnit.Value.UnitSelectedMarker.gameObject.SetActive(active);
+        }
     }
 
     void TryInteract(Vector2 pos)
@@ -43,9 +53,9 @@ public class PlayerInteractionManager : MonoBehaviour
         _hits = Physics2D.RaycastAll(pos, Vector2.zero);
         var interactableUnit = GetInteractableFromHits();
 
-        if (interactableUnit != null)
+        if (interactableUnit != null && _selectedUnit.Value.Interact(interactableUnit, _selectedUnit.Value.GetContexts()))
         {
-            _selectedUnit.Value.Interact(interactableUnit, _selectedUnit.Value.GetContexts());
+            SetSlectedUnitMarkerActive(false);
             _selectedUnit.OnNext(null);
         }
         else
