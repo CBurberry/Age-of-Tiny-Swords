@@ -1,5 +1,7 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using static Player;
 
@@ -20,6 +22,9 @@ public class BuildingData : ScriptableObject
 
     [ShowIf("HasAnimatedPrefab")]
     public GameObject ConstructedAnimatedPrefab;
+
+    [Tooltip("All units this building can spawn")]
+    public List<UnitCost> SpawnableUnits;
 
     //TODO: Resources required to build
 
@@ -48,4 +53,12 @@ public enum BuildingStates
     Constructed = 0,
     PreConstruction,
     Destroyed
+}
+
+[Serializable]
+public class UnitCost
+{
+    public float BuildTime = 5f;
+    public SerializedDictionary<ResourceType, int> Cost;
+    public AUnitInteractableUnit UnitToSpawn;
 }

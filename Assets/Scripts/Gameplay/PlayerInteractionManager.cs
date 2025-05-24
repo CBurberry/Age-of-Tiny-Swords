@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using System;
 using UniDi;
 using UniRx;
 using UnityEngine;
@@ -12,16 +13,17 @@ public class PlayerInteractionManager : MonoBehaviour
     CompositeDisposable _selectedUnitDisposable = new();
     RaycastHit2D[] _hits;
     BehaviorSubject<AUnitInteractableUnit> _selectedUnit = new(null);
-    
+    BehaviorSubject<SimpleBuilding> _selectedBuilding = new(null);
+
+    public IObservable<SimpleBuilding> ObserveSelectedBuilding() => _selectedBuilding;
 
     // Update is called once per frame
     void Awake()
     {
         SetupTargetIndicator();
 
-        _inputManager.ObserveSingleSelect().Subscribe(TrySelectUnit).AddTo(_disposables);
+        _inputManager.ObserveSingleSelect().Subscribe(TrySelect).AddTo(_disposables);
         _inputManager.ObserveInteract().Subscribe(TryInteract).AddTo(_disposables);
-        
     }
 
     void OnDestroy()
@@ -29,11 +31,18 @@ public class PlayerInteractionManager : MonoBehaviour
         _disposables.Clear();
     }
 
-    void TrySelectUnit(Vector2 pos)
+    void TrySelect(Vector2 pos)
     {
         _hits = Physics2D.RaycastAll(pos, Vector2.zero);
         SetSlectedUnitMarkerActive(false);
+
         _selectedUnit.OnNext(GetUnitFromHits());
+
+        if (_selectedUnit.Value == null)
+        {
+            _selectedBuilding.OnNext(GetBuildingFromHits());
+        }
+
         SetSlectedUnitMarkerActive(true);
     }
 
@@ -43,6 +52,11 @@ public class PlayerInteractionManager : MonoBehaviour
         {
             _selectedUnit.Value.UnitSelectedMarker.gameObject.SetActive(active);
         }
+
+        //if (_selectedBuilding.Value != null && _selectedBuilding.Value.UnitSelectedMarker)
+        //{
+        //    _selectedUnit.Value.UnitSelectedMarker.gameObject.SetActive(active);
+        //}
     }
 
     void TryInteract(Vector2 pos)
@@ -68,9 +82,23 @@ public class PlayerInteractionManager : MonoBehaviour
     {
         foreach (RaycastHit2D hit in _hits)
         {
-            if (hit.transform.TryGetComponent<AUnitInteractableUnit>(out var unit))
+            if (hit.transform.TryGetComponent<AUnitInteractableUnit>(out var unit) 
+                && unit.Faction == GameManager.Instance.CurrentPlayerFaction)
             {
                 return unit;
+            }
+        }
+
+        return null;
+    }
+    SimpleBuilding GetBuildingFromHits()
+    {
+        foreach (RaycastHit2D hit in _hits)
+        {
+            if (hit.transform.TryGetComponent<SimpleBuilding>(out var building)
+                && building.Faction == GameManager.Instance.CurrentPlayerFaction)
+            {
+                return building;
             }
         }
 
@@ -88,11 +116,6 @@ public class PlayerInteractionManager : MonoBehaviour
         }
 
         return null;
-    }
-
-    void TrySelectNonUnit(Vector2 pos)
-    {
-        // TODO
     }
 
 

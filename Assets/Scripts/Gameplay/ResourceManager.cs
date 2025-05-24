@@ -1,6 +1,8 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
 using System;
+using System.Linq;
+using UniRx;
 using UnityEngine;
 
 /// <summary>
@@ -8,6 +10,8 @@ using UnityEngine;
 /// </summary>
 public class ResourceManager : MonoBehaviour
 {
+    BehaviorSubject<SerializedDictionary<ResourceType, int>> _currentResourceUpdated = new(null);
+
     [SerializeField]
     private SerializedDictionary<ResourceType, int> resourceLimits;
 
@@ -32,6 +36,13 @@ public class ResourceManager : MonoBehaviour
     private int wood;
 #endif
 
+    public IObservable<SerializedDictionary<ResourceType, int>> ObserveCurrentResourcesUpdated() => _currentResourceUpdated;
+
+    private void Awake()
+    {
+        _currentResourceUpdated.OnNext(currentResources);
+    }
+
     private void Update()
     {
         //Just to show current levels without developing a custom UI
@@ -44,11 +55,26 @@ public class ResourceManager : MonoBehaviour
     public void AddResource(ResourceType type, int amount)
     {
         currentResources[type] = Math.Clamp(currentResources[type] + amount, 0, resourceLimits[type]);
+        _currentResourceUpdated.OnNext(currentResources);
     }
 
     public void RemoveResource(ResourceType type, int amount)
     {
         currentResources[type] = Math.Clamp(currentResources[type] - amount, 0, resourceLimits[type]);
+        _currentResourceUpdated.OnNext(currentResources);
+    }
+
+    public bool HaveResources(SerializedDictionary<ResourceType, int> resources)
+    {
+        return resources.All(x => currentResources[x.Key] >= x.Value);
+    }
+
+    public void RemoveResources(SerializedDictionary<ResourceType, int> resources)
+    {
+        foreach (var iter in resources)
+        {
+            RemoveResource(iter.Key, iter.Value);
+        }
     }
 
     private void UpdateEditorProgressBars()
@@ -69,6 +95,6 @@ public class ResourceManager : MonoBehaviour
 public enum ResourceType
 {
     Food = 0,
-    Gold,
-    Wood
+    Gold = 1,
+    Wood = 2,
 }
