@@ -198,11 +198,13 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             return;
         }
 
+        var cachedInteractionTarget = interactionTarget;
         MoveToNearestBuilding(() => 
         {
             DepositResources();
+            interactionTarget = cachedInteractionTarget;
             MoveTo((interactionTarget as MonoBehaviour).transform, onMoveComplete, false);
-        }, false);
+        }, true);
     }
 
     private void MoveToNearestBuilding(Action onMoveComplete = null, bool clearTarget = true)
