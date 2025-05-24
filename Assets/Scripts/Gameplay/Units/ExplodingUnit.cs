@@ -59,6 +59,20 @@ public class ExplodingUnit : AUnitInteractableUnit
         //TODO: Add a check for an enemy nearby, if so - set active bool and start attacking
     }
 
+    protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        IDamageable damagableTarget = target as IDamageable;
+        if (damagableTarget != null && damagableTarget.HpAlpha > 0f && damagableTarget.Faction != Faction)
+        {
+            interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+        }
+        else
+        {
+            throw new NotImplementedException($"[{nameof(ExplodingUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(ExplodingUnit)} & {context}!");
+        }
+    }
+
     protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         if (target is Sheep || target is MeleeUnit)
@@ -155,7 +169,7 @@ public class ExplodingUnit : AUnitInteractableUnit
             Explode();
         }
 
-        Destroy(gameObject);
+        base.TriggerDeath();
     }
 
     private void Explode()

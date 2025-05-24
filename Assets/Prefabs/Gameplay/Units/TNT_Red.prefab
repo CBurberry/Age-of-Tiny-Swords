@@ -108,7 +108,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: a32ddd806d54eb244b639375c2151c5b, type: 2}
   healthBar: {fileID: 4448644365687356928}
+  spawnDeadPrefab: 1
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
+  unitSelectedMarker: {fileID: 0}
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
   projectilePrefab: {fileID: 5329233954103935982, guid: 7c2968340e1bf5640817ebb37d00500a, type: 3}

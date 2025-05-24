@@ -10,6 +10,9 @@ using static Player;
 /// </summary>
 public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
+    public static event Action<Faction> OnAnyBuildingBuilt;
+    public static event Action<Faction> OnAnyBuildingDestroyed;
+
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
     public Faction Faction => faction;
@@ -140,8 +143,13 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// <returns>Boolean indicating completion</returns>
     public virtual bool Build(int amount)
     {
+        if (currentHp == maxHp) 
+        {
+            return false;
+        }
+
         currentHp = Math.Clamp(currentHp + amount, currentHp, maxHp);
-        if (currentHp == maxHp)
+        if (state == BuildingStates.PreConstruction && currentHp == maxHp)
         {
             CompleteConstruction();
             return true;
@@ -207,6 +215,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
+        OnAnyBuildingBuilt?.Invoke(faction);
     }
 
     protected virtual void ApplyDamagedVisual()
@@ -233,6 +242,11 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     private void DestroyBuilding()
     {
+        if (state == BuildingStates.Destroyed)
+        {
+            return;
+        }
+
         //TODO: Play vfx e.g. smoke
         //TODO: Remove any fire vfx playing (if any)
 
@@ -247,6 +261,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
 
         spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
+        OnAnyBuildingDestroyed?.Invoke(faction);
     }
 
     [Button("Build 100% (PlayMode)", EButtonEnableMode.Playmode)]

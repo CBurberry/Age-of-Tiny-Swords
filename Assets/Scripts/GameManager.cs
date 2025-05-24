@@ -28,6 +28,23 @@ public class GameManager : MonoBehaviour
         {
             throw new InvalidOperationException();
         }
+
+        Knights.OnPlayerDied += OnPlayerDied;
+        Goblins.OnPlayerDied += OnPlayerDied;
+    }
+
+    private void OnPlayerDied(Faction diedFaction)
+    {
+        if (diedFaction == Faction.Goblins)
+        {
+            //TODO: Add UI
+            Debug.Log("Win");
+        }
+        else 
+        {
+            //TODO: Add UI
+            Debug.Log("Lose");
+        }
     }
 
     public static Player GetPlayer(Faction faction)

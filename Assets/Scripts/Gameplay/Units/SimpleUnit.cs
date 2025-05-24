@@ -17,6 +17,9 @@ using static Player;
 /// </summary>
 public class SimpleUnit : MonoBehaviour, IDamageable
 {
+    public static event Action<Faction> OnAnyUnitSpawned;
+    public static event Action<Faction> OnAnyUnitDied;
+
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
 
     BehaviorSubject<Vector3?> _targetPos = new(null);
@@ -31,6 +34,10 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [SerializeField]
     private UnitHealthBar healthBar;
 
+    [SerializeField]
+    private bool spawnDeadPrefab;
+
+    [ShowIf("spawnDeadPrefab")]
     [SerializeField]
     private DeadUnit deadPrefab;
 
@@ -72,7 +79,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     }
 
     protected virtual void Start()
-    { 
+    {
+        OnAnyUnitSpawned?.Invoke(faction);
     }
 
     protected virtual void OnDestroy()
@@ -170,12 +178,22 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [Button("TriggerDeath (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void TriggerDeath()
     {
+        if (!spriteRenderer.enabled) 
+        {
+            return;
+        }
+
         //Hide self
         spriteRenderer.enabled = false;
 
-        //Replace this prefab with a spawned instance of the death prefab
-        DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
-        deadUnit.name = deadUnit.UnitName = name;
+        if (spawnDeadPrefab) 
+        {
+            //Replace this prefab with a spawned instance of the death prefab
+            DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
+            deadUnit.name = deadUnit.UnitName = name;
+        }
+        
+        OnAnyUnitDied?.Invoke(faction);
         Destroy(gameObject);
     }
 
@@ -183,8 +201,15 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     {
         if (isMoving && interactionTarget != null)
         {
-            _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
-            _pathfinder.destination = _targetPos.Value.Value;
+            try
+            {
+                _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
+                _pathfinder.destination = _targetPos.Value.Value;
+            }
+            catch
+            {
+                interactionTarget = null;
+            }
         }
     }
 

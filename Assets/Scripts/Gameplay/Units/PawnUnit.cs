@@ -120,6 +120,14 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         switch (context)
         {
+            case UnitInteractContexts.Attack:
+                IDamageable damagableTarget = target as IDamageable;
+                if (damagableTarget != null && damagableTarget.HpAlpha > 0f && damagableTarget.Faction != Faction) 
+                {
+                    interactionTarget = target;
+                    MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+                }
+                break;
             case UnitInteractContexts.Build:
                 interactionTarget = target;
                 MoveTo((target as MonoBehaviour).transform, StartBuilding, false);

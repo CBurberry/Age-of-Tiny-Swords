@@ -462,6 +462,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 34a46e9e43f0d564abd99b7d98a1039a, type: 2}
   healthBar: {fileID: 1210667256455917646}
+  spawnDeadPrefab: 1
   deadPrefab: {fileID: 300610352005500166, guid: e0a0d94305c0b8d49900ff54b2cd96d6, type: 3}
   unitSelectedMarker: {fileID: 126361039419980148}
   moveToTargetTransform: {fileID: 0}

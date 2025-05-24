@@ -91,7 +91,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  uniqueID: 8819370767698085981
+  uniqueID: 7912121748547168997
   updateError: 1
   checkTime: 0.2
 --- !u!1 &1829964203892140398
@@ -225,7 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe026d4db3b1d940b33f61d53022556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableContexts: 0
+  interactableContexts: 7
   data: {fileID: 11400000, guid: dd528f34d855aed42b0d622c359be8dd, type: 2}
   visuals: {fileID: 1829964203892140398}
   buildOnStart: 0

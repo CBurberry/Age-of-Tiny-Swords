@@ -6,6 +6,20 @@ public class MeleeUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
 
+    protected override void ResolveBuildingInteraction(IUnitInteractable target, UnitInteractContexts context)
+    {
+        IDamageable damagableTarget = target as IDamageable;
+        if (damagableTarget != null && damagableTarget.HpAlpha > 0f && damagableTarget.Faction != Faction)
+        {
+            interactionTarget = target;
+            MoveTo((target as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+        }
+        else 
+        {
+            throw new NotImplementedException($"[{nameof(MeleeUnit)}.{nameof(ResolveBuildingInteraction)}]: Context resolution not implemented for {nameof(MeleeUnit)} & {context}!");
+        }
+    }
+
     protected override void ResolveDamagableInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
         if (target is IDamageable)
