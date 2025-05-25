@@ -207,8 +207,8 @@ public class RangedUnit : AUnitInteractableUnit
 
     protected void CheckForNewEnemyTarget()
     {
-        IEnumerable<IDamageable> potentialTargets = DamageableUtilities.GetDamageablesInArea(transform.position, data.AttackDistance,
-            (x) => x.Faction != Player.Faction.None && x.Faction != Faction && x.HpAlpha > 0f);
+        IEnumerable<IDamageable> potentialTargets = DamageableUtilities.GetDamageablesInArea(transform.position, data.DetectionDistance,
+            (x) => x.Faction != Player.Faction.None && x.Faction != Faction && !x.IsKilled);
 
         //Select the closest one (underlying implemenation uses pre-sorted results)
         attackTarget = potentialTargets.FirstOrDefault();

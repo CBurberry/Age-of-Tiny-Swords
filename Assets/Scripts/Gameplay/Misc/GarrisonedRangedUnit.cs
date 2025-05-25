@@ -75,7 +75,7 @@ public class GarrisonedRangedUnit : MonoBehaviour
     protected void CheckForNewEnemyTarget()
     {
         IEnumerable<IDamageable> potentialTargets = DamageableUtilities.GetDamageablesInArea(transform.position, attackRange, 
-            (x) => x.Faction != Faction.None && x.Faction != faction && x.HpAlpha > 0f);
+            (x) => x.Faction != Faction.None && x.Faction != faction && !x.IsKilled);
 
         //Select the closest one (underlying implemenation uses pre-sorted results)
         attackTarget = potentialTargets.FirstOrDefault();

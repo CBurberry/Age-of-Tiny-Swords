@@ -1,10 +1,15 @@
+using NaughtyAttributes;
+using RuntimeStatics;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class ExplodingUnit : AUnitInteractableUnit
 {
+    public bool IsAttacking() => attackTarget != null;
+
     private const string ANIMATION_BOOL_ACTIVE = "IsActive";            //Goblin is peeking out of the barrel
     private const string ANIMATION_TRIG_FIRE = "Fire";                  //Trigger once to move to flashing with an in animation playing between
     private const string ANIMATION_TRIG_DISARM = "Disarm";              //Trigger once to move to active idle/run with an out animation playing
@@ -31,6 +36,13 @@ public class ExplodingUnit : AUnitInteractableUnit
     [SerializeField]
     private bool canDestroyMine;
 
+    [SerializeField]
+    [MinValue(1f)]
+    private float delayForTargetAcquisition;
+
+    private IDamageable attackTarget;
+    private float targetAcquireTimer;
+
     private bool hasExploded;
     private float elapsedIdleTime;
 
@@ -49,7 +61,8 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         base.Update();
 
-        if (IsIdlingOpen())
+        //Disabling due to animation bugs
+        /*if (IsIdlingOpen())
         {
             elapsedIdleTime += Time.deltaTime;
             if (elapsedIdleTime >= timeBeforeIdleIn) 
@@ -57,9 +70,18 @@ public class ExplodingUnit : AUnitInteractableUnit
                 elapsedIdleTime = 0f;
                 animator.SetBool(ANIMATION_BOOL_ACTIVE, false);
             }
-        }
+        }*/
 
-        //TODO: Add a check for an enemy nearby, if so - set active bool and start attacking
+        //Check for enemies in the area, attack them until they leave range (or are killed)
+        if (!isMoving && !IsAttacking())
+        {
+            targetAcquireTimer += Time.deltaTime;
+            if (targetAcquireTimer > delayForTargetAcquisition)
+            {
+                CheckForNewEnemyTarget();
+                targetAcquireTimer = 0f;
+            }
+        }
     }
 
     protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
@@ -142,11 +164,12 @@ public class ExplodingUnit : AUnitInteractableUnit
     //Move to, countdown timer, if enemy still close, go boom, otherwise MoveTo again
     private IEnumerator Attacking()
     {
-        IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
+        attackTarget = interactionTarget as IDamageable;
+        attackTarget.OnDeath += OnTargetKilled;
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
-            if (!IsTargetWithinDistance(damageTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out _))
             {
                 //Disarm and move
                 if (IsPrimedToExplode())
@@ -159,12 +182,16 @@ public class ExplodingUnit : AUnitInteractableUnit
             }
             else
             {
+                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                FaceTarget(angle);
+
                 //Arm, set timer and explode after another proximity check
                 animator.SetTrigger(ANIMATION_TRIG_FIRE);
                 float time = Time.time;
                 yield return new WaitForEndOfFrame();
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(timeToExplode,
-                    () => !condition.Invoke() && !IsTargetWithinDistance(damageTarget, out _));
+                    () => !condition.Invoke() && !IsTargetWithinDistance(attackTarget, out _));
 
                 //If we broke early out of the check, the previous yield was interrupted
                 if (Time.time - time > timeToExplode)
@@ -175,9 +202,18 @@ public class ExplodingUnit : AUnitInteractableUnit
             }
         }
 
-        //TODO: Seek another target or return to an idle routine
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+
+        attackTarget = null;
+
         //For now just disarm if we lose a target
-        animator.SetBool(ANIMATION_BOOL_ACTIVE, false);
+        if (IsPrimedToExplode())
+        {
+            animator.SetTrigger(ANIMATION_TRIG_DISARM);
+        }
     }
 
     private void StartAttackMine()
@@ -210,6 +246,10 @@ public class ExplodingUnit : AUnitInteractableUnit
             }
             else
             {
+                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                FaceTarget(angle);
+
                 //Arm, set timer and explode after another check
                 animator.SetTrigger(ANIMATION_TRIG_FIRE);
                 float time = Time.time;
@@ -263,5 +303,45 @@ public class ExplodingUnit : AUnitInteractableUnit
                 mine.DestroyMine();
             }
         }
+    }
+
+    protected void CheckForNewEnemyTarget()
+    {
+        //Get all enemies (and structures) in a radius around this unit and apply damage to them
+        IEnumerable<IDamageable> potentialDamageableTargets = DamageableUtilities.GetDamageablesInArea(transform.position, data.DetectionDistance,
+            (x) => x.Faction != Player.Faction.None && x.Faction != Faction && !x.IsKilled);
+
+        var potentialGoldmineTargets = Physics2D.OverlapCircleAll(transform.position, data.DetectionDistance)
+            .Where(x => x != null && x.gameObject.TryGetComponent(out GoldMine mine) && mine.IsBeingMined)
+            .Select(x => x.gameObject.GetComponent<GoldMine>());
+
+        if (canDestroyMine && potentialGoldmineTargets.Count() > 0)
+        {
+            interactionTarget = potentialGoldmineTargets.First();
+            StartAttackMine();
+        }
+        else
+        {
+            attackTarget = potentialDamageableTargets.FirstOrDefault();
+            if (attackTarget != null)
+            {
+                interactionTarget = attackTarget as IUnitInteractable;
+                StartAttacking();
+            }
+        }
+    }
+
+    protected virtual void OnTargetKilled()
+    {
+        attackTarget = null;
+        if (IsPrimedToExplode())
+        {
+            animator.SetTrigger(ANIMATION_TRIG_DISARM);
+        }
+    }
+
+    protected virtual void FaceTarget(float angle)
+    {
+        spriteRenderer.flipX = (angle <= 180f && angle > 90f) || (angle > -180f && angle <= -90f);
     }
 }

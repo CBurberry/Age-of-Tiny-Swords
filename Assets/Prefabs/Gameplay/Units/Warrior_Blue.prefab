@@ -299,6 +299,7 @@ MonoBehaviour:
   unitSelectedMarker: {fileID: 4639776220653851361}
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
+  delayForTargetAcquisition: 1
 --- !u!114 &2945140083663398138
 MonoBehaviour:
   m_ObjectHideFlags: 0

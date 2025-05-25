@@ -17,5 +17,6 @@ MonoBehaviour:
   MovementSpeed: 1
   AttackSpeed: 1
   AttackDistance: 4
+  DetectionDistance: 4
   BaseAttackDamage: 12
   FOV: 1
