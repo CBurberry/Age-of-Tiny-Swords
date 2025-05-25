@@ -485,6 +485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _container: {fileID: 8310897184184429978}
   _winLoseText: {fileID: 7977937069557477240}
+  _exitBtn: {fileID: 2093999636850016473}
 --- !u!1 &1829435821908427846
 GameObject:
   m_ObjectHideFlags: 0

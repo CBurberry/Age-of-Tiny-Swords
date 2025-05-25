@@ -151,7 +151,7 @@ MonoBehaviour:
   hasGarrisonedRangedUnits: 0
   garrisonedRangedUnits: []
   unitsParent: {fileID: 0}
-  spawnPoint: {fileID: 0}
+  spawnPoint: {fileID: 1039501009711057206}
 --- !u!61 &4960129541604921246
 BoxCollider2D:
   m_ObjectHideFlags: 0

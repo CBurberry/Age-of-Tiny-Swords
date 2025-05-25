@@ -47,6 +47,14 @@ public class GarrisonedRangedUnit : MonoBehaviour
         prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform, 10);
     }
 
+    protected virtual void OnDestroy()
+    {
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+    }
+
     protected virtual void Update()
     {
         //Check for enemies in the area, attack them until they leave range (or are killed)
@@ -95,6 +103,9 @@ public class GarrisonedRangedUnit : MonoBehaviour
     protected virtual void OnTargetKilled()
     {
         attackTarget = null;
-        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        if (animator != null)
+        {
+            animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        }
     }
 }

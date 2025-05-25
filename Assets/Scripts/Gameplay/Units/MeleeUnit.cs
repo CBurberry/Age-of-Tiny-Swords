@@ -28,6 +28,15 @@ public class MeleeUnit : AUnitInteractableUnit
         Up = 2
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -214,6 +223,9 @@ public class MeleeUnit : AUnitInteractableUnit
     protected virtual void OnTargetKilled()
     {
         attackTarget = null;
-        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        if (animator != null)
+        {
+            animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        }
     }
 }

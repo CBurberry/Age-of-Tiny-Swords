@@ -32,7 +32,14 @@ public class RangedUnit : AUnitInteractableUnit
         base.Awake();
         prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
     }
-
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+    }
     protected override void Update()
     {
         //Check for enemies in the area, attack them until they leave range (or are killed)
@@ -226,7 +233,10 @@ public class RangedUnit : AUnitInteractableUnit
     protected virtual void OnTargetKilled()
     {
         attackTarget = null;
-        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        if (animator != null)
+        {
+            animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
+        }
     }
 
     protected virtual void SetProjectileSpawnPoint(AProjectile projectile)

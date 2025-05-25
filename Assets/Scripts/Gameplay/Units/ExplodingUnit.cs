@@ -57,6 +57,15 @@ public class ExplodingUnit : AUnitInteractableUnit
         elapsedIdleTime = 0f;
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -334,7 +343,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     protected virtual void OnTargetKilled()
     {
         attackTarget = null;
-        if (!hasExploded && IsPrimedToExplode())
+        if (!hasExploded && IsPrimedToExplode() && animator != null)
         {
             animator.SetTrigger(ANIMATION_TRIG_DISARM);
         }
