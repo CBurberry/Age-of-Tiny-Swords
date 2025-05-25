@@ -3,6 +3,7 @@ using UniRx;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class InputManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] float _panEdgePerc = 0.15f;
     [SerializeField] float _dragTriggerScreenDistance = 30;
     [SerializeField] InputActionReference _mouseScrollRef;
+    [SerializeField] RawImage _fogOfWar;
 
     Subject<Vector2> _singleSelect = new Subject<Vector2>();
     Subject<(Vector2, Vector2)> _groupSelect = new Subject<(Vector2, Vector2)>();
@@ -22,6 +24,8 @@ public class InputManager : MonoBehaviour
     Camera _camera;
     Vector3 _mouseStartPos;
     bool _isDragging;
+    bool _clickProcessed;
+    Texture2D _readableTexture;
 
     public IObservable<Vector2> ObserveSingleSelect() => _singleSelect;
     public IObservable<(Vector2, Vector2)> ObserveGroupSelect() => _groupSelect;
@@ -51,12 +55,13 @@ public class InputManager : MonoBehaviour
 
     void HandleMouseButtons()
     {
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && IsRevealedArea(Input.mousePosition))
         {
             _mouseStartPos = Input.mousePosition;
             _isDragging = false;
+            _clickProcessed = true;
         }
-        else if (Input.GetMouseButton(0))
+        else if (_clickProcessed && Input.GetMouseButton(0))
         {
             if (!_isDragging && (_mouseStartPos - Input.mousePosition).magnitude >= _dragTriggerScreenDistance)
             {
@@ -65,14 +70,23 @@ public class InputManager : MonoBehaviour
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if (_isDragging)
+            if (_clickProcessed)
             {
-                _groupSelect.OnNext((MouseToWorldPos(_mouseStartPos), MouseToWorldPos(Input.mousePosition)));
+                if (_isDragging)
+                {
+                    _groupSelect.OnNext((MouseToWorldPos(_mouseStartPos), MouseToWorldPos(Input.mousePosition)));
+                }
+                else
+                {
+                    _singleSelect.OnNext(MouseToWorldPos(Input.mousePosition));
+                }
             }
-            else
+            else if (!_isDragging && !EventSystem.current.IsPointerOverGameObject() && !IsRevealedArea(Input.mousePosition))
             {
-                _singleSelect.OnNext(MouseToWorldPos(Input.mousePosition));
+                _singleSelect.OnNext(new Vector3(float.MaxValue, float.MaxValue, -100));
             }
+           
+            _clickProcessed = false;
         }
         // interact
         else if (Input.GetMouseButtonUp(1))
@@ -121,5 +135,42 @@ public class InputManager : MonoBehaviour
         var worldPos = _camera.ScreenToWorldPoint(mousePos);
         worldPos.z = 0;
         return worldPos;
+    }
+
+    public bool IsRevealedArea(Vector2 screenPoint)
+    {
+        if (!_fogOfWar || _fogOfWar.texture == null)
+            return true;
+
+        RectTransform rectTransform = _fogOfWar.rectTransform;
+        Vector2 localPoint;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(rectTransform, screenPoint, _camera, out localPoint))
+            return false;
+
+        Rect rect = rectTransform.rect;
+        float normalizedX = (localPoint.x - rect.x) / rect.width;
+        float normalizedY = (localPoint.y - rect.y) / rect.height;
+
+        if (normalizedX < 0 || normalizedX > 1 || normalizedY < 0 || normalizedY > 1)
+            return false;
+
+        var renderTexture = _fogOfWar.texture as RenderTexture;
+
+        _readableTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
+        int x = Mathf.FloorToInt(normalizedX * _fogOfWar.texture.width);
+        int y = Mathf.FloorToInt(normalizedY * _fogOfWar.texture.height);
+
+
+        RenderTexture currentRT = RenderTexture.active;
+        RenderTexture.active = _fogOfWar.texture as RenderTexture;
+
+        _readableTexture.ReadPixels(new Rect(x, y, 1, 1), 0, 0);
+        _readableTexture.Apply();
+
+        RenderTexture.active = currentRT;
+
+        Color color = _readableTexture.GetPixel(x, y);
+
+        return color != Color.black;
     }
 }

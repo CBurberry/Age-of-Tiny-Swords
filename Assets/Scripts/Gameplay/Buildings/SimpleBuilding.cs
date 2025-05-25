@@ -28,7 +28,23 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public IReadOnlyList<UnitCost> SpawnableUnits => data.SpawnableUnits;
     public Sprite Icon => data.BuildingSpriteVisuals[_buildingState.Value];
     public int PopulationIncrease => data.PopulationIncrease;
-    public float FOV => _buildingState.Value == BuildingStates.Constructed ? data.FOV : 0;
+    public float FOV
+    { 
+        get 
+        {
+            switch (_buildingState.Value)
+            {
+                // adding in case we want to do something about this
+                case BuildingStates.Destroyed:
+                    return 0f;
+                case BuildingStates.PreConstruction:
+                    return 0f;
+                case BuildingStates.Constructed:
+                    return data.FOV;
+            }
+            return 0f;
+        } 
+    }
 
     [SerializeField]
     //[Expandable] Naughty Attributes can't handle this data
