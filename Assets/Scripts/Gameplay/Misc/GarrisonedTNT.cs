@@ -75,7 +75,6 @@ public class GarrisonedTNT: GarrisonedRangedUnit
     private void FaceTarget(float angle)
     {
         spriteRenderer.flipX = (angle <= 180f && angle > 90f) || (angle > -180f && angle <= -90f);
-        Debug.Log($"angle {angle}, flip {spriteRenderer.flipX}");
     }
 
     [Button("AttackTestTarget (PlayMode)", EButtonEnableMode.Playmode)]
