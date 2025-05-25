@@ -1,10 +1,5 @@
 using NaughtyAttributes;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Tilemaps;
-using static UnityEditor.PlayerSettings;
 
 public class MapManager : MonoBehaviour
 {

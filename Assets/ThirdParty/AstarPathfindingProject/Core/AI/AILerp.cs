@@ -1,12 +1,10 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Pathfinding {
 	using Pathfinding.Util;
     using System;
     using UniRx;
-    using static Codice.CM.Common.Merge.MergePathResolver;
 
     /// <summary>
     /// Linearly interpolating movement script.

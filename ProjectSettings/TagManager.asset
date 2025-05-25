@@ -51,3 +51,6 @@ TagManager:
   - name: Character_HP
     uniqueID: 775532473
     locked: 0
+  - name: FOW
+    uniqueID: 2095591079
+    locked: 0

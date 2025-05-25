@@ -14,4 +14,5 @@ public class UnitData : ScriptableObject
     public float AttackSpeed = 1f;          //Calculated as 1 / attackspeed per tick
     public float AttackDistance = 2f;       //Comapred against vector magnitude to target closest point
     public int BaseAttackDamage = 5;
+    public float FOV;
 }

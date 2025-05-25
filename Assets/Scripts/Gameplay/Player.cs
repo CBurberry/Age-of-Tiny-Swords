@@ -1,5 +1,6 @@
 using NaughtyAttributes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
@@ -20,6 +21,8 @@ public class Player : MonoBehaviour
     public bool CanBuildMoreUnits => _currentPopulation.Value < populationCap;
     public IObservable<int> ObserveCurrentPopulation() => _currentPopulation;
     public IObservable<int> ObservePopuplationCap() => _currentPopuplationCap;
+    public IReadOnlyList<SimpleUnit> Units => _units;
+    public IReadOnlyList<SimpleBuilding> Buildings => _buildings;
 
     [HideInInspector]
     public ResourceManager Resources;
@@ -43,7 +46,10 @@ public class Player : MonoBehaviour
 
     BehaviorSubject<int> _currentPopulation = new(0);
     BehaviorSubject<int> _currentPopuplationCap = new(0);
+    List<SimpleUnit> _units = new();
+    List<SimpleBuilding> _buildings = new();
 
+    
 
     private void Awake()
     {
@@ -68,47 +74,49 @@ public class Player : MonoBehaviour
         SimpleBuilding.OnAnyBuildingDestroyed -= OnBuildingDestroyed;
     }
 
-    private void OnUnitSpawned(Faction faction)
+    private void OnUnitSpawned(SimpleUnit simpleUnit)
     {
-        if (this.faction != faction) 
+        if (this.faction != simpleUnit.Faction) 
         {
             return;
         }
-
+        _units.Add(simpleUnit);
         SetLivingPopulation(livingPopulation + 1);
     }
 
-    private void OnUnitKilled(Faction faction)
+    private void OnUnitKilled(SimpleUnit simpleUnit)
     {
-        if (this.faction != faction)
+        if (this.faction != simpleUnit.Faction)
         {
             return;
         }
 
+        _units.Remove(simpleUnit);
         SetLivingPopulation(livingPopulation - 1);
-
         HasDiedCheck();
     }
 
-    private void OnBuildingBuilt(BuildingData buildingData)
+    private void OnBuildingBuilt(SimpleBuilding building)
     {
-        if (this.faction != buildingData.Faction)
+        if (this.faction != building.Faction)
         {
             return;
         }
 
+        _buildings.Add(building);
         activeBuildings++;
-        SetPopulationCap(populationCap + buildingData.PopulationIncrease);
+        SetPopulationCap(populationCap + building.PopulationIncrease);
     }
 
-    private void OnBuildingDestroyed(BuildingData buildingData)
+    private void OnBuildingDestroyed(SimpleBuilding building)
     {
-        if (this.faction != buildingData.Faction)
+        if (this.faction != building.Faction)
         {
             return;
         }
 
-        SetPopulationCap(populationCap - buildingData.PopulationIncrease);
+        _buildings.Remove(building);
+        SetPopulationCap(populationCap - building.PopulationIncrease);
         activeBuildings--;
         HasDiedCheck();
     }

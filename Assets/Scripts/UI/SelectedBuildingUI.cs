@@ -5,7 +5,6 @@ using UniDi;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.Progress;
 
 public class SelectedBuildingUI : MonoBehaviour
 {

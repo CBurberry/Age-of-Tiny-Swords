@@ -13,6 +13,7 @@ public class BuildingData : ScriptableObject
 {
     public const string PreviewColorString = "#999999";
 
+    public float FOV;
     public int MaxHp;
     public int PopulationIncrease = 5;
     public bool HasAnimatedPrefab;
