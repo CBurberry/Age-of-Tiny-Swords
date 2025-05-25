@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TNT : AProjectile
 {
+    public IDamageable Owner;
     public int Damage;
     public float ExplosionRadius;
 
@@ -55,7 +56,7 @@ public class TNT : AProjectile
         {
             if (colliders.gameObject.TryGetComponent(out IDamageable damageable))
             {
-                damageable.ApplyDamage(Damage);
+                damageable.ApplyDamage(Damage, Owner);
             }
 
             if (colliders.gameObject.TryGetComponent(out GoldMine mine))

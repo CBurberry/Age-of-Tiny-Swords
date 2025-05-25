@@ -150,7 +150,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         spriteRenderer.enabled = true;
     }
 
-    public virtual void ApplyDamage(int value)
+    public virtual void ApplyDamage(int value, IDamageable attacker)
     {
         if (value == 0f)
         {
@@ -163,13 +163,22 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
         //Update health bar
         bool shouldShow = currentHp < maxHp && currentHp > 0f;
-        healthBar.SetValue(HpAlpha);
         healthBar.gameObject.SetActive(shouldShow);
 
         if (currentHp <= 0f)
         {
             TriggerDeath();
         }
+        else 
+        {
+            OnDamaged(attacker);
+        }
+    }
+
+    //Trigger other behaviours upon receiving damage e.g. attack back
+    protected virtual void OnDamaged(IDamageable attacker)
+    {
+        healthBar.SetValue(HpAlpha);
     }
 
     [Button("MoveToTransform (PlayMode)", EButtonEnableMode.Playmode)]
@@ -199,7 +208,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         if (spawnDeadPrefab) 
         {
             //Replace this prefab with a spawned instance of the death prefab
-            DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
+            DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, GameManager.Instance.UnitsParent);
             deadUnit.name = deadUnit.UnitName = name;
         }
 

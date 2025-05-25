@@ -182,7 +182,7 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
         yield return new WaitUntil(() => miners.All(x => x.IsRendererActive));
         foreach (var miner in miners) 
         {
-            miner.ApplyDamage(1000);
+            miner.ApplyDamage(1000, null);
         }
     }
 

@@ -58,7 +58,7 @@ public class Sheep : AUnitInteractableUnit
         //Hide self
         spriteRenderer.enabled = false;
 
-        GameObject gameObject = Instantiate(resourcePrefab, transform.position, Quaternion.identity, transform.parent);
+        GameObject gameObject = Instantiate(resourcePrefab, transform.position, Quaternion.identity,  GameManager.Instance.ResourcesParent);
         ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
         resourceItem.Spawn(ResourceType.Food, foodAmount);
         Destroy(this.gameObject);
