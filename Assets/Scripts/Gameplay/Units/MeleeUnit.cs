@@ -1,10 +1,48 @@
+using NaughtyAttributes;
+using RuntimeStatics;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class MeleeUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
+    private const string ANIMATION_INT_FACING = "FacingDirection";
+
+    public bool IsAttacking() => attackTarget != null;
+
+    [SerializeField]
+    [MinValue(1f)]
+    private float delayForTargetAcquisition;
+
+    //Not goldmine
+    private IDamageable attackTarget;
+    private float targetAcquireTimer;
+
+    private enum FacingDirection
+    {
+        Front = 0,
+        Down = 1,
+        Up = 2
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        //Check for enemies in the area, attack them until they leave range (or are killed)
+        if (!isMoving && !IsAttacking())
+        {
+            targetAcquireTimer += Time.deltaTime;
+            if (targetAcquireTimer > delayForTargetAcquisition)
+            {
+                CheckForNewEnemyTarget();
+                targetAcquireTimer = 0f;
+            }
+        }
+    }
 
     protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
     {
@@ -62,13 +100,13 @@ public class MeleeUnit : AUnitInteractableUnit
     //TODO: Time the hit with the animation connecting the hit
     private IEnumerator Attacking()
     {
-        IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
-
+        attackTarget = interactionTarget as IDamageable;
+        attackTarget.OnDeath += OnTargetKilled;
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            if (!IsTargetWithinDistance(damageTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
                 MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
@@ -76,12 +114,21 @@ public class MeleeUnit : AUnitInteractableUnit
             }
             else
             {
+                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                FaceTarget(angle);
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, true);
-                damageTarget.ApplyDamage(data.BaseAttackDamage);
+                attackTarget.ApplyDamage(data.BaseAttackDamage);
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
         }
 
+        if (attackTarget != null)
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+
+        attackTarget = null;
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 
@@ -118,15 +165,55 @@ public class MeleeUnit : AUnitInteractableUnit
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 
-    private void OnUnitKill()
+    protected void CheckForNewEnemyTarget()
     {
-        Debug.Log("OnEnemyUnitKill");
-        
-        /* Was the target that was killed an enemy unit?
-           - If so, look for another unit within an aggression range to engage combat in
-           - Otherwise do nothing
-         */
+        IEnumerable<IDamageable> potentialTargets = DamageableUtilities.GetDamageablesInArea(transform.position, data.DetectionDistance,
+            (x) => x.Faction != Player.Faction.None && x.Faction != Faction && !x.IsKilled);
 
-        //POLISH/TODO: Add a setting that prevents units from following an enemy unit too far or to return to a guarding / patrol position
+        //Select the closest one (underlying implemenation uses pre-sorted results)
+        attackTarget = potentialTargets.FirstOrDefault();
+        if (attackTarget != null)
+        {
+            interactionTarget = attackTarget as IUnitInteractable;
+            StartAttacking();
+        }
+    }
+
+    protected virtual void FaceTarget(float angle)
+    {
+        //Set facing for melee units (similar to ranged implementation but with 4 directions)
+        FacingDirection facing = (FacingDirection)animator.GetInteger(ANIMATION_INT_FACING);
+        if (angle > -45f && angle <= 45f)
+        {
+            //Forward
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Front;
+        }
+        else if (angle > 45f && angle <= 135f)
+        {
+            //Up
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Up;
+        }
+        else if ((angle > 135f && angle <= 180f) || (angle > -180f && angle <= -135f))
+        {
+            //Flipped Forward
+            spriteRenderer.flipX = true;
+            facing = FacingDirection.Front;
+        }
+        else if (angle > -135f && angle <= -45f)
+        {
+            //Down
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Down;
+        }
+
+        animator.SetInteger(ANIMATION_INT_FACING, (int)facing);
+    }
+
+    protected virtual void OnTargetKilled()
+    {
+        attackTarget = null;
+        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 }

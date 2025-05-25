@@ -104,7 +104,7 @@ PrefabInstance:
     - target: {fileID: 1160356261127867848, guid: e3ea04f585403f1498783fc015d390c0, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 465f6b6db6a36c84998048987bc21ba1, type: 2}
+      objectReference: {fileID: 9100000, guid: de9fd95931979104fad79c26b2a5596c, type: 2}
     - target: {fileID: 3626916397498700004, guid: e3ea04f585403f1498783fc015d390c0, type: 3}
       propertyPath: m_SpriteSortPoint
       value: 1
@@ -199,6 +199,7 @@ MonoBehaviour:
   explosionRadius: 1.5
   timeBeforeIdleIn: 5
   canDestroyMine: 1
+  delayForTargetAcquisition: 1
 --- !u!114 &5724973367365759734
 MonoBehaviour:
   m_ObjectHideFlags: 0
