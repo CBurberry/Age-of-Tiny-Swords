@@ -6,6 +6,7 @@ using System.Linq;
 using UniRx;
 using UnityEngine;
 using static Player;
+using static UnityEngine.GraphicsBuffer;
 
 
 [RequireComponent(typeof(Seeker))]
@@ -96,23 +97,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
-        //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
-        var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
-
-        //Smelly code I know. We assume bottom center pivot (or similarily defined custom pivot)
-        var spriteRenderer = spriteRenderers.FirstOrDefault(x => x.gameObject.name == "Visuals");
-        if (spriteRenderer == null) 
-        {
-            //Backup check for non-conforming objects
-            spriteRenderer = spriteRenderers.FirstOrDefault();
-        }
-
-        Bounds bounds = spriteRenderer.bounds;
-
-        //Set to bottom of bounds for simplicity
-        bounds.center = new Vector3(bounds.center.x, bounds.center.y - bounds.extents.y, spriteRenderer.transform.position.z);
-        bounds.extents = new Vector3(bounds.extents.x, 0f, 0f);
-        return MoveTo(bounds.ClosestPoint(transform.position), onComplete, clearTarget, stopAtAttackDistance);
+        return MoveTo(GetClosestPoint(target), onComplete, clearTarget, stopAtAttackDistance);
     }
 
     public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
@@ -224,7 +209,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             try
             {
-                _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
+                _targetPos.OnNext(GetClosestPoint((interactionTarget as MonoBehaviour).transform));
                 _pathfinder.destination = _targetPos.Value.Value;
             }
             catch
@@ -277,5 +262,25 @@ public class SimpleUnit : MonoBehaviour, IDamageable
                 spriteRenderer.flipX = direction.x < 0f;
             }
         }).AddTo(_disposables);
+    }
+
+    Vector3 GetClosestPoint(Transform target)
+    {
+        //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
+        var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);
+        //Smelly code I know. We assume bottom center pivot (or similarily defined custom pivot)
+        var spriteRenderer = spriteRenderers.FirstOrDefault(x => x.gameObject.name == "Visuals");
+        if (spriteRenderer == null)
+        {
+            //Backup check for non-conforming objects
+            spriteRenderer = spriteRenderers.FirstOrDefault();
+        }
+
+        Bounds bounds = spriteRenderer.bounds;
+
+        //Set to bottom of bounds for simplicity
+        bounds.center = new Vector3(bounds.center.x, bounds.center.y - bounds.extents.y, spriteRenderer.transform.position.z);
+        bounds.extents = new Vector3(bounds.extents.x, 0f, 0f);
+        return bounds.ClosestPoint(transform.position);
     }
 }

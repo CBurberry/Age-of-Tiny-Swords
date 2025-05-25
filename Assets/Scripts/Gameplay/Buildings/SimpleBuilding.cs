@@ -23,6 +23,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
     public IReadOnlyList<UnitCost> SpawnableUnits => data.SpawnableUnits;
+    public Sprite Icon => data.BuildingSpriteVisuals[_buildingState.Value];
 
     [SerializeField]
     //[Expandable] Naughty Attributes can't handle this data
@@ -60,14 +61,17 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     private const float damageVisualThreshold = 0.75f;
 
+    ResourceManager _resourceManager;
     CompositeDisposable _disposables = new();
     Collider2D[] _colliders;
-    BehaviorSubject<BuildingStates> _buildintState = new(BuildingStates.PreConstruction);
+    BehaviorSubject<BuildingStates> _buildingState = new(BuildingStates.PreConstruction);
     BehaviorSubject<List<UnitCost>> _buildQueue = new(new List<UnitCost>());
     BehaviorSubject<float> _currentUnitBuildTime = new(0f);
+    BehaviorSubject<float> _constructionProgress = new(0f);
     BehaviorSubject<int> _currentHp = new(0);
-    public IObservable<BuildingStates> ObserveBuildingState() => _buildintState;
+    public IObservable<BuildingStates> ObserveBuildingState() => _buildingState;
     public IObservable<List<UnitCost>> ObserveUnitBuildQueue() => _buildQueue;
+    public IObservable<float> ObserveConstructionProgress() => _constructionProgress;
     public IObservable<float> ObserveUnitBuildProgress() => _currentUnitBuildTime.Select(x =>
     {
         if (_buildQueue.Value.Count > 0f)
@@ -92,7 +96,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
         }
         _colliders = GetComponentsInChildren<Collider2D>();
-        _buildintState.Select(x => x != BuildingStates.Destroyed)
+        _buildingState.Select(x => x != BuildingStates.Destroyed)
             .DistinctUntilChanged()
             .Subscribe(requiresCollider =>
             {
@@ -124,6 +128,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     protected void Start()
     {
+        _resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
+
         if (buildOnStart)
         {
             HidePreview();
@@ -242,6 +248,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             SetHp(maxHp);
             CompleteConstruction();
         }
+        _constructionProgress.OnNext(_currentHp.Value / (float)maxHp);
     }
 
     /// <summary>
@@ -257,6 +264,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
 
         SetHp(Math.Clamp(currentHp + amount, currentHp, maxHp));
+        _constructionProgress.OnNext(_currentHp.Value / (float)maxHp);
         if (state == BuildingStates.PreConstruction && currentHp == maxHp)
         {
             CompleteConstruction();
@@ -313,19 +321,22 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     public bool TryAddUnitToQueue(UnitCost unitCost)
     {
+        if (_buildingState.Value != BuildingStates.Constructed)
+        {
+            return false;
+        }
         var buildQueue = _buildQueue.Value;
-        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
 
         if (_buildQueue.Value.Count >=  MAX_UNITS_QUEUE)
         {
             return false;
         }
-        if (!resourceManager.HaveResources(unitCost.Cost))
+        if (!_resourceManager.HaveResources(unitCost.Cost))
         {
             return false;
         }
 
-        resourceManager.RemoveResources(unitCost.Cost);
+        _resourceManager.RemoveResources(unitCost.Cost);
         buildQueue.Add(unitCost);
         _buildQueue.OnNext(buildQueue);
 
@@ -334,6 +345,11 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     public bool TryRemoveUnitFromQueue(int i)
     {
+        if (_buildingState.Value != BuildingStates.Constructed)
+        {
+            return false;
+        }
+
         var buildQueue = _buildQueue.Value;
         if (i >= buildQueue.Count)
         {
@@ -344,9 +360,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             _currentUnitBuildTime.OnNext(0f);
         }
-        var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
 
-        resourceManager.AddResources(buildQueue[i].Cost);
+        _resourceManager.AddResources(buildQueue[i].Cost);
 
         buildQueue.RemoveAt(i);
         _buildQueue.OnNext(buildQueue);
@@ -461,7 +476,17 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     void SetState(BuildingStates newState)
     { 
         state = newState;
-        _buildintState.OnNext(newState);
+        _buildingState.OnNext(newState);
+        switch (newState)
+        {
+            case BuildingStates.PreConstruction:
+            case BuildingStates.Destroyed:
+                var buildQueue = _buildQueue.Value;
+                buildQueue.Clear();
+                _buildQueue.OnNext(buildQueue);
+                _currentUnitBuildTime.OnNext(0f);
+                break;
+        }
     }
     
     void SetHp(int hp)
