@@ -334,7 +334,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     protected virtual void OnTargetKilled()
     {
         attackTarget = null;
-        if (IsPrimedToExplode())
+        if (!hasExploded && IsPrimedToExplode())
         {
             animator.SetTrigger(ANIMATION_TRIG_DISARM);
         }
