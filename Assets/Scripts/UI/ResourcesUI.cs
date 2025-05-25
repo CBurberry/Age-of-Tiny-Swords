@@ -8,13 +8,15 @@ using UnityEngine;
 public class ResourcesUI : MonoBehaviour
 {
     [SerializeField] SerializedDictionary<ResourceType, TextMeshProUGUI> _resourceTexts;
+    [SerializeField] TextMeshProUGUI _populationText;
 
     CompositeDisposable _disposables = new();
 
     // Start is called before the first frame update
     void Start()
     {
-        GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources
+        var player = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction);
+        player.Resources
             .ObserveCurrentResourcesUpdated()
             .Subscribe(currentResources =>
             {
@@ -24,6 +26,16 @@ public class ResourcesUI : MonoBehaviour
                 }
             })
             .AddTo(_disposables);
+
+        Observable.CombineLatest(
+            player.ObserveCurrentPopulation(),
+            player.ObservePopuplationCap(),
+            (population, cap) => (population, cap)
+        ).Subscribe(x => 
+        {
+            _populationText.text = $"{x.population}/{x.cap}";
+            _populationText.color = x.population >= x.cap ? Color.red : Color.white;
+        }).AddTo(_disposables);
     }
 
     private void OnDestroy()

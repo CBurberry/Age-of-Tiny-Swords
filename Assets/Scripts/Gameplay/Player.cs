@@ -1,6 +1,7 @@
 using NaughtyAttributes;
 using System;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -16,6 +17,9 @@ public class Player : MonoBehaviour
 
     public Faction Team => faction;
     public event Action<Faction> OnPlayerDied;
+    public bool CanBuildMoreUnits => _currentPopulation.Value < populationCap;
+    public IObservable<int> ObserveCurrentPopulation() => _currentPopulation;
+    public IObservable<int> ObservePopuplationCap() => _currentPopuplationCap;
 
     [HideInInspector]
     public ResourceManager Resources;
@@ -37,15 +41,15 @@ public class Player : MonoBehaviour
     [ReadOnly]
     private int activeBuildings;
 
+    BehaviorSubject<int> _currentPopulation = new(0);
+    BehaviorSubject<int> _currentPopuplationCap = new(0);
+
+
     private void Awake()
     {
         Resources = GetComponent<ResourceManager>();
-        livingPopulation  = activeBuildings = 0;
-    }
-
-    private void Start()
-    {
-        populationCap = startingPopulationCap;
+        SetPopulationCap(startingPopulationCap);
+        SetLivingPopulation(0);
     }
 
     private void OnEnable()
@@ -71,7 +75,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        livingPopulation++;
+        SetLivingPopulation(livingPopulation + 1);
     }
 
     private void OnUnitKilled(Faction faction)
@@ -81,27 +85,30 @@ public class Player : MonoBehaviour
             return;
         }
 
-        livingPopulation--;
+        SetLivingPopulation(livingPopulation - 1);
+
         HasDiedCheck();
     }
 
-    private void OnBuildingBuilt(Faction faction)
+    private void OnBuildingBuilt(BuildingData buildingData)
     {
-        if (this.faction != faction)
+        if (this.faction != buildingData.Faction)
         {
             return;
         }
 
         activeBuildings++;
+        SetPopulationCap(populationCap + buildingData.PopulationIncrease);
     }
 
-    private void OnBuildingDestroyed(Faction faction)
+    private void OnBuildingDestroyed(BuildingData buildingData)
     {
-        if (this.faction != faction)
+        if (this.faction != buildingData.Faction)
         {
             return;
         }
 
+        SetPopulationCap(populationCap - buildingData.PopulationIncrease);
         activeBuildings--;
         HasDiedCheck();
     }
@@ -118,4 +125,15 @@ public class Player : MonoBehaviour
         => GameObject.FindGameObjectsWithTag(PLAYER_TAG)
         .FirstOrDefault(x => x.name == name)
         .GetComponent<Player>();
+
+    void SetLivingPopulation(int newPopuplation)
+    {
+        livingPopulation = newPopuplation;
+        _currentPopulation.OnNext(newPopuplation);
+    }
+    void SetPopulationCap(int newCap)
+    {
+        populationCap = newCap;
+        _currentPopuplationCap.OnNext(newCap);
+    }
 }

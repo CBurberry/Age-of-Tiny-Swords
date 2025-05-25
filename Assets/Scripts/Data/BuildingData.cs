@@ -14,6 +14,7 @@ public class BuildingData : ScriptableObject
     public const string PreviewColorString = "#999999";
 
     public int MaxHp;
+    public int PopulationIncrease = 5;
     public bool HasAnimatedPrefab;
     public Faction Faction;
 
@@ -25,6 +26,7 @@ public class BuildingData : ScriptableObject
 
     [Tooltip("All units this building can spawn")]
     public List<UnitCost> SpawnableUnits;
+
 
     //TODO: Resources required to build
 

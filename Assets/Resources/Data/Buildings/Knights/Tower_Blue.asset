@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tower_Blue
   m_EditorClassIdentifier: 
   MaxHp: 1000
+  PopulationIncrease: 3
   HasAnimatedPrefab: 0
   Faction: 1
   BuildingSpriteVisuals:
@@ -24,3 +25,4 @@ MonoBehaviour:
     - Key: 2
       Value: {fileID: 21300000, guid: 072c8d5c612fbfe45940276a90c25ea4, type: 3}
   ConstructedAnimatedPrefab: {fileID: 0}
+  SpawnableUnits: []
