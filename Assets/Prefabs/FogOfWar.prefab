@@ -411,6 +411,8 @@ MonoBehaviour:
   _currentlyRevealedArea: {fileID: 8400000, guid: bdc7d3cac41b64f4f9a44abef6592bf7, type: 2}
   _drawMaterial: {fileID: 2100000, guid: 01a882897d415694c85abef411363306, type: 2}
   _sizeOfMap: 100
+  Test: {fileID: 0}
+  Radius: 0
 --- !u!1 &8088911569677948814
 GameObject:
   m_ObjectHideFlags: 0
@@ -482,7 +484,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4023
+    m_Bits: 3895
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 64062d38e5eef7743b7e65894f9bf925, type: 2}
   m_TargetDisplay: 0

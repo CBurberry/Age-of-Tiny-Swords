@@ -1,18 +1,27 @@
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
+using UniDi;
 using UniRx;
 using UnityEngine;
 
 public class BuildArea : MonoBehaviour
 {
+    [Inject] FogOfWarManager _fogOfWarManager;
     [SerializeField] BuildAreaData _buildAreaData;
     [SerializeField] Transform _buildingsParent;
 
+    BoxCollider2D _boxCollider;
     ResourceManager _resourceManager;
     CompositeDisposable _buildingDisposable = new();
     SimpleBuilding _currentBuilding;
     public IReadOnlyList<ConstructionData> Constructions => _buildAreaData.Constructions;
+
+    private void Awake()
+    {
+        _boxCollider = GetComponent<BoxCollider2D>();
+    }
 
     void Start()
     {
@@ -54,5 +63,9 @@ public class BuildArea : MonoBehaviour
             })
             .AddTo(_buildingDisposable);
         _currentBuilding.Construct();
+        float moreThanHalf = 0.6f; // need to take more than half to cover a little bit more than a radius
+        _fogOfWarManager.UpdateArea(
+            transform.position + (Vector3)_boxCollider.offset, 
+            Mathf.Max(_boxCollider.size.x, _boxCollider.size.y) * moreThanHalf).Forget();
     }
 }
