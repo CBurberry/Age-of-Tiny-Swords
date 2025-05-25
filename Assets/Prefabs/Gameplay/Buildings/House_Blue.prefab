@@ -146,8 +146,8 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 73eb4df1140bc5e4db04f261ca9697c2, type: 2}
   visuals: {fileID: 8382499713719440887}
   buildOnStart: 0
-  hasGarrisonedArchers: 0
-  garrisonedArchers: []
+  hasGarrisonedRangedUnits: 0
+  garrisonedRangedUnits: []
   unitsParent: {fileID: 0}
   spawnPoint: {fileID: 0}
 --- !u!61 &4960129541604921246

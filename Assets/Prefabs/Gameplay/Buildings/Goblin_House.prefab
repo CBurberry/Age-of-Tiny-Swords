@@ -45,10 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe026d4db3b1d940b33f61d53022556, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactableContexts: 0
+  interactableContexts: 1
   data: {fileID: 11400000, guid: e3ebf2d83f2029b4ebe0061a1f497f56, type: 2}
   visuals: {fileID: 5370296285964601377}
   buildOnStart: 0
+  hasGarrisonedRangedUnits: 0
+  garrisonedRangedUnits: []
+  unitsParent: {fileID: 0}
+  spawnPoint: {fileID: 0}
 --- !u!1 &5370296285964601377
 GameObject:
   m_ObjectHideFlags: 0
