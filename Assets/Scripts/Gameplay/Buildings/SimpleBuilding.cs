@@ -13,8 +13,8 @@ using static Player;
 /// </summary>
 public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
-    public static event Action<BuildingData> OnAnyBuildingBuilt;
-    public static event Action<BuildingData> OnAnyBuildingDestroyed;
+    public static event Action<SimpleBuilding> OnAnyBuildingBuilt;
+    public static event Action<SimpleBuilding> OnAnyBuildingDestroyed;
     public event Action OnDeath;
 
     public static readonly int MAX_UNITS_QUEUE = 5;
@@ -27,6 +27,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public float HpAlpha => (float)currentHp / maxHp;
     public IReadOnlyList<UnitCost> SpawnableUnits => data.SpawnableUnits;
     public Sprite Icon => data.BuildingSpriteVisuals[_buildingState.Value];
+    public int PopulationIncrease => data.PopulationIncrease;
+    public float FOV => _buildingState.Value == BuildingStates.Constructed ? data.FOV : 0;
 
     [SerializeField]
     //[Expandable] Naughty Attributes can't handle this data
@@ -418,7 +420,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             }
         }
 
-        OnAnyBuildingBuilt?.Invoke(data);
+        OnAnyBuildingBuilt?.Invoke(this);
     }
 
     protected virtual void ApplyDamagedVisual()
@@ -473,7 +475,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         OnDeath?.Invoke();
-        OnAnyBuildingDestroyed?.Invoke(data);
+        OnAnyBuildingDestroyed?.Invoke(this);
     }
 
     [Button("Build 100% (PlayMode)", EButtonEnableMode.Playmode)]

@@ -1,15 +1,24 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class FogOfWarManager : MonoBehaviour
 {
+    class RevealEntry
+    {
+        public Vector3 Pos;
+        public float Radius;
+    }
+
+    [SerializeField] GameObject _container;
     [SerializeField] RenderTexture _cameraRenderTexture;
     [SerializeField] RenderTexture _fogTexture;
     [SerializeField] RenderTexture _currentlyRevealedArea;
     [SerializeField] Material _drawMaterial;
-    [SerializeField] float _revealRadius = 1f;
+    [SerializeField] float _sizeOfMap = 100f;
 
+    Player _player;
     CommandBuffer _commandBuffer;
 
     Camera _camera;
@@ -18,7 +27,7 @@ public class FogOfWarManager : MonoBehaviour
     {
         _camera = Camera.main;
         _commandBuffer = new CommandBuffer();
-
+        _container.gameObject.SetActive(true);
         RenderTexture.active = _fogTexture;
         GL.Clear(true, true, Color.black);
         
@@ -29,30 +38,42 @@ public class FogOfWarManager : MonoBehaviour
         RenderTexture.active = null;
     }
 
-    void LateUpdate()
+    private void Start()
     {
-        if (Input.GetMouseButton(0))
-        {
-            Vector3 worldPos = _camera.ScreenToWorldPoint(Input.mousePosition);
-            List<Vector3> revealPositions = new() { worldPos };
-            RevealPositions(revealPositions);
-        }
+        _player = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction);
     }
 
-    public void RevealPositions(List<Vector3> revealPositions)
+    void LateUpdate()
     {
-        float sizeOfMap = 100f;
+        List<RevealEntry> revealPositions = _player.Buildings.Select(x => new RevealEntry
+        {
+            Pos = x.transform.position,
+            Radius = x.FOV
+        }).ToList();
+
+        revealPositions.AddRange(_player.Units.Select(x => new RevealEntry
+        {
+            Pos = x.transform.position,
+            Radius = x.FOV
+        }).ToList());
+        RevealPositions(revealPositions);
+    }
+
+    void RevealPositions(List<RevealEntry> revealData)
+    {
         _commandBuffer.Clear();
         _commandBuffer.SetRenderTarget(_currentlyRevealedArea);
         _commandBuffer.ClearRenderTarget(true, true, Color.black);
 
-        for (int i = 0; i < revealPositions.Count; i++)
+        for (int i = 0; i < revealData.Count; i++)
         {
-            var position = revealPositions[i];
-            Vector2 uv = new Vector2(position.x / sizeOfMap + 0.5f, position.y / sizeOfMap + 0.5f); // scale world to UVs
+            var position = revealData[i].Pos;
+            var radius = revealData[i].Radius;
+
+            Vector2 uv = new Vector2(position.x / _sizeOfMap + 0.5f, position.y / _sizeOfMap + 0.5f); // scale world to UVs
             var tempMat = new Material(_drawMaterial);
             tempMat.SetVector("_Center", uv);
-            tempMat.SetFloat("_Size", _revealRadius / sizeOfMap);
+            tempMat.SetFloat("_Size", radius / _sizeOfMap);
 
             _commandBuffer.Blit(null, _currentlyRevealedArea, tempMat);
             _commandBuffer.SetRenderTarget(_fogTexture);

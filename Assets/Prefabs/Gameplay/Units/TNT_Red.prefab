@@ -13,6 +13,10 @@ PrefabInstance:
       value: TNT_Red
       objectReference: {fileID: 0}
     - target: {fileID: -2253911629886400664, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: -2253911629886400664, guid: f6933952bdbed83469b258bb5efd4c56, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -264,6 +268,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3848916797519723227, guid: 1265a5b3514727a45924eebbda2e37a2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6094705937786151840, guid: 1265a5b3514727a45924eebbda2e37a2, type: 3}
       propertyPath: alpha
       value: 1
@@ -273,8 +281,16 @@ PrefabInstance:
       value: HealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 7610416366667076338, guid: 1265a5b3514727a45924eebbda2e37a2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7610416366667076338, guid: 1265a5b3514727a45924eebbda2e37a2, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8881445902535606170, guid: 1265a5b3514727a45924eebbda2e37a2, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

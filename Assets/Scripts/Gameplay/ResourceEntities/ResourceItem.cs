@@ -1,6 +1,5 @@
 using AYellowpaper.SerializedCollections;
 using NaughtyAttributes;
-using UnityEditor.Animations;
 using UnityEngine;
 
 /// <summary>
@@ -24,7 +23,7 @@ public class ResourceItem : AUnitInteractableNonUnit, IResourceSource
     private bool spawnOnStart;
 
     [SerializeField]
-    private SerializedDictionary<ResourceType, AnimatorController> animationControllers;
+    private SerializedDictionary<ResourceType, RuntimeAnimatorController> animationControllers;
 
     [SerializeField]
     private SerializedDictionary<ResourceType, Sprite> resourceSprite;

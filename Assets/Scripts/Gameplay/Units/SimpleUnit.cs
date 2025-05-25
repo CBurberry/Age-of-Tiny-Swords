@@ -18,8 +18,8 @@ using static UnityEngine.GraphicsBuffer;
 /// </summary>
 public class SimpleUnit : MonoBehaviour, IDamageable
 {
-    public static event Action<Faction> OnAnyUnitSpawned;
-    public static event Action<Faction> OnAnyUnitDied;
+    public static event Action<SimpleUnit> OnAnyUnitSpawned;
+    public static event Action<SimpleUnit> OnAnyUnitDied;
     public event Action OnDeath;
 
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
@@ -30,6 +30,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     public bool IsKilled => currentHp == 0;
     public float HpAlpha => (float)currentHp / maxHp;
     public bool IsRendererActive => spriteRenderer.enabled;
+    public float FOV => data.FOV;
 
     [SerializeField]
     [Expandable]
@@ -85,7 +86,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     protected virtual void Start()
     {
-        OnAnyUnitSpawned?.Invoke(faction);
+        OnAnyUnitSpawned?.Invoke(this);
     }
 
     protected virtual void OnDestroy()
@@ -205,7 +206,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         }
 
         OnDeath?.Invoke();
-        OnAnyUnitDied?.Invoke(faction);
+        OnAnyUnitDied?.Invoke(this);
         Destroy(gameObject);
     }
 
