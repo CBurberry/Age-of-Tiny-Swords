@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
   m_Name: House
   m_EditorClassIdentifier: 
+  FOV: 0
   MaxHp: 600
+  PopulationIncrease: 0
   HasAnimatedPrefab: 0
   Faction: 2
   BuildingSpriteVisuals:
@@ -22,3 +24,8 @@ MonoBehaviour:
     - Key: 2
       Value: {fileID: 21300000, guid: db3b0be3c0be2624f8f923e06e040a93, type: 3}
   ConstructedAnimatedPrefab: {fileID: 0}
+  SpawnableUnits:
+  - BuildTime: 0
+    Cost:
+      _serializedList: []
+    UnitToSpawn: {fileID: -5091512016492490256, guid: 5ef5414478e1b4e42943dc912be01ff9, type: 3}

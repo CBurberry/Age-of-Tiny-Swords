@@ -415,6 +415,11 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         return true;
     }
 
+    public void SpawnUnitInstance(int index)
+    {
+        Instantiate(SpawnableUnits[index].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, unitsParent);
+    }
+
     protected virtual void CompleteConstruction()
     {
         SetState(BuildingStates.Constructed);
