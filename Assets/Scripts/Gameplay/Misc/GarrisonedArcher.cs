@@ -4,9 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GarrisonedArcher : MonoBehaviour
+public class GarrisonedArcher : GarrisonedRangedUnit
 {
-    private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
     private const string ANIMATION_INT_FACING = "FacingDirection";
 
     public int ArrowDamage;
