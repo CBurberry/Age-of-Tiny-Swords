@@ -13,8 +13,8 @@ using static Player;
 /// </summary>
 public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
-    public static event Action<Faction> OnAnyBuildingBuilt;
-    public static event Action<Faction> OnAnyBuildingDestroyed;
+    public static event Action<BuildingData> OnAnyBuildingBuilt;
+    public static event Action<BuildingData> OnAnyBuildingDestroyed;
     public event Action OnDeath;
 
     public static readonly int MAX_UNITS_QUEUE = 5;
@@ -74,6 +74,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     private const float damageVisualThreshold = 0.75f;
 
+    Player _player;
     ResourceManager _resourceManager;
     CompositeDisposable _disposables = new();
     Collider2D[] _colliders;
@@ -142,7 +143,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     protected void Start()
     {
-        _resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
+        _player = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction);
+        _resourceManager = _player.Resources;
 
         if (buildOnStart)
         {
@@ -188,7 +190,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         var buildQueue = _buildQueue.Value;
         var currentBuildTime = _currentUnitBuildTime.Value;
-        if (buildQueue.Count > 0)
+        if (buildQueue.Count > 0 && _player.CanBuildMoreUnits)
         {
             currentBuildTime += Time.deltaTime;
             if (currentBuildTime >= buildQueue[0].BuildTime)
@@ -416,7 +418,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             }
         }
 
-        OnAnyBuildingBuilt?.Invoke(faction);
+        OnAnyBuildingBuilt?.Invoke(data);
     }
 
     protected virtual void ApplyDamagedVisual()

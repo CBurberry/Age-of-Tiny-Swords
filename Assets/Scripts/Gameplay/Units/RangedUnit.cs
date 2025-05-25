@@ -79,7 +79,7 @@ public class RangedUnit : AUnitInteractableUnit
     protected virtual IEnumerator Attacking()
     {
         IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
+        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
@@ -109,7 +109,7 @@ public class RangedUnit : AUnitInteractableUnit
     {
         GoldMine mine = interactionTarget as GoldMine;
         Vector3 closestPosition;
-        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active;
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);

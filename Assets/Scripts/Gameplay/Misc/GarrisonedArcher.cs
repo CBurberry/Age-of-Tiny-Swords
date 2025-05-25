@@ -29,7 +29,7 @@ public class GarrisonedArcher : GarrisonedRangedUnit
     //TODO: Time the hit with the animation connecting the hit
     protected override IEnumerator Attacking()
     {
-        Func<bool> condition = () => attackTarget != null && attackTarget.HpAlpha > 0f;
+        Func<bool> condition = () => attackTarget != null && attackTarget.HpAlpha > 0f && (attackTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)

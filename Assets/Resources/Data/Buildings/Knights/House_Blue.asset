@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: House_Blue
   m_EditorClassIdentifier: 
   MaxHp: 500
+  PopulationIncrease: 3
   HasAnimatedPrefab: 0
   Faction: 1
   BuildingSpriteVisuals:
