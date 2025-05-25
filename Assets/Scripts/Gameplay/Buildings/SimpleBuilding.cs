@@ -165,11 +165,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             }
             else if (state == BuildingStates.Constructed)
             {
-                //Allow deposit resource to any building (when constructed)
-                contexts |= UnitInteractContexts.Gather;
-                if (currentHp < maxHp) 
+                if (currentHp < maxHp)
                 {
                     contexts |= UnitInteractContexts.Repair;
+                }
+                else 
+                {
+                    //Allow deposit resource to any building (when constructed & repaired)
+                    contexts |= UnitInteractContexts.Gather;
                 }
             }
         }
