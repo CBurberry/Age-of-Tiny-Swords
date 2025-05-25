@@ -24,3 +24,10 @@ MonoBehaviour:
     - Key: 2
       Value: {fileID: 21300000, guid: 217d030ff337dd44b8344dbf8380e123, type: 3}
   ConstructedAnimatedPrefab: {fileID: 0}
+  SpawnableUnits:
+  - BuildTime: 5
+    Cost:
+      _serializedList:
+      - Key: 0
+        Value: 2
+    UnitToSpawn: {fileID: 2599030650891800530, guid: 2e146c2f5003bfe4495c93ce6ac2259b, type: 3}

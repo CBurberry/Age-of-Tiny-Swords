@@ -1,6 +1,5 @@
 using AYellowpaper.SerializedCollections;
 using System;
-using TMPro;
 using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
@@ -28,13 +27,5 @@ public class UnitCostUI : MonoBehaviour
             resourceCostUI.CostText.text = iter.Value.ToString();
             resourceCostUI.Container.gameObject.SetActive(true);
         }
-    }
-
-
-    [System.Serializable]
-    class ResourceCostUI
-    {
-        public GameObject Container;
-        public TextMeshProUGUI CostText;
     }
 }
