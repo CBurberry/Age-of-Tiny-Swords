@@ -4,7 +4,6 @@ using System.Linq;
 using UniDi;
 using UniRx;
 using UniRx.Triggers;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInteractionManager : MonoBehaviour
