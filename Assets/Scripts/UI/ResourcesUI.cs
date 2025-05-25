@@ -34,7 +34,7 @@ public class ResourcesUI : MonoBehaviour
         ).Subscribe(x => 
         {
             _populationText.text = $"{x.population}/{x.cap}";
-            _populationText.color = x.population >= x.cap ? Color.red : Color.white;
+            _populationText.color = x.population >= x.cap ? Color.red : Color.black;
         }).AddTo(_disposables);
     }
 

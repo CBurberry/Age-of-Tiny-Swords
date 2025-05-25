@@ -1,4 +1,5 @@
 using System;
+using UniRx;
 using UnityEngine;
 using static Player;
 
@@ -9,6 +10,9 @@ public class GameManager : MonoBehaviour
     public Faction CurrentPlayerFaction => Faction.Knights;
     public Player Knights;
     public Player Goblins;
+    public IObservable<bool> ObserveGameOver() => _gameOver;
+
+    Subject<bool> _gameOver = new();
 
     private void Awake()
     {
@@ -36,16 +40,7 @@ public class GameManager : MonoBehaviour
 
     private void OnPlayerDied(Faction diedFaction)
     {
-        if (diedFaction == Faction.Goblins)
-        {
-            //TODO: Add UI
-            Debug.Log("Win");
-        }
-        else 
-        {
-            //TODO: Add UI
-            Debug.Log("Lose");
-        }
+        _gameOver.OnNext(diedFaction == Faction.Goblins);
     }
 
     public static Player GetPlayer(Faction faction)
