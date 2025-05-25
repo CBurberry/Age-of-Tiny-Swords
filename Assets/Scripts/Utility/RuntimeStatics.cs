@@ -103,6 +103,40 @@ namespace RuntimeStatics
         }
     }
 
+    public static class DamageableUtilities
+    {
+        //Get all IDamageable entities in an circle about a position
+        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius)
+            => Physics2D.OverlapCircleAll(sourcePosition, radius)
+                .Where(x => x.gameObject.TryGetComponent(out IDamageable target))
+                .Select(x => x.gameObject.GetComponent<IDamageable>());
+
+        //Get all IDamageable entities in an circle about a position with custom predicate
+        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius, Func<IDamageable, bool> predicate)
+            => Physics2D.OverlapCircleAll(sourcePosition, radius)
+                .Where(x => x.gameObject.TryGetComponent(out IDamageable target) && predicate(target))
+                .Select(x => x.gameObject.GetComponent<IDamageable>());
+    }
+
+    //Source: https://stackoverflow.com/a/2019433, modified as Single() throws on empty
+    public static class EnumerableExtensions
+    {
+        public static T PickRandom<T>(this IEnumerable<T> source)
+        {
+            return source.PickRandom(1).FirstOrDefault();
+        }
+
+        public static IEnumerable<T> PickRandom<T>(this IEnumerable<T> source, int count)
+        {
+            return source.Shuffle().Take(count);
+        }
+
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
+        {
+            return source.OrderBy(x => Guid.NewGuid());
+        }
+    }
+
     //Source: https://stackoverflow.com/questions/5542816/printing-flags-enum-as-separate-flags
     public static class EnumExtensions
     {
@@ -154,21 +188,6 @@ namespace RuntimeStatics
                     yield return value;
             }
         }
-    }
-
-    public static class DamageableUtilities
-    {
-        //Get all IDamageable entities in an circle about a position
-        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius)
-            => Physics2D.OverlapCircleAll(sourcePosition, radius)
-                .Where(x => x.gameObject.TryGetComponent(out IDamageable target))
-                .Select(x => x.gameObject.GetComponent<IDamageable>());
-
-        //Get all IDamageable entities in an circle about a position with custom predicate
-        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius, Func<IDamageable, bool> predicate)
-            => Physics2D.OverlapCircleAll(sourcePosition, radius)
-                .Where(x => x.gameObject.TryGetComponent(out IDamageable target) && predicate(target))
-                .Select(x => x.gameObject.GetComponent<IDamageable>());
     }
 
     public static class TransformExtensions

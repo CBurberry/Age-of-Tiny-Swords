@@ -10,7 +10,7 @@ public class RangedUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
 
-    public bool IsAttacking() => attackTarget != null;
+    public override bool IsAttacking() => attackTarget != null;
 
     [SerializeField]
     private AProjectile projectilePrefab;

@@ -209,7 +209,7 @@ MonoBehaviour:
   unitSelectedMarker: {fileID: 0}
   moveToTargetTransform: {fileID: 0}
   interactableContexts: 1
-  explosionPrefab: {fileID: 0}
+  explosionPrefab: {fileID: 5421023536461709875, guid: eab3506c2806f434fb001494f77907ac, type: 3}
   shouldExplodeOnDeath: 1
   timeToExplode: 5
   explosionRadius: 1.5
@@ -240,7 +240,7 @@ MonoBehaviour:
       serializedVersion: 2
       m_Bits: 4294967295
     useGraphRaycasting: 0
-  traversableTags: -1
+  traversableTags: -3
   tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   graphMask:
     value: -1

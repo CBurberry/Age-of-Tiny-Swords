@@ -19,6 +19,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     public static readonly int MAX_UNITS_QUEUE = 5;
 
+    public Vector3 SpawnPosition => spawnPoint.position;
     public bool IsAnyGarrisonedUnitAttacking => hasGarrisonedRangedUnits && garrisonedRangedUnits.Any(x => x.IsAttacking());
     public BuildingStates State => state;
     public bool IsKilled => currentHp == 0;

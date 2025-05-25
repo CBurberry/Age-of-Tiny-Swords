@@ -11,7 +11,7 @@ public class MeleeUnit : AUnitInteractableUnit
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
     private const string ANIMATION_INT_FACING = "FacingDirection";
 
-    public bool IsAttacking() => attackTarget != null;
+    public override bool IsAttacking() => attackTarget != null;
 
     [SerializeField]
     [MinValue(1f)]

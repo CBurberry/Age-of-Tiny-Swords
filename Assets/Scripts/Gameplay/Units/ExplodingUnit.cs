@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class ExplodingUnit : AUnitInteractableUnit
 {
-    public bool IsAttacking() => attackTarget != null;
+    public override bool IsAttacking() => attackTarget != null;
 
     private const string ANIMATION_BOOL_ACTIVE = "IsActive";            //Goblin is peeking out of the barrel
     private const string ANIMATION_TRIG_FIRE = "Fire";                  //Trigger once to move to flashing with an in animation playing between

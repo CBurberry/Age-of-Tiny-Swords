@@ -24,6 +24,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     BehaviorSubject<Vector3?> _targetPos = new(null);
 
+    public bool IsIdle => !IsMoving && !IsAttacking();
+    public bool IsMoving => isMoving;
     public Faction Faction => faction;
     public bool IsKilled => currentHp == 0;
     public float HpAlpha => (float)currentHp / maxHp;
@@ -98,6 +100,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     protected virtual void Update()
     {
     }
+
+    public virtual bool IsAttacking() => throw new NotImplementedException();
 
     public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
