@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7589100541597623618}
   - component: {fileID: 4914224494609405446}
+  - component: {fileID: 4043968200332175493}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Player
@@ -46,6 +47,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Resources: {fileID: 0}
   faction: 2
+  startingPopulationCap: 100
+  populationCap: 0
+  livingPopulation: 0
+  activeBuildings: 0
+--- !u!114 &4043968200332175493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1855757182191714573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f5485173be84984990624dcefbeee6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randomRangeSpawnTimer: {x: 0, y: 30}
+  elapsedSpawnTimer: 0
+  spawnAtTime: 0
 --- !u!1 &3150992446793043974
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,6 +113,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Resources: {fileID: 0}
   faction: 1
+  startingPopulationCap: 0
+  populationCap: 0
+  livingPopulation: 0
+  activeBuildings: 0
 --- !u!114 &8085380566655357513
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,22 +132,22 @@ MonoBehaviour:
   resourceLimits:
     _serializedList:
     - Key: 0
-      Value: 100
+      Value: 1000000
     - Key: 1
-      Value: 100
+      Value: 1000000
     - Key: 2
-      Value: 100
+      Value: 1000000
   currentResources:
     _serializedList:
     - Key: 0
-      Value: 0
+      Value: 100
     - Key: 1
-      Value: 0
+      Value: 100
     - Key: 2
-      Value: 0
-  food: 0
-  gold: 0
-  wood: 0
+      Value: 100
+  food: 100
+  gold: 100
+  wood: 100
 --- !u!1 &4276628649796871166
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +173,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4276628649796871166}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -172,3 +196,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Knights: {fileID: 667299112207307215}
   Goblins: {fileID: 4914224494609405446}
+  enableGoblinAI: 1

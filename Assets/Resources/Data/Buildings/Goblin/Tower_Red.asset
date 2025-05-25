@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
   m_Name: Tower_Red
   m_EditorClassIdentifier: 
-  MaxHp: 1250
+  FOV: 0
+  MaxHp: 1350
+  PopulationIncrease: 0
   HasAnimatedPrefab: 1
   Faction: 2
   BuildingSpriteVisuals:
@@ -24,3 +26,8 @@ MonoBehaviour:
     - Key: 2
       Value: {fileID: 21300000, guid: e0a3a3db8f19eb64980e721989c4e255, type: 3}
   ConstructedAnimatedPrefab: {fileID: 4692316355359331067, guid: 3ca588bb55a963345a1159b4856ef6a4, type: 3}
+  SpawnableUnits:
+  - BuildTime: 0
+    Cost:
+      _serializedList: []
+    UnitToSpawn: {fileID: 7077059931901748619, guid: 9f03516f3f09195498ce823ba134f43e, type: 3}

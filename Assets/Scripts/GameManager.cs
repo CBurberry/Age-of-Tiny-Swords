@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
 
     Subject<bool> _gameOver = new();
 
+    [SerializeField]
+    private bool enableGoblinAI;
+
     private void Awake()
     {
         if (Instance == null)
@@ -36,6 +39,11 @@ public class GameManager : MonoBehaviour
 
         Knights.OnPlayerDied += OnPlayerDied;
         Goblins.OnPlayerDied += OnPlayerDied;
+
+        if (Goblins.TryGetComponent(out GoblinAI AI)) 
+        {
+            AI.enabled = enableGoblinAI;
+        }
     }
 
     private void OnPlayerDied(Faction diedFaction)
