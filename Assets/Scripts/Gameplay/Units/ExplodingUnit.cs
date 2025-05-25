@@ -143,7 +143,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     private IEnumerator Attacking()
     {
         IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f;
+        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             if (!IsTargetWithinDistance(damageTarget, out _))
@@ -190,7 +190,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         GoldMine mine = interactionTarget as GoldMine;
         Vector3 closestPosition;
-        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active;
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);

@@ -97,7 +97,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public virtual bool MoveTo(Transform target, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
     {
-        return MoveTo(GetClosestPoint(target), onComplete, clearTarget, stopAtAttackDistance);
+        return MoveTo(target.transform.position, onComplete, clearTarget, stopAtAttackDistance);
     }
 
     public virtual bool MoveTo(Vector3 worldPosition, Action onComplete = null, bool clearTarget = true, bool stopAtAttackDistance = false)
@@ -108,9 +108,11 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             interactionTarget = null;
         }
 
-        if (worldPosition == transform.position || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance) 
+        if (worldPosition == transform.position 
+            || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance) 
         {
             onComplete?.Invoke();
+            Debug.Log($"Complete");
             return true;
         }
 
@@ -209,7 +211,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         {
             try
             {
-                _targetPos.OnNext(GetClosestPoint((interactionTarget as MonoBehaviour).transform));
+                _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
                 _pathfinder.destination = _targetPos.Value.Value;
             }
             catch
