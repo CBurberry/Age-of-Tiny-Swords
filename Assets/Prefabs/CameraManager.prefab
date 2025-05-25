@@ -48,4 +48,4 @@ MonoBehaviour:
   _maxWorldBounds: {x: 20, y: 10}
   _orthoRange: {x: 3, y: 9}
   _panSpeed: 10
-  _zoomSensitivity: 1
+  _zoomSensitivity: -1
