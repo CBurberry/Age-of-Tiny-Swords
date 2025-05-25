@@ -60,10 +60,15 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     private const float damageVisualThreshold = 0.75f;
 
+    CompositeDisposable _disposables = new();
+    Collider2D[] _colliders;
+    BehaviorSubject<BuildingStates> _buildintState = new(BuildingStates.PreConstruction);
     BehaviorSubject<List<UnitCost>> _buildQueue = new(new List<UnitCost>());
-    BehaviorSubject<float> _currentBuildTime = new(0f);
+    BehaviorSubject<float> _currentUnitBuildTime = new(0f);
+    BehaviorSubject<int> _currentHp = new(0);
+    public IObservable<BuildingStates> ObserveBuildingState() => _buildintState;
     public IObservable<List<UnitCost>> ObserveUnitBuildQueue() => _buildQueue;
-    public IObservable<float> ObserveUnitBuildProgress() => _currentBuildTime.Select(x =>
+    public IObservable<float> ObserveUnitBuildProgress() => _currentUnitBuildTime.Select(x =>
     {
         if (_buildQueue.Value.Count > 0f)
         {
@@ -86,7 +91,33 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             visuals.transform.localScale = Vector3.one;
             spriteRenderer.spriteSortPoint = SpriteSortPoint.Pivot;
         }
+        _colliders = GetComponentsInChildren<Collider2D>();
+        _buildintState.Select(x => x != BuildingStates.Destroyed)
+            .DistinctUntilChanged()
+            .Subscribe(requiresCollider =>
+            {
+                foreach (var collider in _colliders)
+                {
+                    collider.enabled = requiresCollider;
+                }
+                if (spawnPoint && requiresCollider && _colliders.Length > 0)
+                {
+                    Collider2D mainCollider = _colliders[0];
+                    ContactFilter2D filter = new ContactFilter2D().NoFilter();
+                    Collider2D[] results = new Collider2D[20]; // adjust size as needed
 
+                    int count = mainCollider.OverlapCollider(filter, results);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        var result = results[i];
+                        if (result.TryGetComponent<SimpleUnit>(out var unit))
+                        {
+                            unit.transform.position = spawnPoint.transform.position;
+                        }
+                    }
+                }
+            }).AddTo(_disposables);
         //To allow for later overriding if needed
         faction = data.Faction;
     }
@@ -101,9 +132,15 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
         else 
         {
-            state = BuildingStates.PreConstruction;
+            SetState(BuildingStates.PreConstruction);
         }
     }
+
+    protected void OnDestroy()
+    {
+        _disposables.Clear();
+    }
+
 
     protected void OnValidate()
     {
@@ -120,20 +157,20 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     protected void Update()
     {
         var buildQueue = _buildQueue.Value;
-        var currentBuildTime = _currentBuildTime.Value;
+        var currentBuildTime = _currentUnitBuildTime.Value;
         if (buildQueue.Count > 0)
         {
             currentBuildTime += Time.deltaTime;
             if (currentBuildTime >= buildQueue[0].BuildTime)
             {
                 var newUnit = Instantiate(buildQueue[0].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, unitsParent);
-                _currentBuildTime.OnNext(0f);
+                _currentUnitBuildTime.OnNext(0f);
                 buildQueue.RemoveAt(0);
                 _buildQueue.OnNext(buildQueue);
             }
             else
             {
-                _currentBuildTime.OnNext(currentBuildTime);
+                _currentUnitBuildTime.OnNext(currentBuildTime);
             }
         }
     }
@@ -195,14 +232,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         if (data.BuildingSpriteVisuals.Keys.Contains(BuildingStates.PreConstruction))
         {
-            state = BuildingStates.PreConstruction;
-            currentHp = 10;
+            SetState(BuildingStates.PreConstruction);
+            SetHp(10);
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
         else 
         {
             //Some enemy buildings don't have a PreConstructed state so just skip to full build
-            currentHp = maxHp;
+            SetHp(maxHp);
             CompleteConstruction();
         }
     }
@@ -219,7 +256,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             return false;
         }
 
-        currentHp = Math.Clamp(currentHp + amount, currentHp, maxHp);
+        SetHp(Math.Clamp(currentHp + amount, currentHp, maxHp));
         if (state == BuildingStates.PreConstruction && currentHp == maxHp)
         {
             CompleteConstruction();
@@ -243,7 +280,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             return;
         }
 
-        currentHp = Math.Clamp(currentHp + amount, 0, maxHp);
+        SetHp(Math.Clamp(currentHp + amount, 0, maxHp));
         if (state == BuildingStates.Constructed && currentHp > damageVisualThreshold) 
         {
             RemoveDamagedVisual();
@@ -260,7 +297,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public virtual void ApplyDamage(int amount)
     {
         //Note: maybe make this two tier of intensity when damaged?
-        currentHp = Math.Clamp(currentHp - amount, 0, maxHp);
+        SetHp(Math.Clamp(currentHp - amount, 0, maxHp));
 
         if (currentHp == 0)
         {
@@ -305,7 +342,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         if (i == 0)
         {
-            _currentBuildTime.OnNext(0f);
+            _currentUnitBuildTime.OnNext(0f);
         }
         var resourceManager = GameManager.GetPlayer(GameManager.Instance.CurrentPlayerFaction).Resources;
 
@@ -318,7 +355,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     protected virtual void CompleteConstruction()
     {
-        state = BuildingStates.Constructed;
+        SetState(BuildingStates.Constructed);
         if (data.HasAnimatedPrefab)
         {
             spriteRenderer.enabled = false;
@@ -381,7 +418,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
 
         //Replace visual with destroyed visual
-        state = BuildingStates.Destroyed;
+        SetState(BuildingStates.Destroyed);
 
         if (animatedPrefabInstance != null) 
         {
@@ -419,5 +456,17 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     protected virtual void TriggerDestroy()
     {
         ApplyDamage(maxHp);
+    }
+
+    void SetState(BuildingStates newState)
+    { 
+        state = newState;
+        _buildintState.OnNext(newState);
+    }
+    
+    void SetHp(int hp)
+    {
+        currentHp = hp;
+        _currentHp.OnNext(hp);
     }
 }

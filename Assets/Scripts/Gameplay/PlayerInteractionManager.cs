@@ -1,7 +1,10 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Linq;
 using UniDi;
 using UniRx;
+using UniRx.Triggers;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerInteractionManager : MonoBehaviour
@@ -12,16 +15,22 @@ public class PlayerInteractionManager : MonoBehaviour
 
     CompositeDisposable _disposables = new();
     CompositeDisposable _selectedUnitDisposable = new();
+    CompositeDisposable _clearSelectedUnitDisposable = new();
+    CompositeDisposable _clearBuildAreaDisposable = new();
+    CompositeDisposable _clearBuildingDisposable = new();
     RaycastHit2D[] _hits;
     BehaviorSubject<AUnitInteractableUnit> _selectedUnit = new(null);
     BehaviorSubject<SimpleBuilding> _selectedBuilding = new(null);
+    BehaviorSubject<BuildArea> _selectedBuildArea = new(null);
 
     public IObservable<SimpleBuilding> ObserveSelectedBuilding() => _selectedBuilding;
+    public IObservable<BuildArea> ObserveSelectedBuildArea() => _selectedBuildArea;
 
     // Update is called once per frame
     void Awake()
     {
         SetupTargetIndicator();
+        SetupClearOnDisable();
 
         _inputManager.ObserveSingleSelect().Subscribe(TrySelect).AddTo(_disposables);
         _inputManager.ObserveInteract().Subscribe(TryInteract).AddTo(_disposables);
@@ -30,6 +39,10 @@ public class PlayerInteractionManager : MonoBehaviour
     void OnDestroy()
     {
         _disposables.Clear();
+        _selectedUnitDisposable.Clear();
+        _clearBuildAreaDisposable.Clear();
+        _clearSelectedUnitDisposable.Clear();
+        _clearBuildingDisposable.Clear();
     }
 
     void TrySelect(Vector2 pos)
@@ -37,16 +50,22 @@ public class PlayerInteractionManager : MonoBehaviour
         _hits = Physics2D.RaycastAll(pos, Vector2.zero);
         SetSlectedUnitMarkerActive(false);
 
-        _selectedUnit.OnNext(GetUnitFromHits());
+        AUnitInteractableUnit hitUnit = GetUnitFromHits();
+        SimpleBuilding hitBuilding = null;
+        BuildArea hitBuildArea = null;
 
-        if (_selectedUnit.Value == null)
+        if (hitUnit == null)
         {
-            _selectedBuilding.OnNext(GetBuildingFromHits());
+            hitBuilding = GetBuildingFromHits();
+            if (hitBuilding == null)
+            {
+                hitBuildArea = GetBuildAreaFromHits();
+            }
         }
-        else
-        {
-            _selectedBuilding.OnNext(null);
-        }
+
+        _selectedUnit.OnNext(hitUnit);
+        _selectedBuilding.OnNext(hitBuilding);
+        _selectedBuildArea.OnNext(hitBuildArea);
 
         SetSlectedUnitMarkerActive(true);
     }
@@ -110,6 +129,19 @@ public class PlayerInteractionManager : MonoBehaviour
         return null;
     }
 
+    BuildArea GetBuildAreaFromHits()
+    {
+        foreach (RaycastHit2D hit in _hits)
+        {
+            if (hit.transform.TryGetComponent<BuildArea>(out var buildArea))
+            {
+                return buildArea;
+            }
+        }
+
+        return null;
+    }
+
     IUnitInteractable GetInteractableFromHits()
     {
         foreach (RaycastHit2D hit in _hits)
@@ -123,6 +155,46 @@ public class PlayerInteractionManager : MonoBehaviour
         return null;
     }
 
+    void SetupClearOnDisable()
+    {
+        _selectedUnit.Subscribe(selectedUnit =>
+        {
+            _clearSelectedUnitDisposable.Clear();
+            if (selectedUnit)
+            {
+                selectedUnit.gameObject.OnDisableAsObservable()
+                   .Subscribe(x => _selectedUnit.OnNext(null))
+                   .AddTo(_clearSelectedUnitDisposable);
+            }
+        }).AddTo(_disposables);
+
+        _selectedBuildArea.Subscribe(buildArea =>
+        {
+            _clearBuildAreaDisposable.Clear();
+            if (buildArea)
+            {
+                buildArea.gameObject.OnDisableAsObservable()
+                   .Subscribe(x => _selectedBuildArea.OnNext(null))
+                   .AddTo(_clearBuildAreaDisposable);
+            }
+        }).AddTo(_disposables);
+
+        _selectedBuilding.Subscribe(buidling =>
+        {
+            _clearBuildingDisposable.Clear();
+            if (buidling)
+            {
+                buidling.gameObject.OnDisableAsObservable()
+                   .Subscribe(x => _selectedBuilding.OnNext(null))
+                   .AddTo(_clearBuildingDisposable);
+                buidling.ObserveBuildingState()
+                    .Select(x => x == BuildingStates.Destroyed)
+                    .Where(x => x)
+                    .Subscribe(x => _selectedBuilding.OnNext(null))
+                    .AddTo(_clearBuildingDisposable);
+            }
+        }).AddTo(_disposables);
+    }
 
     void SetupTargetIndicator()
     {
