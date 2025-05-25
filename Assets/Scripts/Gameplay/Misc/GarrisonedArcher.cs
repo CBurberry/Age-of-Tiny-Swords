@@ -23,9 +23,6 @@ public class GarrisonedArcher : GarrisonedRangedUnit
     private float attackRange;
 
     [SerializeField]
-    private Animator animator;
-
-    [SerializeField]
     private SpriteRenderer spriteRenderer;
 
     [SerializeField]

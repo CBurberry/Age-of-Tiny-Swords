@@ -17,7 +17,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public static event Action<BuildingData> OnAnyBuildingDestroyed;
     public static readonly int MAX_UNITS_QUEUE = 5;
 
-
+    public bool IsAnyGarrisonedUnitAttacking => hasGarrisonedRangedUnits && garrisonedRangedUnits.Any(x => x.IsAttacking());
     public BuildingStates State => state;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
     public Faction Faction => faction;
@@ -45,6 +45,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     protected bool buildOnStart;
 
     [SerializeField]
+    protected bool enableAutoRepair;
+
+    [ShowIf("enableAutoRepair")]
+    [SerializeField]
+    [MinValue(1)]
+    protected int repairHpPerSecond;
+
+    [SerializeField]
     private bool hasGarrisonedRangedUnits;
 
     [ShowIf("hasGarrisonedRangedUnits")]
@@ -58,6 +66,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     protected Transform spawnPoint;
 
     protected Faction faction;
+
+    private float repairTimer;
 
     private const float damageVisualThreshold = 0.75f;
 
@@ -125,6 +135,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             }).AddTo(_disposables);
         //To allow for later overriding if needed
         faction = data.Faction;
+        repairTimer = 0f;
     }
 
     protected void Start()
@@ -164,6 +175,16 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     protected void Update()
     {
+        if (enableAutoRepair && state == BuildingStates.Constructed && currentHp < maxHp) 
+        {
+            repairTimer += Time.deltaTime;
+            if (repairTimer > 1f) 
+            {
+                Repair(repairHpPerSecond);
+                repairTimer = 0f;
+            }
+        }
+
         var buildQueue = _buildQueue.Value;
         var currentBuildTime = _currentUnitBuildTime.Value;
         if (buildQueue.Count > 0 && _player.CanBuildMoreUnits)
@@ -306,6 +327,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// <param name="amount"></param>
     public virtual void ApplyDamage(int amount)
     {
+        repairTimer = 0f;
+
         //Note: maybe make this two tier of intensity when damaged?
         SetHp(Math.Clamp(currentHp - amount, 0, maxHp));
 

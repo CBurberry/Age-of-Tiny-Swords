@@ -168,6 +168,8 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 64a9c79d9214cf94882df05474a88b5f, type: 2}
   visuals: {fileID: 4016681619413240150}
   buildOnStart: 0
+  enableAutoRepair: 0
+  repairHpPerSecond: 0
   hasGarrisonedRangedUnits: 1
   garrisonedRangedUnits:
   - {fileID: 287232364147080302}
