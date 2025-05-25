@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static Player;
 
@@ -6,7 +7,10 @@ using static Player;
 /// </summary>
 public interface IDamageable
 {
+    public event Action OnDeath;
+
     float HpAlpha { get; }
+    bool IsKilled { get; }
     Faction Faction { get; }
     Vector3 GetClosestPosition(Vector3 position);
     void ApplyDamage(int value);

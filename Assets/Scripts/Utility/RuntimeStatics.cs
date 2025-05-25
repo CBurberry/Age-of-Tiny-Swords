@@ -156,6 +156,21 @@ namespace RuntimeStatics
         }
     }
 
+    public static class DamageableUtilities
+    {
+        //Get all IDamageable entities in an circle about a position
+        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius)
+            => Physics2D.OverlapCircleAll(sourcePosition, radius)
+                .Where(x => x.gameObject.TryGetComponent(out IDamageable target))
+                .Select(x => x.gameObject.GetComponent<IDamageable>());
+
+        //Get all IDamageable entities in an circle about a position with custom predicate
+        public static IEnumerable<IDamageable> GetDamageablesInArea(Vector3 sourcePosition, float radius, Func<IDamageable, bool> predicate)
+            => Physics2D.OverlapCircleAll(sourcePosition, radius)
+                .Where(x => x.gameObject.TryGetComponent(out IDamageable target) && predicate(target))
+                .Select(x => x.gameObject.GetComponent<IDamageable>());
+    }
+
     public static class TransformExtensions
     {
         //Source: https://discussions.unity.com/t/clean-est-way-to-find-nearest-object-of-many-c/409917/4

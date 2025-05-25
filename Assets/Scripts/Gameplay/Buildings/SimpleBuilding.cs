@@ -15,10 +15,13 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
     public static event Action<Faction> OnAnyBuildingBuilt;
     public static event Action<Faction> OnAnyBuildingDestroyed;
+    public event Action OnDeath;
+
     public static readonly int MAX_UNITS_QUEUE = 5;
 
     public bool IsAnyGarrisonedUnitAttacking => hasGarrisonedRangedUnits && garrisonedRangedUnits.Any(x => x.IsAttacking());
     public BuildingStates State => state;
+    public bool IsKilled => currentHp == 0;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
     public Faction Faction => faction;
     public float HpAlpha => (float)currentHp / maxHp;
@@ -325,6 +328,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// <param name="amount"></param>
     public virtual void ApplyDamage(int amount)
     {
+        Debug.Log($"Damage to {gameObject.name}, amount {amount}");
         repairTimer = 0f;
 
         //Note: maybe make this two tier of intensity when damaged?
@@ -466,6 +470,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
 
         spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
+        OnDeath?.Invoke();
         OnAnyBuildingDestroyed?.Invoke(faction);
     }
 

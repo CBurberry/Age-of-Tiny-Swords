@@ -119,10 +119,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e440f85e71f7de34696a6b427af1126c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ArrowDamage: 12
+  Damage: 12
   projectilePrefab: {fileID: 1028177973677635333, guid: 87b9ada3686937442802e3c14c15df83, type: 3}
+  animator: {fileID: 2161014814197797196}
   projectileSpeed: 6
   attackSpeed: 1
   attackRange: 5
-  animator: {fileID: 2161014814197797196}
+  faction: 1
+  delayForTargetAcquisition: 1
   spriteRenderer: {fileID: 4031033599260603633}
+  testAttackUnit: {fileID: 0}

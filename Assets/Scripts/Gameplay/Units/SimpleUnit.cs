@@ -20,12 +20,14 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 {
     public static event Action<Faction> OnAnyUnitSpawned;
     public static event Action<Faction> OnAnyUnitDied;
+    public event Action OnDeath;
 
     protected const string ANIMATION_BOOL_MOVING = "IsMoving";
 
     BehaviorSubject<Vector3?> _targetPos = new(null);
 
     public Faction Faction => faction;
+    public bool IsKilled => currentHp == 0;
     public float HpAlpha => (float)currentHp / maxHp;
     public bool IsRendererActive => spriteRenderer.enabled;
 
@@ -67,6 +69,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private AILerp _pathfinder;
 
     public GameObject UnitSelectedMarker => unitSelectedMarker;
+
     public IObservable<Vector3?> ObserveTargetPos() => _targetPos;
 
     protected virtual void Awake()
@@ -198,7 +201,8 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, transform.parent);
             deadUnit.name = deadUnit.UnitName = name;
         }
-        
+
+        OnDeath?.Invoke();
         OnAnyUnitDied?.Invoke(faction);
         Destroy(gameObject);
     }

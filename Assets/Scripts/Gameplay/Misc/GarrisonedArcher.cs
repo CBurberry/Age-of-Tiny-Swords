@@ -8,28 +8,12 @@ public class GarrisonedArcher : GarrisonedRangedUnit
 {
     private const string ANIMATION_INT_FACING = "FacingDirection";
 
-    public int ArrowDamage;
-
-    [SerializeField]
-    private AProjectile projectilePrefab;
-
-    [SerializeField]
-    private float projectileSpeed;
-
-    [SerializeField]
-    private float attackSpeed;
-
-    [SerializeField]
-    private float attackRange;
-
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
     [SerializeField]
     private SimpleUnit testAttackUnit;
 
-    private PrefabsPool<AProjectile> prefabsPool;
-    private IDamageable attackTarget;
     private FacingDirection facing;
 
     //Represents a 1-1 match to the int value in the animator (use flipX for left facing)
@@ -42,23 +26,8 @@ public class GarrisonedArcher : GarrisonedRangedUnit
         DiagonalUp = 4
     }
 
-    private void Awake()
-    {
-        prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform, 10);
-    }
-
-    private void Update()
-    {
-        //TODO: Periodically check for enemies in range
-    }
-
-    public void StartAttacking()
-    {
-        StartCoroutine(Attacking());
-    }
-
     //TODO: Time the hit with the animation connecting the hit
-    private IEnumerator Attacking()
+    protected override IEnumerator Attacking()
     {
         Func<bool> condition = () => attackTarget != null && attackTarget.HpAlpha > 0f;
         while (condition.Invoke())
@@ -67,7 +36,8 @@ public class GarrisonedArcher : GarrisonedRangedUnit
             if (!IsTargetWithinRange(attackTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-
+                attackTarget.OnDeath -= OnTargetKilled;
+                attackTarget = null;
                 //Do nothing, wait for a new target
                 yield break;
             }
@@ -132,12 +102,7 @@ public class GarrisonedArcher : GarrisonedRangedUnit
             spriteRenderer.flipX = false;
             facing = FacingDirection.DiagonalDown;
         }
-        else 
-        {
-            Debug.LogWarning("FACING NOT SET");
-        }
 
-        Debug.Log($"SetFacing: input angle {angle}, flipX {spriteRenderer.flipX}, facing {facing}");
         animator.SetInteger(ANIMATION_INT_FACING, (int)facing);
     }
 
@@ -233,7 +198,6 @@ public class GarrisonedArcher : GarrisonedRangedUnit
         }
 
         projectile.transform.position = transform.position + offset;
-        Debug.Log("Arrow spawn position: " + projectile.transform.position);
     }
 
     private void SetProjectileRotation(AProjectile projectile, float angle)
@@ -245,16 +209,9 @@ public class GarrisonedArcher : GarrisonedRangedUnit
     {
         projectile.OnComplete = () =>
         {
-            attackTarget.ApplyDamage(ArrowDamage);
+            attackTarget?.ApplyDamage(Damage);
             projectile.enabled = false;
             prefabsPool.Release(projectile);
         };
-    }
-
-    private bool IsTargetWithinRange(IDamageable target, out Vector3 closestPosition)
-    {
-        closestPosition = target.GetClosestPosition(transform.position);
-        float magnitude = (closestPosition - transform.position).magnitude;
-        return magnitude <= attackRange;
     }
 }

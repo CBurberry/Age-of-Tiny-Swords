@@ -15,6 +15,6 @@ MonoBehaviour:
   Faction: 2
   MaxHp: 150
   MovementSpeed: 1
-  AttackSpeed: 1
+  AttackSpeed: 0.6
   AttackDistance: 3.5
   BaseAttackDamage: 40

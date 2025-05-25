@@ -6,46 +6,14 @@ using UnityEngine;
 
 public class GarrisonedTNT: GarrisonedRangedUnit
 {
-    public int Damage;
-
-    [SerializeField]
-    private AProjectile projectilePrefab;
-
-    [SerializeField]
-    private float projectileSpeed;
-
-    [SerializeField]
-    private float attackSpeed;
-
-    [SerializeField]
-    private float attackRange;
-
     [SerializeField]
     private SpriteRenderer spriteRenderer;
 
     [SerializeField]
     private SimpleUnit testAttackUnit;
 
-    private PrefabsPool<AProjectile> prefabsPool;
-    private IDamageable attackTarget;
-
-    private void Awake()
-    {
-        prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform, 10);
-    }
-
-    private void Update()
-    {
-        //TODO: Periodically check for enemies in range
-    }
-
-    public void StartAttacking()
-    {
-        StartCoroutine(Attacking());
-    }
-
     //TODO: Time the hit with the animation connecting the hit
-    private IEnumerator Attacking()
+    protected override IEnumerator Attacking()
     {
         Func<bool> condition = () => attackTarget != null && attackTarget.HpAlpha > 0f;
         while (condition.Invoke())
@@ -54,7 +22,8 @@ public class GarrisonedTNT: GarrisonedRangedUnit
             if (!IsTargetWithinRange(attackTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-
+                attackTarget.OnDeath -= OnTargetKilled;
+                attackTarget = null;
                 //Do nothing, wait for a new target
                 yield break;
             }
@@ -146,12 +115,5 @@ public class GarrisonedTNT: GarrisonedRangedUnit
             dynamite.enabled = false;
             prefabsPool.Release(projectile);
         };
-    }
-
-    private bool IsTargetWithinRange(IDamageable target, out Vector3 closestPosition)
-    {
-        closestPosition = target.GetClosestPosition(transform.position);
-        float magnitude = (closestPosition - transform.position).magnitude;
-        return magnitude <= attackRange;
     }
 }

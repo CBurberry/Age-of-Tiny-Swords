@@ -251,6 +251,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GarrisonedTNT
       objectReference: {fileID: 0}
+    - target: {fileID: 5586621942288142647, guid: 145404e62bbd6d849826e9590964ab34, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

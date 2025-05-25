@@ -121,9 +121,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Damage: 40
   projectilePrefab: {fileID: 5329233954103935982, guid: 7c2968340e1bf5640817ebb37d00500a, type: 3}
+  animator: {fileID: 2161014814197797196}
   projectileSpeed: 1.5
   attackSpeed: 1
   attackRange: 4.25
-  animator: {fileID: 2161014814197797196}
+  faction: 2
+  delayForTargetAcquisition: 1
   spriteRenderer: {fileID: 4031033599260603633}
   testAttackUnit: {fileID: 0}
