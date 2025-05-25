@@ -66,7 +66,6 @@ public class ArcherUnit : RangedUnit
         }
 
         projectile.transform.position = transform.position + offset;
-        Debug.Log("Arrow spawn position: " + projectile.transform.position);
     }
 
     //Set properties like damage radius etc which aren't common to base projectile
@@ -78,5 +77,60 @@ public class ArcherUnit : RangedUnit
             projectile.enabled = false;
             prefabsPool.Release(projectile);
         };
+    }
+
+    protected override void FaceTarget(float angle)
+    {
+        FacingDirection facing = (FacingDirection)animator.GetInteger(ANIMATION_INT_FACING);
+        if (angle > -22.5f && angle <= 22.5f)
+        {
+            //Forward
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Front;
+        }
+        else if (angle > 22.5f && angle <= 67.5f)
+        {
+            //Forward diagonal up
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.DiagonalUp;
+        }
+        else if (angle > 67.5f && angle <= 112.5f)
+        {
+            //Up
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Up;
+        }
+        else if (angle > 112.5f && angle <= 157.5f)
+        {
+            //Flipped Forward diagonal up
+            spriteRenderer.flipX = true;
+            facing = FacingDirection.DiagonalUp;
+        }
+        else if (angle > 157.5f && angle <= -157.5f)
+        {
+            //Flipped Forward
+            spriteRenderer.flipX = true;
+            facing = FacingDirection.Front;
+        }
+        else if (angle > -157.5f && angle <= -112.5f)
+        {
+            //Flipped Forward diagonal down
+            spriteRenderer.flipX = true;
+            facing = FacingDirection.DiagonalDown;
+        }
+        else if (angle > -112.5f && angle <= -67.5f)
+        {
+            //Down
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.Down;
+        }
+        else if (angle > -67.5f && angle <= -22.5f)
+        {
+            //Forward diagonal down
+            spriteRenderer.flipX = false;
+            facing = FacingDirection.DiagonalDown;
+        }
+
+        animator.SetInteger(ANIMATION_INT_FACING, (int)facing);
     }
 }

@@ -132,6 +132,7 @@ MonoBehaviour:
   interactableContexts: 1
   projectilePrefab: {fileID: 1028177973677635333, guid: 87b9ada3686937442802e3c14c15df83, type: 3}
   projectileSpeed: 6
+  delayForTargetAcquisition: 1
 --- !u!114 &7811432440885757724
 MonoBehaviour:
   m_ObjectHideFlags: 0

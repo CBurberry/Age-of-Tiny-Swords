@@ -35,4 +35,9 @@ public class TNTUnit : RangedUnit
             prefabsPool.Release(projectile);
         };
     }
+
+    protected override void FaceTarget(float angle)
+    {
+        spriteRenderer.flipX = (angle <= 180f && angle > 90f) || (angle > -180f && angle <= -90f);
+    }
 }

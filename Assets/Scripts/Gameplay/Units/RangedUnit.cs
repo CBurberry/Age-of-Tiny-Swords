@@ -1,12 +1,16 @@
 using NaughtyAttributes;
+using RuntimeStatics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class RangedUnit : AUnitInteractableUnit
 {
     private const string ANIMATION_BOOL_ATTACKING = "IsAttacking";
+
+    public bool IsAttacking() => attackTarget != null;
 
     [SerializeField]
     private AProjectile projectilePrefab;
@@ -14,12 +18,33 @@ public class RangedUnit : AUnitInteractableUnit
     [SerializeField]
     private float projectileSpeed;
 
+    [SerializeField]
+    private float delayForTargetAcquisition;
+
     protected PrefabsPool<AProjectile> prefabsPool;
+
+    //Not goldmine
+    private IDamageable attackTarget;
+    private float targetAcquireTimer;
 
     protected override void Awake()
     {
         base.Awake();
         prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
+    }
+
+    protected override void Update()
+    {
+        //Check for enemies in the area, attack them until they leave range (or are killed)
+        if (!isMoving && !IsAttacking())
+        {
+            targetAcquireTimer += Time.deltaTime;
+            if (targetAcquireTimer > delayForTargetAcquisition)
+            {
+                CheckForNewEnemyTarget();
+                targetAcquireTimer = 0f;
+            }
+        }
     }
 
     protected override void ResolveResourceInteraction(IUnitInteractable target, UnitInteractContexts context)
@@ -78,12 +103,13 @@ public class RangedUnit : AUnitInteractableUnit
     //TODO: Time the hit with the animation connecting the hit
     protected virtual IEnumerator Attacking()
     {
-        IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
+        attackTarget = interactionTarget as IDamageable;
+        attackTarget.OnDeath += OnTargetKilled;
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            if (!IsTargetWithinDistance(damageTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
                 MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
@@ -97,6 +123,12 @@ public class RangedUnit : AUnitInteractableUnit
             }
         }
 
+        if (attackTarget != null) 
+        {
+            attackTarget.OnDeath -= OnTargetKilled;
+        }
+
+        attackTarget = null;
         animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 
@@ -158,6 +190,10 @@ public class RangedUnit : AUnitInteractableUnit
         float distance = Vector3.Distance(transform.position, targetTransform.position);
         Vector3 travelVector = targetTransform.position - transform.position;
         Vector3 direction = travelVector.normalized;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        //Update the facing direction
+        FaceTarget(angle);
 
         //NOTE: asuumes starts with component inactive
         AProjectile projectile = prefabsPool.Get();
@@ -169,16 +205,28 @@ public class RangedUnit : AUnitInteractableUnit
         projectile.enabled = true;
     }
 
-    protected virtual void OnUnitKill()
+    protected void CheckForNewEnemyTarget()
     {
-        Debug.Log("OnEnemyUnitKill");
+        IEnumerable<IDamageable> potentialTargets = DamageableUtilities.GetDamageablesInArea(transform.position, data.AttackDistance,
+            (x) => x.Faction != Player.Faction.None && x.Faction != Faction && x.HpAlpha > 0f);
 
-        /* Was the target that was killed an enemy unit?
-           - If so, look for another unit within an aggression range to engage combat in
-           - Otherwise do nothing
-         */
+        //Select the closest one (underlying implemenation uses pre-sorted results)
+        attackTarget = potentialTargets.FirstOrDefault();
+        if (attackTarget != null)
+        {
+            interactionTarget = attackTarget as IUnitInteractable;
+            StartAttacking();
+        }
+    }
 
-        //POLISH/TODO: Add a setting that prevents units from following an enemy unit too far or to return to a guarding / patrol position
+    protected virtual void FaceTarget(float angle)
+    {
+    }
+
+    protected virtual void OnTargetKilled()
+    {
+        attackTarget = null;
+        animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
     }
 
     protected virtual void SetProjectileSpawnPoint(AProjectile projectile)
