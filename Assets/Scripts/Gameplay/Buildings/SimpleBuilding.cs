@@ -473,7 +473,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         OnDeath?.Invoke();
-        OnAnyBuildingDestroyed?.Invoke(faction);
+        OnAnyBuildingDestroyed?.Invoke(data);
     }
 
     [Button("Build 100% (PlayMode)", EButtonEnableMode.Playmode)]
