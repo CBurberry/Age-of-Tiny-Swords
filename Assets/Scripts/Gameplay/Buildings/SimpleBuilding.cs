@@ -175,9 +175,9 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
     }
 
-    public static IEnumerable<GameObject> GetAllBuildings(Faction faction)
+    public static IEnumerable<GameObject> GetAllBuildings(Faction faction, BuildingStates state = BuildingStates.Constructed)
         => GameObject.FindGameObjectsWithTag("Building")
-            .Where(x => x.TryGetComponent(out IBuilding building) && building.Faction == faction);
+            .Where(x => x.TryGetComponent(out IBuilding building) && building.Faction == faction && building.State == state);
 
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
     {
