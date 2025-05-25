@@ -69,6 +69,21 @@ public class GarrisonedRangedUnit : MonoBehaviour
         }
     }
 
+    public void OrderToAttack(IDamageable target)
+    {
+        StartCoroutine(ClearPreviousTargetAndAttack(target));
+    }
+
+    protected IEnumerator ClearPreviousTargetAndAttack(IDamageable target)
+    {
+        attackTarget = null;
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        yield return new WaitForEndOfFrame();
+        attackTarget = target;
+        StartCoroutine(Attacking());
+    }
+
     protected virtual void StartAttacking()
     {
         attackTarget.OnDeath += OnTargetKilled;

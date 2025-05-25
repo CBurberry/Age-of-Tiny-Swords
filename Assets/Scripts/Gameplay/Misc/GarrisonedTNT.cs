@@ -108,6 +108,7 @@ public class GarrisonedTNT: GarrisonedRangedUnit
     private void SetOtherProjectileProperties(AProjectile projectile)
     {
         TNT dynamite = projectile as TNT;
+        dynamite.Owner = GetComponentInParent<SimpleBuilding>();
         dynamite.Damage = Damage;
         dynamite.OnComplete = () =>
         {

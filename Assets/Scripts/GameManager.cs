@@ -14,6 +14,10 @@ public class GameManager : MonoBehaviour
 
     Subject<bool> _gameOver = new();
 
+    public Transform UnitsParent;
+    public Transform BuildingsParent;
+    public Transform ResourcesParent;
+
     [SerializeField]
     private bool enableGoblinAI;
 
@@ -39,6 +43,10 @@ public class GameManager : MonoBehaviour
 
         Knights.OnPlayerDied += OnPlayerDied;
         Goblins.OnPlayerDied += OnPlayerDied;
+
+        UnitsParent = GameObject.Find("Units")?.transform;
+        BuildingsParent = GameObject.Find("Buildings")?.transform;
+        ResourcesParent = GameObject.Find("Resources")?.transform;
 
         if (Goblins.TryGetComponent(out GoblinAI AI)) 
         {

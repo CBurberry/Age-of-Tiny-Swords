@@ -13,5 +13,5 @@ public interface IDamageable
     bool IsKilled { get; }
     Faction Faction { get; }
     Vector3 GetClosestPosition(Vector3 position);
-    void ApplyDamage(int value);
+    void ApplyDamage(int value, IDamageable attacker);
 }

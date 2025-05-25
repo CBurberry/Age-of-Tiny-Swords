@@ -27,6 +27,7 @@ public class TNTUnit : RangedUnit
     protected override void SetOtherProjectileProperties(AProjectile projectile)
     {
         TNT dynamite = projectile as TNT;
+        dynamite.Owner = this;
         dynamite.Damage = data.BaseAttackDamage;
         dynamite.OnComplete = () =>
         {

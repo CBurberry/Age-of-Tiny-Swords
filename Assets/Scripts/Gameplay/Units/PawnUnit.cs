@@ -202,7 +202,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
                 float radius = UnityEngine.Random.Range(0.5f, 1f);
                 Vector3 randomPosition = basePosition + (UnityEngine.Random.insideUnitSphere * radius);
 
-                GameObject gameObject = Instantiate(resourcePrefab, randomPosition, Quaternion.identity, transform.parent);
+                GameObject gameObject = Instantiate(resourcePrefab, randomPosition, Quaternion.identity, GameManager.Instance.ResourcesParent);
                 ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
                 resourceItem.Spawn(kvp.Key, kvp.Value);
             }
@@ -275,7 +275,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             else 
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, true);
-                damageTarget.ApplyDamage(data.BaseAttackDamage);
+                damageTarget.ApplyDamage(data.BaseAttackDamage, this);
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
         }

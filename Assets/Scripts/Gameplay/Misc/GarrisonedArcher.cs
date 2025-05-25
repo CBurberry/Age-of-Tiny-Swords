@@ -209,7 +209,7 @@ public class GarrisonedArcher : GarrisonedRangedUnit
     {
         projectile.OnComplete = () =>
         {
-            attackTarget?.ApplyDamage(Damage);
+            attackTarget?.ApplyDamage(Damage, GetComponentInParent<SimpleBuilding>());
             projectile.enabled = false;
             prefabsPool.Release(projectile);
         };

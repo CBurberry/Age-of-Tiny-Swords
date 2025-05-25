@@ -142,7 +142,7 @@ public class ExplodingUnit : AUnitInteractableUnit
         return base.MoveTo(worldPosition, onComplete, clearTarget, stopAtAttackDistance);
     }
 
-    public override void ApplyDamage(int value)
+    public override void ApplyDamage(int value, IDamageable attacker)
     {
         //Taking damage should activate this unit
         if (value > 0)
@@ -150,7 +150,7 @@ public class ExplodingUnit : AUnitInteractableUnit
             animator.SetBool(ANIMATION_BOOL_ACTIVE, true);
         }
 
-        base.ApplyDamage(value);
+        base.ApplyDamage(value, attacker);
     }
 
     private bool IsPrimedToExplode()
@@ -303,7 +303,7 @@ public class ExplodingUnit : AUnitInteractableUnit
         {
             if (colliders.gameObject.TryGetComponent(out IDamageable damageable))
             {
-                damageable.ApplyDamage(data.BaseAttackDamage);
+                damageable.ApplyDamage(data.BaseAttackDamage, null);
             }
 
             if (canDestroyMine && colliders.gameObject.TryGetComponent(out GoldMine mine))
@@ -337,6 +337,18 @@ public class ExplodingUnit : AUnitInteractableUnit
                 interactionTarget = attackTarget as IUnitInteractable;
                 StartAttacking();
             }
+        }
+    }
+
+    protected override void OnDamaged(IDamageable attacker)
+    {
+        base.OnDamaged(attacker);
+
+        if (!isMoving && !IsAttacking() && !hasExploded && !IsPrimedToExplode()) 
+        {
+            attackTarget = attacker;
+            interactionTarget = attackTarget as IUnitInteractable;
+            StartAttacking();
         }
     }
 

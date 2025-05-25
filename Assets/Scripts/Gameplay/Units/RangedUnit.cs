@@ -30,7 +30,7 @@ public class RangedUnit : AUnitInteractableUnit
     protected override void Awake()
     {
         base.Awake();
-        prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform.parent, 10);
+        prefabsPool = new PrefabsPool<AProjectile>(projectilePrefab, transform, 10);
     }
     protected override void OnDestroy()
     {
@@ -221,6 +221,18 @@ public class RangedUnit : AUnitInteractableUnit
         attackTarget = potentialTargets.FirstOrDefault();
         if (attackTarget != null)
         {
+            interactionTarget = attackTarget as IUnitInteractable;
+            StartAttacking();
+        }
+    }
+
+    protected override void OnDamaged(IDamageable attacker)
+    {
+        base.OnDamaged(attacker);
+
+        if (!isMoving && !IsAttacking())
+        {
+            attackTarget = attacker;
             interactionTarget = attackTarget as IUnitInteractable;
             StartAttacking();
         }

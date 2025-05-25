@@ -73,7 +73,7 @@ public class ArcherUnit : RangedUnit
     {
         projectile.OnComplete = () =>
         {
-            (interactionTarget as IDamageable)?.ApplyDamage(data.BaseAttackDamage);
+            (interactionTarget as IDamageable)?.ApplyDamage(data.BaseAttackDamage, this);
             projectile.enabled = false;
             prefabsPool.Release(projectile);
         };

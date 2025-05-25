@@ -348,9 +348,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// Apply damage to building e.g. when attacked
     /// </summary>
     /// <param name="amount"></param>
-    public virtual void ApplyDamage(int amount)
+    public virtual void ApplyDamage(int amount, IDamageable attacker = null)
     {
-        Debug.Log($"Damage to {gameObject.name}, amount {amount}");
         repairTimer = 0f;
 
         //Note: maybe make this two tier of intensity when damaged?
@@ -362,9 +361,28 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             return;
         }
 
+        OnDamaged(attacker);
+
         if (state == BuildingStates.Constructed && HpAlpha < damageVisualThreshold) 
         {
             ApplyDamagedVisual();
+        }
+    }
+
+    //Trigger other behaviours upon receiving damage e.g. attack back
+    protected virtual void OnDamaged(IDamageable attacker)
+    {
+        if (!hasGarrisonedRangedUnits) 
+        {
+            return;
+        }
+
+        foreach (var unit in garrisonedRangedUnits) 
+        {
+            if (!unit.IsAttacking()) 
+            {
+                unit.OrderToAttack(attacker);
+            }
         }
     }
 
@@ -419,7 +437,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     public void SpawnUnitInstance(int index)
     {
-        Instantiate(SpawnableUnits[index].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, unitsParent);
+        Instantiate(SpawnableUnits[index].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, GameManager.Instance.UnitsParent);
     }
 
     protected virtual void CompleteConstruction()
