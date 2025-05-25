@@ -1,12 +1,10 @@
 using NaughtyAttributes;
 using Pathfinding;
-using RuntimeStatics;
 using System;
 using System.Linq;
 using UniRx;
 using UnityEngine;
 using static Player;
-using static UnityEngine.GraphicsBuffer;
 
 
 [RequireComponent(typeof(Seeker))]
@@ -68,7 +66,9 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private Action onMoveToComplete;
     private CompositeDisposable _disposables = new();
     private AILerp _pathfinder;
+    protected Collider2D _collider;
 
+    public Vector3 ColliderOffset => _collider != null ? _collider.offset : Vector3.zero;
     public GameObject UnitSelectedMarker => unitSelectedMarker;
 
     public IObservable<Vector3?> ObserveTargetPos() => _targetPos;
@@ -78,7 +78,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         currentHp = maxHp;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-
+        _collider = GetComponent<Collider2D>();
         //To allow for later overriding if needed
         faction = data.Faction;
         SetupPathfinder();
@@ -134,20 +134,18 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public virtual void EnterBuilding()
     {
-        var collider = GetComponent<Collider2D>();
-        if (collider != null) 
+        if (_collider != null) 
         {
-            collider.enabled = false;
+            _collider.enabled = false;
         }
         spriteRenderer.enabled = false;
     }
 
     public virtual void ExitBuilding()
     {
-        var collider = GetComponent<Collider2D>();
-        if (collider != null)
+        if (_collider != null)
         {
-            collider.enabled = true;
+            _collider.enabled = true;
         }
         spriteRenderer.enabled = true;
     }

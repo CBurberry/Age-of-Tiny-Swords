@@ -101,6 +101,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     BehaviorSubject<float> _currentUnitBuildTime = new(0f);
     BehaviorSubject<float> _constructionProgress = new(0f);
     BehaviorSubject<int> _currentHp = new(0);
+
+    public Vector3 ColliderOffset => _colliders.Length > 0 ? _colliders[0].offset : Vector3.zero;
     public IObservable<BuildingStates> ObserveBuildingState() => _buildingState;
     public IObservable<List<UnitCost>> ObserveUnitBuildQueue() => _buildQueue;
     public IObservable<float> ObserveConstructionProgress() => _constructionProgress;
