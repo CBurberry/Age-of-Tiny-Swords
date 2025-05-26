@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
 
     private void HasDiedCheck()
     {
-        if (livingPopulation == 0 && activeBuildings == 0) 
+        if (livingPopulation <= 0 && activeBuildings <= 0) 
         {
             OnPlayerDied?.Invoke(Team);
         }
