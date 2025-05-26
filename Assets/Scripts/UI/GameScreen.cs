@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UniDi;
 using UniRx;
 using UnityEngine;
@@ -15,14 +13,23 @@ public class GameScreen : MonoBehaviour
 {
     [Inject] UIService _uiService;
     [SerializeField] Button _backBtn;
+    [SerializeField] Button _homeBtn;
+    [SerializeField] Transform _cameraResetTransform;
 
     GameViewModel _model;
     CompositeDisposable _disposables = new();
 
     void Awake()
     {
+        var camera = Camera.main;
         _backBtn.OnClickAsObservable().Subscribe(_ => _model?.OnBack?.Invoke()).AddTo(_disposables);
         _uiService.ObserveGameViewModel().Subscribe(x => _model = x).AddTo(_disposables);
+        _homeBtn.OnClickAsObservable().Subscribe(_ =>
+        {
+            var pos = _cameraResetTransform.position;
+            pos.z = camera.transform.position.z;
+            camera.transform.position = pos;
+        }).AddTo(_disposables);
     }
 
     void OnDestroy()

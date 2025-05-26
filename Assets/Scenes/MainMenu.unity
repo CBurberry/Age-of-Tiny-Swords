@@ -670,10 +670,10 @@ RectTransform:
   - {fileID: 1532366440}
   m_Father: {fileID: 835590589}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 990, y: -806.87494}
-  m_SizeDelta: {x: 500, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 500, y: 166.66667}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1113344927
 MonoBehaviour:
@@ -1161,7 +1161,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tiny World
+  m_text: Age of Tiny Swords
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 334baa6a0f48590499d41fca6934672e, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: f02ecea440391fc44914f0f1461e2b29, type: 2}
@@ -1188,7 +1188,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 117.35
+  m_fontSize: 85.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
