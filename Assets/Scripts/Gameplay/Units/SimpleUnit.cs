@@ -120,7 +120,6 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance) 
         {
             onComplete?.Invoke();
-            Debug.Log($"Complete");
             return true;
         }
 

@@ -5,6 +5,8 @@ using Random = UnityEngine.Random;
 
 public class Sheep : AUnitInteractableUnit
 {
+    private const float IDLE_MOVE_TIME = 10f;
+
     [SerializeField]
     private GameObject resourcePrefab;
 
@@ -23,33 +25,42 @@ public class Sheep : AUnitInteractableUnit
     [MinMaxSlider(80, 200)]
     private Vector2Int maxFoundAmountRange;
 
+    private UnitIdleTimer idleTimer;
+
     protected override void Awake()
     {
         base.Awake();
         currentHp = maxHp;
         foodAmount = randomizeMaxFoodAmount ? Random.Range(maxFoundAmountRange.x, maxFoundAmountRange.y) : maxFoodAmount;
+        idleTimer = GetComponent<UnitIdleTimer>();
     }
 
     protected override void Update()
     {
-        //TODO: Add a movement routine such that sheeps randomly pick a point near them to move to every so often
-        //      Also to move away from an attacker when attacked
+        if (IsIdle && idleTimer.Timer > IDLE_MOVE_TIME) 
+        {
+            RandomMove();
+        }
     }
+
+    public override bool IsAttacking() => false;
 
     //Sheep drops a food prefab(s) when killed
     public override UnitInteractContexts GetApplicableContexts(SimpleUnit unit)
         => UnitInteractContexts.Attack;
 
-    //POLISH/TODO: Sheep should randmly decide to move about short distances
     public void RandomMove()
     {
-        throw new NotImplementedException();
+        Vector3 randomPoint = Random.insideUnitCircle;
+        MoveTo(transform.position + new Vector3(randomPoint.x, randomPoint.y, 0f));
     }
 
-    //POLISH/TODO: Sheep should try to move away from an attacker
-    public void MoveAwayFrom(Vector3 position) 
+    //Sheep should try to move away from an attacker
+    public void MoveAwayFrom(Vector3 position)
     {
-        throw new NotImplementedException();
+        Debug.Log("Baaaa!");
+        Vector3 direction = (transform.position - position).normalized;
+        MoveTo(transform.position + (direction * 0.5f));
     }
 
     [Button("TriggerDeath - Sheep (PlayMode)", EButtonEnableMode.Playmode)]
@@ -62,5 +73,14 @@ public class Sheep : AUnitInteractableUnit
         ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
         resourceItem.Spawn(ResourceType.Food, foodAmount);
         Destroy(this.gameObject);
+    }
+
+    protected override void OnDamaged(IDamageable attacker)
+    {
+        base.OnDamaged(attacker);
+        if (attacker != null) 
+        {
+            MoveAwayFrom((attacker as MonoBehaviour).transform.position);
+        }
     }
 }
