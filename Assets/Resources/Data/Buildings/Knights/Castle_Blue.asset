@@ -27,21 +27,23 @@ MonoBehaviour:
       Value: {fileID: 21300000, guid: ad1cd87a661c15a4a857c352b48b02b2, type: 3}
   ConstructedAnimatedPrefab: {fileID: 0}
   SpawnableUnits:
-  - BuildTime: 5
+  - BuildTime: 20
     Cost:
       _serializedList:
       - Key: 0
-        Value: 4
+        Value: 120
       - Key: 1
-        Value: 10
-    UnitToSpawn: {fileID: 9077969076346248852, guid: 97f786ec149ef0b4b9906bf2bc95c633, type: 3}
-  - BuildTime: 5
-    Cost:
-      _serializedList:
-      - Key: 0
-        Value: 3
-      - Key: 1
-        Value: 2
+        Value: 80
       - Key: 2
-        Value: 2
+        Value: 30
+    UnitToSpawn: {fileID: 9077969076346248852, guid: 97f786ec149ef0b4b9906bf2bc95c633, type: 3}
+  - BuildTime: 20
+    Cost:
+      _serializedList:
+      - Key: 0
+        Value: 90
+      - Key: 1
+        Value: 50
+      - Key: 2
+        Value: 100
     UnitToSpawn: {fileID: 7275343823640596953, guid: 25f41f64aac38b64399665407485bdf8, type: 3}
