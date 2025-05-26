@@ -13,6 +13,8 @@ public class InputManager : MonoBehaviour
     [SerializeField] float _panEdgePerc = 0.15f;
     [SerializeField] float _dragTriggerScreenDistance = 30;
     [SerializeField] InputActionReference _mouseScrollRef;
+    [SerializeField] InputActionReference _mouseScrollAltInBtn;
+    [SerializeField] InputActionReference _mouseScrollAltOutBtn;
     [SerializeField] SpriteRenderer _groupSelectVisual; // 1x1 groups select square
     [SerializeField] RawImage _fogOfWar;
 
@@ -147,8 +149,11 @@ public class InputManager : MonoBehaviour
 
     void HandleZoom()
     {
+        bool zoomInPressed = _mouseScrollAltInBtn.action.WasPressedThisFrame();
+        bool zoomOutPressed = _mouseScrollAltOutBtn.action.WasPressedThisFrame();
         Vector2 axis = _mouseScrollRef.action.ReadValue<Vector2>() / 360f;
-        _zoom.OnNext(axis.y);
+        int btnInput = (zoomInPressed ? 1 : 0) - (zoomOutPressed ? 1 : 0);
+        _zoom.OnNext(Mathf.Clamp(axis.y + btnInput, -1f, 1f));
     }
 
     Vector3 MouseToWorldPos(Vector3 mousePos)

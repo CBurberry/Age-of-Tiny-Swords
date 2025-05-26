@@ -63345,6 +63345,14 @@ PrefabInstance:
       propertyPath: _fogOfWar
       value: 
       objectReference: {fileID: 1630330195}
+    - target: {fileID: 1518302349501606547, guid: a3bad6e2d605b6f4aa9835eb12ff6467, type: 3}
+      propertyPath: _mouseScrollAltInBtn
+      value: 
+      objectReference: {fileID: -4567742206812545287, guid: 4bc47e3044b13b4489499157dbed5b81, type: 3}
+    - target: {fileID: 1518302349501606547, guid: a3bad6e2d605b6f4aa9835eb12ff6467, type: 3}
+      propertyPath: _mouseScrollAltOutBtn
+      value: 
+      objectReference: {fileID: 1370997256998898003, guid: 4bc47e3044b13b4489499157dbed5b81, type: 3}
     - target: {fileID: 8691809016818904204, guid: a3bad6e2d605b6f4aa9835eb12ff6467, type: 3}
       propertyPath: m_Name
       value: InputManager
