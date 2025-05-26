@@ -199,9 +199,10 @@ public class GoblinAI : MonoBehaviour
             attackTarget = GetRandomEnemyUnit();
         }
 
-        Debug.Log($"{nameof(IssueAttackMissive)}: Requested Force ({attackForceSize}), Actual Force ({attackCandidates.Count()}), Target: {attackTarget.name}");
         if (attackTarget != null)
         {
+            Debug.Log($"{nameof(IssueAttackMissive)}: Requested Force ({attackForceSize}), Actual Force ({attackCandidates.Count()}), Target: {attackTarget.name}");
+
             foreach (var unit in attackCandidates)
             {
                 //Just move the forces there, proximity attack will deal with the rest
