@@ -165,7 +165,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         currentHp = Math.Clamp(currentHp - value, 0, maxHp);
 
         //Update health bar
-        bool shouldShow = currentHp < maxHp && currentHp > 0f;
+        bool shouldShow = currentHp > 0f && currentHp < maxHp;
         healthBar.gameObject.SetActive(shouldShow);
 
         if (currentHp <= 0f)

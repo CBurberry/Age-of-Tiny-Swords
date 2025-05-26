@@ -1,8 +1,11 @@
+using AYellowpaper.SerializedCollections;
+using Cysharp.Threading.Tasks;
 using NaughtyAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Resources;
+using UniDi;
 using UniRx;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,6 +16,7 @@ using static Player;
 /// </summary>
 public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 {
+    [Inject] FogOfWarManager _fogOfWarManager;
     public static event Action<SimpleBuilding> OnAnyBuildingBuilt;
     public static event Action<SimpleBuilding> OnAnyBuildingDestroyed;
     public event Action OnDeath;
@@ -25,13 +29,12 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     public bool IsKilled => currentHp == 0;
     public bool IsDamaged => state != BuildingStates.Destroyed && currentHp < maxHp;
     public Faction Faction => faction;
-    public float HpAlpha => (float)currentHp / maxHp;
     public IReadOnlyList<UnitCost> SpawnableUnits => data.SpawnableUnits;
     public Sprite Icon => data.BuildingSpriteVisuals[_buildingState.Value];
     public int PopulationIncrease => data.PopulationIncrease;
     public float FOV
-    { 
-        get 
+    {
+        get
         {
             switch (_buildingState.Value)
             {
@@ -44,12 +47,15 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
                     return data.FOV;
             }
             return 0f;
-        } 
+        }
     }
 
     [SerializeField]
     //[Expandable] Naughty Attributes can't handle this data
     protected BuildingData data;
+
+    [SerializeField]
+    private UnitHealthBar healthBar;
 
     protected int maxHp => data.MaxHp;
     [ShowNonSerializedField]
@@ -87,6 +93,9 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     [SerializeField]
     protected Transform spawnPoint;
 
+    [SerializeField]
+    protected SerializedDictionary<float, GameObject> _fireStages;
+
     protected Faction faction;
 
     private float repairTimer;
@@ -103,6 +112,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     BehaviorSubject<float> _constructionProgress = new(0f);
     BehaviorSubject<int> _currentHp = new(0);
 
+    public float HpAlpha => (float)currentHp / maxHp;
     public Vector3 ColliderOffset => _colliders.Length > 0 ? _colliders[0].offset : Vector3.zero;
     public IObservable<BuildingStates> ObserveBuildingState() => _buildingState;
     public IObservable<List<UnitCost>> ObserveUnitBuildQueue() => _buildQueue;
@@ -156,6 +166,11 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
                         }
                     }
                 }
+
+                if (!requiresCollider && faction == GameManager.Instance.CurrentPlayerFaction)
+                {
+                    _fogOfWarManager.UpdateArea(transform.position + ColliderOffset, data.FOV).Forget();
+                }
             }).AddTo(_disposables);
         //To allow for later overriding if needed
         faction = data.Faction;
@@ -173,7 +188,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             Construct();
             Build(maxHp);
         }
-        else 
+        else
         {
             SetState(BuildingStates.PreConstruction);
         }
@@ -191,7 +206,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         {
             ShowPreview();
         }
-        else 
+        else
         {
             HidePreview();
         }
@@ -199,10 +214,10 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
     protected void Update()
     {
-        if (enableAutoRepair && state == BuildingStates.Constructed && currentHp < maxHp) 
+        if (enableAutoRepair && state == BuildingStates.Constructed && currentHp < maxHp)
         {
             repairTimer += Time.deltaTime;
-            if (repairTimer > 1f) 
+            if (repairTimer > 1f)
             {
                 Repair(repairHpPerSecond);
                 repairTimer = 0f;
@@ -247,7 +262,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             //ABe able to attack any enemy building
             contexts = UnitInteractContexts.Attack;
         }
-        else 
+        else
         {
             if (state == BuildingStates.PreConstruction)
             {
@@ -259,7 +274,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
                 {
                     contexts |= UnitInteractContexts.Repair;
                 }
-                else 
+                else
                 {
                     //Allow deposit resource to any building (when constructed & repaired)
                     contexts |= UnitInteractContexts.Gather;
@@ -278,7 +293,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     [Button("Construct (PlayMode)", EButtonEnableMode.Playmode)]
     public virtual void Construct()
     {
-        if (currentHp > 0) 
+        if (currentHp > 0)
         {
             return;
         }
@@ -289,7 +304,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             SetHp(10);
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
-        else 
+        else
         {
             //Some enemy buildings don't have a PreConstructed state so just skip to full build
             SetHp(maxHp);
@@ -305,7 +320,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// <returns>Boolean indicating completion</returns>
     public virtual bool Build(int amount)
     {
-        if (currentHp == maxHp) 
+        if (currentHp == maxHp)
         {
             return false;
         }
@@ -330,13 +345,13 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     /// <param name="amount"></param>
     public virtual void Repair(int amount)
     {
-        if (currentHp == 0) 
+        if (currentHp == 0)
         {
             return;
         }
 
         SetHp(Math.Clamp(currentHp + amount, 0, maxHp));
-        if (state == BuildingStates.Constructed && currentHp > damageVisualThreshold) 
+        if (state == BuildingStates.Constructed && currentHp > damageVisualThreshold)
         {
             RemoveDamagedVisual();
         }
@@ -364,7 +379,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
 
         OnDamaged(attacker);
 
-        if (state == BuildingStates.Constructed && HpAlpha < damageVisualThreshold) 
+        if (state == BuildingStates.Constructed && HpAlpha < damageVisualThreshold)
         {
             ApplyDamagedVisual();
         }
@@ -373,14 +388,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     //Trigger other behaviours upon receiving damage e.g. attack back
     protected virtual void OnDamaged(IDamageable attacker)
     {
-        if (!hasGarrisonedRangedUnits) 
+        if (!hasGarrisonedRangedUnits)
         {
             return;
         }
 
-        foreach (var unit in garrisonedRangedUnits) 
+        foreach (var unit in garrisonedRangedUnits)
         {
-            if (!unit.IsAttacking()) 
+            if (!unit.IsAttacking())
             {
                 unit.OrderToAttack(attacker);
             }
@@ -395,7 +410,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         }
         var buildQueue = _buildQueue.Value;
 
-        if (_buildQueue.Value.Count >=  MAX_UNITS_QUEUE)
+        if (_buildQueue.Value.Count >= MAX_UNITS_QUEUE)
         {
             return false;
         }
@@ -447,14 +462,14 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
             spriteRenderer.enabled = false;
             animatedPrefabInstance = Instantiate(data.ConstructedAnimatedPrefab, visuals.transform);
         }
-        else 
+        else
         {
             spriteRenderer.sprite = data.BuildingSpriteVisuals[state];
         }
 
-        if (hasGarrisonedRangedUnits) 
+        if (hasGarrisonedRangedUnits)
         {
-            foreach (var archer in garrisonedRangedUnits) 
+            foreach (var archer in garrisonedRangedUnits)
             {
                 archer.gameObject.SetActive(true);
             }
@@ -506,7 +521,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         //Replace visual with destroyed visual
         SetState(BuildingStates.Destroyed);
 
-        if (animatedPrefabInstance != null) 
+        if (animatedPrefabInstance != null)
         {
             Destroy(animatedPrefabInstance);
             animatedPrefabInstance = null;
@@ -521,7 +536,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     [Button("Build 100% (PlayMode)", EButtonEnableMode.Playmode)]
     protected virtual void Build()
     {
-        if (currentHp > 0 && state == BuildingStates.PreConstruction) 
+        if (currentHp > 0 && state == BuildingStates.PreConstruction)
         {
             Build(maxHp);
         }
@@ -546,7 +561,7 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
     }
 
     void SetState(BuildingStates newState)
-    { 
+    {
         state = newState;
         _buildingState.OnNext(newState);
         switch (newState)
@@ -560,10 +575,37 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
                 break;
         }
     }
-    
+
     void SetHp(int hp)
     {
         currentHp = hp;
         _currentHp.OnNext(hp);
+
+        if (healthBar)
+        {
+            //Update health bar
+            bool shouldShow = currentHp > 0f && currentHp < maxHp;
+            if (shouldShow)
+            {
+                healthBar.SetValue(HpAlpha);
+            }
+            healthBar.gameObject.SetActive(shouldShow);
+        }
+
+        foreach (var fireStage in _fireStages)
+        {
+            fireStage.Value.SetActive(false);
+        }
+        if (_buildingState.Value == BuildingStates.Constructed && _currentHp.Value > 0)
+        {
+            foreach (var fireStage in _fireStages)
+            {
+                if (HpAlpha <= fireStage.Key)
+                {
+                    fireStage.Value.SetActive(true);
+                    break;
+                }
+            }
+        }
     }
 }

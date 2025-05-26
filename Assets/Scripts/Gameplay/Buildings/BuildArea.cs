@@ -63,9 +63,14 @@ public class BuildArea : MonoBehaviour
             })
             .AddTo(_buildingDisposable);
         _currentBuilding.Construct();
+        UpdateArea();
+    }
+
+    void UpdateArea()
+    {
         float moreThanHalf = 0.6f; // need to take more than half to cover a little bit more than a radius
         _fogOfWarManager.UpdateArea(
-            transform.position + (Vector3)_boxCollider.offset, 
+            transform.position + (Vector3)_boxCollider.offset,
             Mathf.Max(_boxCollider.size.x, _boxCollider.size.y) * moreThanHalf).Forget();
     }
 }
