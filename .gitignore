@@ -11,6 +11,10 @@
 /[Uu]ser[Ss]ettings/
 /[Mm]emoryCaptures/
 
+//Ignoring audio folder due to bandwidth issues
+/[Aa]ssets/[Aa]udio/*
+/[Aa]ssets/[Aa]udio.meta
+
 //Ignore samples
 /[Aa]ssets/[Ss]amples/*
 /[Aa]ssets/[Ss]amples.meta

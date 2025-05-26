@@ -172,9 +172,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.3
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -334,7 +334,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 166afe3fb5380634b8cc1779d0675543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PeacefulBGMClips:
+  - Key: {fileID: 8300000, guid: ea4bd72ab4b2e7d499767e4313c0f63c, type: 3}
+    Value: 1
+  - Key: {fileID: 8300000, guid: 6368d1cdd0fccc047b200802381bde33, type: 3}
+    Value: 1
+  - Key: {fileID: 8300000, guid: f5de1a3fcbedc5945a44026af01a1a92, type: 3}
+    Value: 0.7
+  - Key: {fileID: 8300000, guid: ae435816bb16aed4d936f0096ac7122c, type: 3}
+    Value: 1
+  - Key: {fileID: 8300000, guid: 75e5ff15ffa899f4fa44675065056478, type: 3}
+    Value: 1
+  - Key: {fileID: 8300000, guid: 72ea96e7747578047835c23cef32c19d, type: 3}
+    Value: 0.8
+  - Key: {fileID: 8300000, guid: c768a8fd8bde5c944ae066e23c60b475, type: 3}
+    Value: 0.82
+  BattleBGMClip:
+    Key: {fileID: 8300000, guid: be7b8657a1f9d484186eca7cd6115cdc, type: 3}
+    Value: 0.3
   VoiceSource: {fileID: 683856445919821953}
   SfxParent: {fileID: 6905337912952180429}
   BackgroundMusic: {fileID: 176650057926370598}
   audioSettings: {fileID: 11400000, guid: e6a847660b64ed8469dd95b5780a6651, type: 2}
+  timeBetweenBGM: 10
