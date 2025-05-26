@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 775532473
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: d64a4b9bc65465b438d09cf04c058b43, type: 3}
   m_Color: {r: 0.1981132, g: 0.1981132, b: 0.1981132, a: 1}
@@ -263,7 +263,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 775532473
-  m_SortingLayer: 1
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: d64a4b9bc65465b438d09cf04c058b43, type: 3}
   m_Color: {r: 0, g: 0.4811321, b: 0.10645761, a: 1}
@@ -471,8 +471,8 @@ MonoBehaviour:
   resourcePrefab: {fileID: 1401573855155755980, guid: f3a45b427f1c4a04bb6d86cef956aac2, type: 3}
   buildAmountPerSecond: 10
   repairAmountPerSecond: 12
-  gatherAmountPerSecond: 1
-  maxHeldResourceCount: 30
+  gatherAmountPerSecond: 5
+  maxHeldResourceCount: 50
   currentResources:
     _serializedList:
     - Key: 0
