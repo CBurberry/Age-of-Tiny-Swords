@@ -44,4 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6add4a672d0921140b4bdb1219888f5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _charactersLayer: 6
   _targetIndicator: {fileID: 0}
+  _allowSelectingEnemies: 0

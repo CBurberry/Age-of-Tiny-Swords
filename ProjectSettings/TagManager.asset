@@ -54,3 +54,6 @@ TagManager:
   - name: FOW
     uniqueID: 2095591079
     locked: 0
+  - name: GroupSelect
+    uniqueID: 3227336099
+    locked: 0

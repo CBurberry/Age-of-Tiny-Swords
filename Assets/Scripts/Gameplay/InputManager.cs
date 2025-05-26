@@ -13,6 +13,7 @@ public class InputManager : MonoBehaviour
     [SerializeField] float _panEdgePerc = 0.15f;
     [SerializeField] float _dragTriggerScreenDistance = 30;
     [SerializeField] InputActionReference _mouseScrollRef;
+    [SerializeField] SpriteRenderer _groupSelectVisual; // 1x1 groups select square
     [SerializeField] RawImage _fogOfWar;
 
     Subject<Vector2> _singleSelect = new Subject<Vector2>();
@@ -22,7 +23,8 @@ public class InputManager : MonoBehaviour
     Subject<float> _zoom = new Subject<float>();
 
     Camera _camera;
-    Vector3 _mouseStartPos;
+    Vector3 _mouseStartScreenPos;
+    Vector3 _mouseStartWorldPos;
     bool _isDragging;
     bool _clickProcessed;
     Texture2D _readableTexture;
@@ -38,6 +40,7 @@ public class InputManager : MonoBehaviour
     {
         _camera = Camera.main;
         _mouseScrollRef.action.Enable();
+        _groupSelectVisual.gameObject.SetActive(false);
     }
 
     void OnDisable()
@@ -55,37 +58,55 @@ public class InputManager : MonoBehaviour
 
     void HandleMouseButtons()
     {
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject() && IsRevealedArea(Input.mousePosition))
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            _mouseStartPos = Input.mousePosition;
+            _mouseStartScreenPos = Input.mousePosition;
+            _mouseStartWorldPos = MouseToWorldPos(Input.mousePosition);
             _isDragging = false;
             _clickProcessed = true;
         }
         else if (_clickProcessed && Input.GetMouseButton(0))
         {
-            if (!_isDragging && (_mouseStartPos - Input.mousePosition).magnitude >= _dragTriggerScreenDistance)
+            var currentScreenPos = Input.mousePosition;
+            var currentWorldPos = MouseToWorldPos(Input.mousePosition);
+            var screenDirection = _mouseStartScreenPos - currentScreenPos;
+
+            if (!_isDragging)
             {
-                _isDragging = true;
+                if (screenDirection.magnitude >= _dragTriggerScreenDistance)
+                {
+                    _isDragging = true;
+                }
+            }
+            else
+            {
+                var worldDirection = _mouseStartWorldPos - currentWorldPos;
+                _groupSelectVisual.transform.position = (_mouseStartWorldPos + currentWorldPos) / 2f;
+                _groupSelectVisual.transform.localScale = new Vector3(Mathf.Abs(worldDirection.x), Mathf.Abs(worldDirection.y), 1);
+                _groupSelectVisual.gameObject.SetActive(true);
             }
         }
         else if (Input.GetMouseButtonUp(0))
         {
             if (_clickProcessed)
             {
+                var currentWorldPos = MouseToWorldPos(Input.mousePosition);
+
                 if (_isDragging)
                 {
-                    _groupSelect.OnNext((MouseToWorldPos(_mouseStartPos), MouseToWorldPos(Input.mousePosition)));
+                    _groupSelect.OnNext((_mouseStartWorldPos, currentWorldPos));
                 }
-                else
+                else if (IsRevealedArea(Input.mousePosition))
                 {
-                    _singleSelect.OnNext(MouseToWorldPos(Input.mousePosition));
+                    _singleSelect.OnNext(currentWorldPos);
                 }
             }
-            else if (!_isDragging && !EventSystem.current.IsPointerOverGameObject() && !IsRevealedArea(Input.mousePosition))
+            else if (!EventSystem.current.IsPointerOverGameObject() && !IsRevealedArea(Input.mousePosition))
             {
                 _singleSelect.OnNext(new Vector3(float.MaxValue, float.MaxValue, -100));
             }
-           
+            _groupSelectVisual.gameObject.SetActive(false);
+
             _clickProcessed = false;
         }
         // interact

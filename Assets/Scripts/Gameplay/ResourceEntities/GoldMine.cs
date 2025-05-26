@@ -104,12 +104,14 @@ public class GoldMine : AUnitInteractableNonUnit, IResourceSource
     {
         if (IsDepleted) 
         {
-            throw new InvalidOperationException($"[{nameof(GoldMine)}.{nameof(EnterMine)}]: Cannot enter a depleted mine!");
+            Debug.LogError($"[{nameof(GoldMine)}.{nameof(EnterMine)}]: Cannot enter a depleted mine!");
+            return;
         }
 
         if (miners.Contains(unit)) 
         {
-            throw new InvalidOperationException($"[{nameof(GoldMine)}.{nameof(EnterMine)}]: Miner is trying to enter the same mine it's already in!");
+            Debug.LogError($"[{nameof(GoldMine)}.{nameof(EnterMine)}]: Miner is trying to enter the same mine it's already in!");
+            return;
         }
 
         miners.Add(unit);

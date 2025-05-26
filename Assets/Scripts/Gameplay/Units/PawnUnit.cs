@@ -261,6 +261,11 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     //TODO: Time the hit with the animation connecting the hit
     private IEnumerator Attacking()
     {
+        if (!(interactionTarget as MonoBehaviour))
+        {
+            yield break;
+        }
+
         IDamageable damageTarget = interactionTarget as IDamageable;
         Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
         while (condition.Invoke())
