@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 public class Sheep : AUnitInteractableUnit
 {
-    private const float IDLE_MOVE_TIME = 10f;
+    private const float IDLE_MOVE_TIME = 25f;
 
     [SerializeField]
     private GameObject resourcePrefab;
@@ -26,6 +26,7 @@ public class Sheep : AUnitInteractableUnit
     private Vector2Int maxFoundAmountRange;
 
     private UnitIdleTimer idleTimer;
+    private float randomOffset;
 
     protected override void Awake()
     {
@@ -33,11 +34,12 @@ public class Sheep : AUnitInteractableUnit
         currentHp = maxHp;
         foodAmount = randomizeMaxFoodAmount ? Random.Range(maxFoundAmountRange.x, maxFoundAmountRange.y) : maxFoodAmount;
         idleTimer = GetComponent<UnitIdleTimer>();
+        randomOffset = Random.Range(0f, 10f);
     }
 
     protected override void Update()
     {
-        if (IsIdle && idleTimer.Timer > IDLE_MOVE_TIME) 
+        if (idleTimer.Timer > IDLE_MOVE_TIME + randomOffset) 
         {
             RandomMove();
         }
