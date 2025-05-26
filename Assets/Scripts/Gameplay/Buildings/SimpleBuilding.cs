@@ -167,10 +167,17 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
                     }
                 }
 
-                if (!requiresCollider && faction == GameManager.Instance.CurrentPlayerFaction)
+                try
                 {
-                    _fogOfWarManager.UpdateArea(transform.position + ColliderOffset, data.FOV).Forget();
+                    if (!requiresCollider && faction == GameManager.Instance.CurrentPlayerFaction)
+                    {
+                        _fogOfWarManager.UpdateArea(transform.position + ColliderOffset, data.FOV).Forget();
+                    }
                 }
+                catch
+                {
+                }
+               
             }).AddTo(_disposables);
         //To allow for later overriding if needed
         faction = data.Faction;
