@@ -60,6 +60,14 @@ public class GoblinAI : MonoBehaviour
     private float spawnAtTime;
     private Player player;
 
+    //(1) Spawning logic will be capped to at most one spawn up to a maximum of 20 per spawn timer elapse
+    //    cap increases for every time the spawn timer elapses
+    //(2) Attack order will be suppressed for the first 5 minutes of the game
+    private float gameTime;
+    private const float attackMissiveSuppresion = 300f;
+    private int spawnedThisWave;
+    private int maxSpawns;
+
     private void Awake()
     {
         player = GetComponent<Player>();
@@ -67,6 +75,7 @@ public class GoblinAI : MonoBehaviour
 
     private void OnEnable()
     {
+        gameTime = 0f;
         ResetSpawnTimer();
         ResetUnitAttackTimer();
         ResetUnitUpdateTimer();
@@ -74,6 +83,9 @@ public class GoblinAI : MonoBehaviour
 
     private void Update()
     {
+        gameTime += Time.deltaTime;
+        maxSpawns = (int)Mathf.Clamp(gameTime * 0.0166f, 0f, 20f);
+
         if (player.CanBuildMoreUnits)
         {
             elapsedSpawnTimer += Time.deltaTime;
@@ -120,14 +132,22 @@ public class GoblinAI : MonoBehaviour
 
     private void TriggerAllSpawns()
     {
+        spawnedThisWave = 0;
         AUnitInteractableUnit spawnedUnit = null;
         Vector3 randomPoint;
         foreach (SimpleBuilding building in player.Buildings)
         {
+            //Exit early if we can't spawn yet
+            if (spawnedThisWave >= maxSpawns) 
+            {
+                return;
+            }
+
             //Spawn a unit for the given building type (goblins only have 1 per building)
             if (building != null && building.State == BuildingStates.Constructed)
             {
                 spawnedUnit = building.SpawnUnitInstance(0);
+                spawnedThisWave++;
 
                 //Move the spawn slightly so they're not all stacked on each other
                 randomPoint = Random.insideUnitCircle;
@@ -146,6 +166,12 @@ public class GoblinAI : MonoBehaviour
 
     private void IssueAttackMissive()
     {
+        //Ignore ordering missives during the start of the game
+        if (gameTime < attackMissiveSuppresion) 
+        {
+            return;
+        }
+
         //Determine a random number of units (max all alive units), to send at the enemy at once
         int attackForceSize = Random.Range(randomRangeAttackingUnitCount.x, randomRangeAttackingUnitCount.y);
         if (attackForceSize == 0)
