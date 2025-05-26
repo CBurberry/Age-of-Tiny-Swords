@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1df3f1e8a43985540848776e2e333fad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _minWorldBounds: {x: -43, y: -25}
-  _maxWorldBounds: {x: 68, y: 67}
+  _minWorldBounds: {x: -44.92, y: -26}
+  _maxWorldBounds: {x: 68.7, y: 67.7}
   _orthoRange: {x: 3, y: 9}
   _panSpeed: 10
   _zoomSensitivity: -1
