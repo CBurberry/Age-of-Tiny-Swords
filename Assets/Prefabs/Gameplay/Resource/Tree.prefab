@@ -187,7 +187,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactableContexts: 8
   animator: {fileID: 4165063641854332504}
-  maxWood: 100
+  maxWood: 75
   currentWood: 0
 --- !u!70 &7277054395791705694
 CapsuleCollider2D:

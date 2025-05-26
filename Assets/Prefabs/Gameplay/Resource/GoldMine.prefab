@@ -102,7 +102,7 @@ MonoBehaviour:
   interactableContexts: 8
   SpriteRenderer: {fileID: 1725714606418054804}
   state: 0
-  maxGold: 250
+  maxGold: 300
   currentGold: 0
   numberOfHitsToEjectPawns: 4
   sprites:
@@ -229,6 +229,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   version: 1
-  uniqueID: 5741864487620217776
+  uniqueID: 1658262183065943278
   updateError: 1
   checkTime: 0.2

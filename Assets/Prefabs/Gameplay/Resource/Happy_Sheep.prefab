@@ -235,11 +235,11 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: e747ea3e0469f6045bb52406e5de2e6a, type: 2}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.81
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.04
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -251,15 +251,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 370d3c9810e68b4428c8bc912e98cff4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59bb9266b58951b45b629c7a9bbd4966, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 0}
+  data: {fileID: 11400000, guid: 551e653cd48000e40b0fd48642c8d53c, type: 2}
   healthBar: {fileID: 8467280940562667729}
   spawnDeadPrefab: 0
   deadPrefab: {fileID: 0}
