@@ -109,6 +109,16 @@ public class MeleeUnit : AUnitInteractableUnit
     //TODO: Time the hit with the animation connecting the hit
     private IEnumerator Attacking()
     {
+        if (!(interactionTarget as MonoBehaviour))
+        {
+            if (attackTarget != null)
+            {
+                attackTarget.OnDeath -= OnTargetKilled;
+                attackTarget = null;
+            }
+            yield break;
+        }
+
         attackTarget = interactionTarget as IDamageable;
         attackTarget.OnDeath += OnTargetKilled;
         Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);

@@ -166,13 +166,24 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         //TODO: Properly handle behaviour changes between active and inactive
         //For now, just set to always be active once we start attacking
-        animator.SetBool(ANIMATION_BOOL_ACTIVE, true);
         StartCoroutine(Attacking());
     }
 
     //Move to, countdown timer, if enemy still close, go boom, otherwise MoveTo again
     private IEnumerator Attacking()
     {
+        if (!(interactionTarget as MonoBehaviour))
+        {
+            if (attackTarget != null)
+            {
+                attackTarget.OnDeath -= OnTargetKilled;
+                attackTarget = null;
+            }
+            yield break;
+        }
+
+        animator.SetBool(ANIMATION_BOOL_ACTIVE, true);
+
         attackTarget = interactionTarget as IDamageable;
         attackTarget.OnDeath += OnTargetKilled;
         Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
