@@ -10,7 +10,7 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField] Vector2 _minWorldBounds;
     [SerializeField] Vector2 _maxWorldBounds;
-    [SerializeField, MinMaxSlider(0f, 20f)] Vector2 _orthoRange;
+    [SerializeField, MinMaxSlider(0f, 25f)] Vector2 _orthoRange;
     [SerializeField] float _panSpeed;
     [SerializeField] float _zoomSensitivity = 5f;
 
