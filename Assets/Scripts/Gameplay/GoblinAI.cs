@@ -95,9 +95,8 @@ public class GoblinAI : MonoBehaviour
         elapsedUnitUpdateTimer += Time.deltaTime;
         if (elapsedUnitUpdateTimer > updateAtTime)
         {
-            //TODO: Test/Implement this one after attack missive is done
-            //UpdateUnits();
-            //ResetUnitUpdateTimer();
+            UpdateUnits();
+            ResetUnitUpdateTimer();
         }
     }
 
@@ -121,12 +120,18 @@ public class GoblinAI : MonoBehaviour
 
     private void TriggerAllSpawns()
     {
+        AUnitInteractableUnit spawnedUnit = null;
+        Vector3 randomPoint;
         foreach (SimpleBuilding building in player.Buildings)
         {
             //Spawn a unit for the given building type (goblins only have 1 per building)
             if (building != null && building.State == BuildingStates.Constructed)
             {
-                building.SpawnUnitInstance(0);
+                spawnedUnit = building.SpawnUnitInstance(0);
+
+                //Move the spawn slightly so they're not all stacked on each other
+                randomPoint = Random.insideUnitCircle;
+                spawnedUnit.MoveTo(building.SpawnPosition + new Vector3(randomPoint.x, randomPoint.y, 0f));
             }
         }
 
@@ -134,7 +139,9 @@ public class GoblinAI : MonoBehaviour
         SimpleBuilding randomBuilding = player.Buildings.Where(x => x != null && x.State == BuildingStates.Constructed)
             .ToList().PickRandom();
 
-        Instantiate(barrel, randomBuilding.SpawnPosition, Quaternion.identity, GameManager.Instance.UnitsParent);
+        randomPoint = Random.insideUnitCircle;
+        spawnedUnit = Instantiate(barrel, randomBuilding.SpawnPosition, Quaternion.identity, GameManager.Instance.UnitsParent);
+        spawnedUnit.MoveTo(randomBuilding.SpawnPosition + new Vector3(randomPoint.x, randomPoint.y, 0f));
     }
 
     private void IssueAttackMissive()
@@ -148,9 +155,15 @@ public class GoblinAI : MonoBehaviour
 
         //Select a random number of units from the unit pool that are idling
         List<SimpleUnit> allIdlingUnits = GetIdlingUnits();
+        int idleCount = allIdlingUnits.Count;
         Debug.Log($"{nameof(IssueAttackMissive)}: Idle Unit Count ({allIdlingUnits.Count})");
-        int rand = Math.Min(attackForceSize, allIdlingUnits.Count);
-        Debug.Log($"{nameof(IssueAttackMissive)}: rand ({rand})");
+
+        if (idleCount == 0) 
+        {
+            return;
+        }
+
+        int rand = Math.Min(attackForceSize, idleCount);
         IEnumerable<SimpleUnit> attackCandidates = allIdlingUnits.PickRandom(rand);
 
         //Pick a random attack target from the Knights faction
@@ -212,7 +225,8 @@ public class GoblinAI : MonoBehaviour
 
     private void GiveUnitOptionalRoutine(SimpleUnit unit)
     {
-        //TODO: Select a routine between moving to a predetermined transform or to attack an enemy
-        //TODO: Arrange a timer or condition group that gives a mandate to go attack the enemy all at once for a subset of units
+        //For now, just move in a small radius about position
+        Vector3 randomPoint = Random.insideUnitCircle;
+        unit.MoveTo(unit.transform.position + new Vector3(randomPoint.x, randomPoint.y, 0f));
     }
 }

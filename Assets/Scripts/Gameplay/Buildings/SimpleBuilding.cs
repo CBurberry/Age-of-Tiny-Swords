@@ -436,10 +436,8 @@ public class SimpleBuilding : AUnitInteractableNonUnit, IBuilding
         return true;
     }
 
-    public void SpawnUnitInstance(int index)
-    {
-        Instantiate(SpawnableUnits[index].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, GameManager.Instance.UnitsParent);
-    }
+    public AUnitInteractableUnit SpawnUnitInstance(int index)
+        => Instantiate(SpawnableUnits[index].UnitToSpawn, spawnPoint.transform.position, Quaternion.identity, GameManager.Instance.UnitsParent);
 
     protected virtual void CompleteConstruction()
     {

@@ -3565,15 +3565,15 @@ PrefabInstance:
       objectReference: {fileID: 1032397646689786068, guid: 1e34cbae0f62287419c70e795df305a0, type: 3}
     - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
       propertyPath: unitIdleMinTime
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
-      propertyPath: randomRangeSpawnTime.x
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
-      propertyPath: randomRangeSpawnTime.y
+      propertyPath: randomRangeSpawnTime.x
       value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
+      propertyPath: randomRangeSpawnTime.y
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
       propertyPath: randomRangeAttackingUnitCount.x
@@ -3593,11 +3593,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
       propertyPath: randomRangeDelayBetweenAttackOrders.x
-      value: 30
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 4043968200332175493, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
       propertyPath: randomRangeDelayBetweenAttackOrders.y
-      value: 60
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 4276628649796871166, guid: 18d1e2f1d432e9f4ea50ae8f2cef468f, type: 3}
       propertyPath: m_Name
