@@ -6,9 +6,7 @@ using System.Linq;
 using UniDi;
 using UniRx;
 using UniRx.Triggers;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class PlayerInteractionManager : MonoBehaviour
 {
