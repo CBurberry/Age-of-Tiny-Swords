@@ -63218,14 +63218,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraManager
       objectReference: {fileID: 0}
-    - target: {fileID: 9149133055881975079, guid: 9ebdd4b49107ac34994a8db0c480f126, type: 3}
-      propertyPath: _orthoRange.y
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 9149133055881975079, guid: 9ebdd4b49107ac34994a8db0c480f126, type: 3}
-      propertyPath: _maxWorldBounds.y
-      value: 72.4
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -63345,6 +63337,10 @@ PrefabInstance:
       propertyPath: _fogOfWar
       value: 
       objectReference: {fileID: 1630330195}
+    - target: {fileID: 1518302349501606547, guid: a3bad6e2d605b6f4aa9835eb12ff6467, type: 3}
+      propertyPath: _scrollSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 1518302349501606547, guid: a3bad6e2d605b6f4aa9835eb12ff6467, type: 3}
       propertyPath: _mouseScrollAltInBtn
       value: 
