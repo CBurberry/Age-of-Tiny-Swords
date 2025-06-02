@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System;
 using UniRx;
 using UnityEngine;
@@ -24,6 +25,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private bool enableGoblinAI;
 
+    [SerializeField] 
+    private Transform cameraResetTransform;
+
+    [SerializeField]
+    private FogOfWarManager fogOfWarManager;
+
+    [SerializeField]
+    private float initialRevealRadius;
+
     private void Awake()
     {
         if (Instance == null)
@@ -47,14 +57,12 @@ public class GameManager : MonoBehaviour
         Knights.OnPlayerDied += OnPlayerDied;
         Goblins.OnPlayerDied += OnPlayerDied;
 
-        UnitsParent = GameObject.Find("Units")?.transform;
-        BuildingsParent = GameObject.Find("Buildings")?.transform;
-        ResourcesParent = GameObject.Find("Resources")?.transform;
-
         if (Goblins.TryGetComponent(out GoblinAI AI)) 
         {
             AI.enabled = enableGoblinAI;
         }
+
+        RevealStartingArea();
     }
 
     public void TogglePause()
@@ -74,6 +82,14 @@ public class GameManager : MonoBehaviour
     private void OnPlayerDied(Faction diedFaction)
     {
         _gameOver.OnNext(diedFaction == Faction.Goblins);
+    }
+
+    private void RevealStartingArea()
+    {
+        if (initialRevealRadius > 0f) 
+        {
+            fogOfWarManager.UpdateArea(cameraResetTransform.position, initialRevealRadius).Forget();
+        }
     }
 
     public static Player GetPlayer(Faction faction)

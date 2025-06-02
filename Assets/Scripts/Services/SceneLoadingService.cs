@@ -19,7 +19,7 @@ public class SceneLoadingService
     {
         _isLoading.OnNext(true);
         await SceneManager.LoadSceneAsync(sceneName);
+        await UniTask.Delay(TimeSpan.FromSeconds(2.5), ignoreTimeScale: true);
         _isLoading.OnNext(false);
     }
-
 }

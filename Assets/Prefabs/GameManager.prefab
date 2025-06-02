@@ -63,7 +63,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f5485173be84984990624dcefbeee6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  randomRangeSpawnTimer: {x: 0, y: 30}
+  barrel: {fileID: 1032397646689786068, guid: 1e34cbae0f62287419c70e795df305a0, type: 3}
+  unitIdleMinTime: 5
+  randomRangeDelayBetweenUnitUpdates: {x: 10, y: 30}
+  elapsedUnitUpdateTimer: 0
+  updateAtTime: 0
+  randomRangeAttackingUnitCount: {x: 5, y: 10}
+  randomRangeDelayBetweenAttackOrders: {x: 90, y: 180}
+  elapsedAttackOrderTimer: 0
+  attackAtTime: 0
+  randomRangeSpawnTime: {x: 60, y: 240}
   elapsedSpawnTimer: 0
   spawnAtTime: 0
 --- !u!1 &3150992446793043974
@@ -196,4 +205,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Knights: {fileID: 667299112207307215}
   Goblins: {fileID: 4914224494609405446}
+  UnitsParent: {fileID: 0}
+  BuildingsParent: {fileID: 0}
+  ResourcesParent: {fileID: 0}
   enableGoblinAI: 1
+  cameraResetTransform: {fileID: 0}
+  fogOfWarManager: {fileID: 0}
+  initialRevealRadius: 10
