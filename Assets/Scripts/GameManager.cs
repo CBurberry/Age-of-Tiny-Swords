@@ -7,12 +7,15 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    public bool IsPaused => _paused.Value;
     public Faction CurrentPlayerFaction => Faction.Knights;
     public Player Knights;
     public Player Goblins;
     public IObservable<bool> ObserveGameOver() => _gameOver;
+    public IObservable<bool> ObservePause() => _paused;
 
     Subject<bool> _gameOver = new();
+    BehaviorSubject<bool> _paused = new(false);
 
     public Transform UnitsParent;
     public Transform BuildingsParent;
@@ -52,6 +55,20 @@ public class GameManager : MonoBehaviour
         {
             AI.enabled = enableGoblinAI;
         }
+    }
+
+    public void TogglePause()
+    {
+        if (!_paused.Value)
+        {
+            Time.timeScale = 0f;
+        }
+        else 
+        {
+            Time.timeScale = 1f;
+        }
+
+        _paused.OnNext(!_paused.Value);
     }
 
     private void OnPlayerDied(Faction diedFaction)

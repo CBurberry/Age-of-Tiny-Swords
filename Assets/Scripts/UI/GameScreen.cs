@@ -14,6 +14,7 @@ public class GameScreen : MonoBehaviour
     [Inject] UIService _uiService;
     [SerializeField] Button _backBtn;
     [SerializeField] Button _homeBtn;
+    [SerializeField] Button _pauseBtn;
     [SerializeField] Transform _cameraResetTransform;
 
     GameViewModel _model;
@@ -30,6 +31,7 @@ public class GameScreen : MonoBehaviour
             pos.z = camera.transform.position.z;
             camera.transform.position = pos;
         }).AddTo(_disposables);
+        _pauseBtn.OnClickAsObservable().Subscribe(_ => GameManager.Instance.TogglePause()).AddTo(_disposables);
     }
 
     void OnDestroy()

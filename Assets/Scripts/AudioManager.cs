@@ -4,6 +4,7 @@ using RuntimeStatics;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UniRx;
 using UnityEngine;
 
 public class AudioManager : MonoBehaviour
@@ -36,6 +37,7 @@ public class AudioManager : MonoBehaviour
     private AudioSource tempSfxAudioSource;
     private AudioClip lastPlayedBgm;
     private float elapsedIdleTime;
+    private CompositeDisposable _disposables = new();
 
     private void Awake()
     {
@@ -54,6 +56,18 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.ObservePause().Subscribe(isPaused =>
+        {
+            if (isPaused)
+            {
+                Instance.PauseBackgroundMusic();
+            }
+            else 
+            {
+                Instance.UnpauseBackgroundMusic();
+            };
+        }).AddTo(_disposables);
+
         PlayRandomPeacefulBGM();
     }
 
@@ -77,6 +91,11 @@ public class AudioManager : MonoBehaviour
                 BackgroundMusic.volume -= Time.deltaTime * 0.2f;
             }
         }
+    }
+
+    private void OnDestroy()
+    {
+        _disposables.Clear();
     }
 
     [Button("PlayRandomPeacefulBGM")]
@@ -144,6 +163,11 @@ public class AudioManager : MonoBehaviour
     public void PauseBackgroundMusic()
     {
         BackgroundMusic.Pause();
+    }
+
+    public void UnpauseBackgroundMusic()
+    {
+        BackgroundMusic.UnPause();
     }
 
     public void CrossfadeBackgroundMusic(AudioClip clip, float volume, float crossfadeTime = 1f)
