@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -56,19 +57,24 @@ public class AudioManager : MonoBehaviour
 
     private void Start()
     {
-        GameManager.Instance.ObservePause().Subscribe(isPaused =>
+        if (GameManager.Instance != null)
         {
-            if (isPaused)
-            {
-                Instance.PauseBackgroundMusic();
-            }
-            else 
-            {
-                Instance.UnpauseBackgroundMusic();
-            };
-        }).AddTo(_disposables);
-
+            SubscribeToGamePause();
+        }
+        else 
+        {
+            SceneManager.activeSceneChanged += OnSceneChanged;
+        }
+        
         PlayRandomPeacefulBGM();
+    }
+
+    private void OnSceneChanged(Scene arg0, Scene arg1)
+    {
+        if (GameManager.Instance != null) 
+        {
+            SubscribeToGamePause();
+        }
     }
 
     private void Update()
@@ -259,5 +265,20 @@ public class AudioManager : MonoBehaviour
         {
             tempSfxAudioSource.UnPause();
         }
+    }
+
+    private void SubscribeToGamePause()
+    {
+        GameManager.Instance.ObservePause().Subscribe(isPaused =>
+        {
+            if (isPaused)
+            {
+                Instance.PauseBackgroundMusic();
+            }
+            else
+            {
+                Instance.UnpauseBackgroundMusic();
+            };
+        }).AddTo(_disposables);
     }
 }
