@@ -17,7 +17,8 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     private const string ANIMSTATE_CARRYING_IDLE = "Carry_Idle";
     private const string ANIMSTATE_CARRYING_RUN = "Carry_Run";
 
-    private const float resourceItemSeekDistance = 3f;
+    private const float RESOURCE_ITEM_SEEK_DISTANCE = 3f;
+    private const float TREE_SEEK_DISTANCE = 3f;
 
     [SerializeField]
     private HeldResourcesVisual heldResourcesVisual;
@@ -345,6 +346,21 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         animator.SetBool(ANIMATION_BOOL_BUILDING, false);
     }
 
+    private void TryToFindNearbyTreeToChop()
+    {
+        var target = Physics2D.OverlapCircleAll(transform.position, TREE_SEEK_DISTANCE)
+            .Where(x => x != null && x.gameObject.TryGetComponent(out Tree tree) && !tree.IsDepleted && !tree.DestructionPending)
+            .Take(3)
+            .OrderBy(x => Vector3.Distance(x.transform.position, transform.position))
+            .FirstOrDefault();
+
+        if (target != null && target.gameObject.TryGetComponent(out Tree tree)) 
+        {
+            interactionTarget = tree;
+            MoveTo(interactionTarget.Position, StartChoppingTree, false);
+        }
+    }
+
     //Start a cycle of building until full or tree felled
     private void StartChoppingTree()
     {
@@ -374,7 +390,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         {
             if (tree.IsDepleted) 
             {
-                MoveToNearestBuilding(DepositResources);
+                MoveToNearestBuildingDepositAndReturn(TryToFindNearbyTreeToChop);
             }
             else 
             {
@@ -467,7 +483,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         var allResourceItems = FindObjectsOfType<ResourceItem>();
         var nearbyFoodItems = allResourceItems.Where(x => x.ResourceType == ResourceType.Food
-                    && Vector3.Distance(transform.position, x.transform.position) <= resourceItemSeekDistance);
+                    && Vector3.Distance(transform.position, x.transform.position) <= RESOURCE_ITEM_SEEK_DISTANCE);
         var firstFoodItem = nearbyFoodItems.FirstOrDefault();
         if (firstFoodItem == null)
         {
