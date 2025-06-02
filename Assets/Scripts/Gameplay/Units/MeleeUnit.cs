@@ -203,7 +203,7 @@ public class MeleeUnit : AUnitInteractableUnit
     {
         base.OnDamaged(attacker);
 
-        if (!isMoving && !IsAttacking())
+        if (!isMoving && !IsAttacking() && attacker.Faction != Faction)
         {
             attackTarget = attacker;
             interactionTarget = attackTarget as IUnitInteractable;

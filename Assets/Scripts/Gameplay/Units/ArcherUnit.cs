@@ -73,7 +73,7 @@ public class ArcherUnit : RangedUnit
     {
         projectile.OnComplete = () =>
         {
-            if (!(interactionTarget as MonoBehaviour))
+            if (IUnitInteractable.IsValid(interactionTarget))
             {
                 (interactionTarget as IDamageable)?.ApplyDamage(data.BaseAttackDamage, this);
             }

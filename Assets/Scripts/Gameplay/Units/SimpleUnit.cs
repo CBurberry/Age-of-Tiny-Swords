@@ -169,7 +169,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
 
     public virtual void ApplyDamage(int value, IDamageable attacker)
     {
-        if (value == 0f)
+        if (value == 0 || currentHp <= 0)
         {
             return;
         }
@@ -182,7 +182,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         bool shouldShow = currentHp > 0f && currentHp < maxHp;
         healthBar.gameObject.SetActive(shouldShow);
 
-        if (currentHp <= 0f)
+        if (currentHp <= 0)
         {
             TriggerDeath();
         }
