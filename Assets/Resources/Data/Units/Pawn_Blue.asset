@@ -19,4 +19,4 @@ MonoBehaviour:
   AttackDistance: 1
   DetectionDistance: 1
   BaseAttackDamage: 5
-  FOV: 2
+  FOV: 2.75

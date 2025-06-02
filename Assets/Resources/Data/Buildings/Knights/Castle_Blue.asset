@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
   m_Name: Castle_Blue
   m_EditorClassIdentifier: 
-  FOV: 6.5
+  FOV: 7.5
   MaxHp: 2500
   PopulationIncrease: 3
   HasAnimatedPrefab: 0

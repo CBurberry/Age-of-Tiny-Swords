@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c848177d22e0844a88d851dd41d3724, type: 3}
   m_Name: Tower_Blue
   m_EditorClassIdentifier: 
-  FOV: 5
+  FOV: 8.5
   MaxHp: 1000
   PopulationIncrease: 3
   HasAnimatedPrefab: 0
