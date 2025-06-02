@@ -186,7 +186,7 @@ public class ExplodingUnit : AUnitInteractableUnit
 
         attackTarget = interactionTarget as IDamageable;
         attackTarget.OnDeath += OnTargetKilled;
-        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke())
         {
             if (!IsTargetWithinDistance(attackTarget, out _))
@@ -247,7 +247,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         GoldMine mine = interactionTarget as GoldMine;
         Vector3 closestPosition;
-        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke())
         {
             closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);

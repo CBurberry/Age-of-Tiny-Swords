@@ -277,7 +277,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
         bool isAttackingSheep = interactionTarget is Sheep;
         IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
@@ -314,7 +314,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
     private IEnumerator Building()
     {
-        Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.PreConstruction && !isMoving && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.PreConstruction && !isMoving && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke()) 
         {
             buildingTarget.Build(buildAmountPerSecond);
@@ -335,7 +335,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     private IEnumerator Repairing()
     {
         Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.Constructed
-            && buildingTarget.IsDamaged && !isMoving && !interactionTarget.DestructionPending;
+            && buildingTarget.IsDamaged && !isMoving && IUnitInteractable.IsValid(interactionTarget);
 
         while (condition.Invoke())
         {
@@ -373,7 +373,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         Tree tree = interactionTarget as Tree;
         int overflow = 0;
-        Func<bool> condition = () => tree != null && !tree.IsDepleted && overflow == 0 && !isMoving && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => tree != null && !tree.IsDepleted && overflow == 0 && !isMoving && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke()) 
         {
             AddResource(ResourceType.Wood, tree.Chopped(gatherAmountPerSecond), out overflow);
@@ -412,7 +412,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         GoldMine mine = interactionTarget as GoldMine;
         int overflow = 0;
-        Func<bool> condition = () => mine != null && !mine.IsDepleted && mine.IsBeingMined && overflow == 0 && !isMoving && !interactionTarget.DestructionPending;
+        Func<bool> condition = () => mine != null && !mine.IsDepleted && mine.IsBeingMined && overflow == 0 && !isMoving && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke())
         {
             AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);

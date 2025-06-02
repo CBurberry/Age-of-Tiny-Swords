@@ -30,6 +30,8 @@ public interface IUnitInteractable
     /// <param name="interactableContexts">Contexts that apply</param>
     /// <returns></returns>
     bool CanInteract(SimpleUnit unit, UnitInteractContexts contexts, out UnitInteractContexts interactableContexts);
+
+    static bool IsValid(IUnitInteractable interactable) => interactable != null && !interactable.DestructionPending;
 }
 
 [System.Flags]
