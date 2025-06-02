@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Torch_Red
   m_EditorClassIdentifier: 
   Faction: 2
-  MaxHp: 175
+  MaxHp: 225
   MovementSpeed: 1
   AttackSpeed: 1
   AttackDistance: 1
   DetectionDistance: 3.5
   BaseAttackDamage: 30
+  FOV: 0

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Warrior_Blue
   m_EditorClassIdentifier: 
   Faction: 1
-  MaxHp: 160
+  MaxHp: 240
   MovementSpeed: 1
   AttackSpeed: 1
   AttackDistance: 1
