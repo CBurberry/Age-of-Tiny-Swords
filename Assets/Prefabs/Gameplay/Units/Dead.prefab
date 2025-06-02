@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d3580111fbc1f45bcfc682eb0a4050, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buryAfterTime: 0
+  buryAfterTime: 1
   deadClip: {fileID: 7400000, guid: 011de68fbb8cb7f41a6c5ef41de7ac16, type: 2}
   buriedClip: {fileID: 7400000, guid: c4c154a5baaaf1d4fadf7d1aaaa0c7fe, type: 2}
-  timeToBuried: 5
+  timeToBuried: 30
