@@ -121,19 +121,20 @@ public class MeleeUnit : AUnitInteractableUnit
 
         attackTarget = interactionTarget as IDamageable;
         attackTarget.OnDeath += OnTargetKilled;
-        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
             if (!IsTargetWithinDistance(attackTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                yield return new WaitForEndOfFrame();
                 yield break;
             }
             else
             {
-                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                Vector3 direction = (interactionTarget.Position - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 FaceTarget(angle);
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, true);
@@ -160,7 +161,7 @@ public class MeleeUnit : AUnitInteractableUnit
     {
         GoldMine mine = interactionTarget as GoldMine;
         Vector3 closestPosition;
-        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);
@@ -170,7 +171,7 @@ public class MeleeUnit : AUnitInteractableUnit
             if (magnitude > data.AttackDistance)
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttackMine, false, stopAtAttackDistance: true);
+                MoveTo(interactionTarget.Position, StartAttackMine, false, stopAtAttackDistance: true);
                 yield break;
             }
             else

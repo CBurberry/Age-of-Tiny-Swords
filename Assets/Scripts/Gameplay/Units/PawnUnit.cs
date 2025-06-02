@@ -221,7 +221,10 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         {
             DepositResources();
             interactionTarget = cachedInteractionTarget;
-            MoveTo((interactionTarget as MonoBehaviour).transform, onMoveComplete, false);
+            if (interactionTarget != null && !interactionTarget.DestructionPending) 
+            {
+                MoveTo(interactionTarget.Position, onMoveComplete, false);
+            }
         }, true);
     }
 
@@ -263,18 +266,25 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         if (!(interactionTarget as MonoBehaviour))
         {
+            Debug.Log($"Unit '{name}' exited early on attacking due to a null interaction target! Was this target a sheep? {lastInteractionTargetType == typeof(Sheep)}");
+            if (lastInteractionTargetType == typeof(Sheep)) 
+            {
+                CollectAllNearbyFoodItems();
+            }
             yield break;
         }
 
+        bool isAttackingSheep = interactionTarget is Sheep;
         IDamageable damageTarget = interactionTarget as IDamageable;
-        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => damageTarget != null && damageTarget.HpAlpha > 0f && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
             if (!IsTargetWithinDistance(damageTarget, out _))
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                yield return new WaitForEndOfFrame();
                 yield break;
             }
             else 
@@ -285,13 +295,11 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
             }
         }
 
+        Debug.Log($"Unit '{name}' completed attacking. Was attacking sheep: {isAttackingSheep}");
         animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
-
-        //If the target was a sheep, its dead, and there is some meat on the floor, pick it up and bring it back
-        //NOTE: HANDLE CASE WHERE MULTIPLE PAWNS MAY BE TRYING TO ACCESS THE SAME ITEM!
-        if (interactionTarget is Sheep)
+        if (isAttackingSheep)
         {
-            OnSheepKill();
+            CollectAllNearbyFoodItems();
         }
     }
 
@@ -305,7 +313,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
 
     private IEnumerator Building()
     {
-        Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.PreConstruction && !isMoving && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.PreConstruction && !isMoving && !interactionTarget.DestructionPending;
         while (condition.Invoke()) 
         {
             buildingTarget.Build(buildAmountPerSecond);
@@ -326,7 +334,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     private IEnumerator Repairing()
     {
         Func<bool> condition = () => buildingTarget != null && buildingTarget.State == BuildingStates.Constructed
-            && buildingTarget.IsDamaged && !isMoving && (interactionTarget as MonoBehaviour);
+            && buildingTarget.IsDamaged && !isMoving && !interactionTarget.DestructionPending;
 
         while (condition.Invoke())
         {
@@ -349,7 +357,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         Tree tree = interactionTarget as Tree;
         int overflow = 0;
-        Func<bool> condition = () => tree != null && !tree.IsDepleted && overflow == 0 && !isMoving && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => tree != null && !tree.IsDepleted && overflow == 0 && !isMoving && !interactionTarget.DestructionPending;
         while (condition.Invoke()) 
         {
             AddResource(ResourceType.Wood, tree.Chopped(gatherAmountPerSecond), out overflow);
@@ -388,7 +396,7 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     {
         GoldMine mine = interactionTarget as GoldMine;
         int overflow = 0;
-        Func<bool> condition = () => mine != null && !mine.IsDepleted && mine.IsBeingMined && overflow == 0 && !isMoving && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => mine != null && !mine.IsDepleted && mine.IsBeingMined && overflow == 0 && !isMoving && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             AddResource(ResourceType.Gold, mine.Mined(gatherAmountPerSecond), out overflow);
@@ -455,30 +463,49 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
     private ResourceType GetMostHeldType()
         => currentResources.OrderByDescending(x => x.Value).FirstOrDefault().Key;
 
-    private void OnSheepKill()
+    private void CollectAllNearbyFoodItems()
     {
-        //POLISH/TODO: Loop this until all resources collected 
-
-        var nearbyResourceItem = FindObjectsOfType<ResourceItem>()
-                .FirstOrDefault(x => x.ResourceType == ResourceType.Food
+        var allResourceItems = FindObjectsOfType<ResourceItem>();
+        var nearbyFoodItems = allResourceItems.Where(x => x.ResourceType == ResourceType.Food
                     && Vector3.Distance(transform.position, x.transform.position) <= resourceItemSeekDistance);
-
-        if (nearbyResourceItem == null)
+        var firstFoodItem = nearbyFoodItems.FirstOrDefault();
+        if (firstFoodItem == null)
         {
+            Debug.Log($"Unit '{name}' found no resources to collect.");
             return;
         }
         else
         {
-            interactionTarget = nearbyResourceItem;
-
-            MoveTo((interactionTarget as MonoBehaviour).transform, () =>
+            interactionTarget = firstFoodItem;
+            MoveTo(interactionTarget.Position, () =>
             {
                 PickupResource();
                 if (GetHeldResourcesCount() > 0)
                 {
-                    MoveToNearestBuilding(DepositResources);
+                    int collections = GetResourceCollectionIterations(nearbyFoodItems);
+                    if (collections > 0)
+                    {
+                        MoveToNearestBuildingDepositAndReturn(CollectAllNearbyFoodItems);
+                    }
+                    else 
+                    {
+                        MoveToNearestBuilding(DepositResources);
+                    }   
                 }
             }, false);
         }
     }
+
+    private int GetResourceCollectionIterations(IEnumerable<ResourceItem> resources)
+    {
+        int resourcesCount = 0;
+        foreach (var resource in resources) 
+        {
+            resourcesCount += resource.ResourceCount;
+        }
+        return Mathf.CeilToInt((float)resourcesCount / maxHeldResourceCount);
+    }
+
+    private int GetResourceCollectionIterations(ResourceItem resource)
+        => Mathf.CeilToInt((float)resource.ResourceCount / maxHeldResourceCount);
 }

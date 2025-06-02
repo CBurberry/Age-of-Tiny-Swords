@@ -101,8 +101,10 @@ public class ResourceItem : AUnitInteractableNonUnit, IResourceSource
         if (requestedAmount >= currentResourceAmount)
         {
             spriteRenderer.enabled = false;
-            Destroy(gameObject);
-            return currentResourceAmount;
+            int temp = currentResourceAmount;
+            currentResourceAmount = 0;
+            DestroySelf();
+            return temp;
         }
         else 
         {

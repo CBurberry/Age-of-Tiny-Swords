@@ -10,6 +10,13 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
     [EnumFlags]
     private UnitInteractContexts interactableContexts;
 
+    //Set this to true when calling Destroy
+    private bool destroyCalled;
+
+    public bool DestructionPending => destroyCalled;
+
+    public Vector3 Position => transform.position;
+
     public UnitInteractContexts GetContexts() => interactableContexts;
 
     public abstract UnitInteractContexts GetApplicableContexts(SimpleUnit unit);
@@ -86,5 +93,32 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
     protected virtual void InteractWith()
     {
         Interact(moveToTargetTransform.gameObject.GetComponent<IUnitInteractable>(), interactableContexts);
+    }
+
+    protected override void TriggerDeath()
+    {
+        if (!spriteRenderer.enabled)
+        {
+            return;
+        }
+
+        //Hide self
+        spriteRenderer.enabled = false;
+
+        if (spawnDeadPrefab)
+        {
+            //Replace this prefab with a spawned instance of the death prefab
+            DeadUnit deadUnit = Instantiate(deadPrefab, transform.position, Quaternion.identity, GameManager.Instance.UnitsParent);
+            deadUnit.name = deadUnit.UnitName = name;
+        }
+
+        InvokeDeathEvents();
+        DestroySelf();
+    }
+
+    protected virtual void DestroySelf()
+    {
+        destroyCalled = true;
+        Destroy(gameObject);
     }
 }

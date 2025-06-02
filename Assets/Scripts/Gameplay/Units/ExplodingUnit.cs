@@ -186,7 +186,7 @@ public class ExplodingUnit : AUnitInteractableUnit
 
         attackTarget = interactionTarget as IDamageable;
         attackTarget.OnDeath += OnTargetKilled;
-        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             if (!IsTargetWithinDistance(attackTarget, out _))
@@ -197,12 +197,13 @@ public class ExplodingUnit : AUnitInteractableUnit
                     animator.SetTrigger(ANIMATION_TRIG_DISARM);
                 }
 
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                yield return new WaitForEndOfFrame();
                 yield break;
             }
             else
             {
-                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                Vector3 direction = (interactionTarget.Position - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 FaceTarget(angle);
 
@@ -246,7 +247,7 @@ public class ExplodingUnit : AUnitInteractableUnit
     {
         GoldMine mine = interactionTarget as GoldMine;
         Vector3 closestPosition;
-        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && (interactionTarget as MonoBehaviour);
+        Func<bool> condition = () => mine != null && mine.State == GoldMine.Status.Active && !interactionTarget.DestructionPending;
         while (condition.Invoke())
         {
             closestPosition = mine.SpriteRenderer.bounds.ClosestPoint(transform.position);
@@ -261,12 +262,12 @@ public class ExplodingUnit : AUnitInteractableUnit
                     animator.SetTrigger(ANIMATION_TRIG_DISARM);
                 }
 
-                MoveTo((interactionTarget as MonoBehaviour).transform, StartAttackMine, false, stopAtAttackDistance: true);
+                MoveTo(interactionTarget.Position, StartAttackMine, false, stopAtAttackDistance: true);
                 yield break;
             }
             else
             {
-                Vector3 direction = ((interactionTarget as MonoBehaviour).transform.position - transform.position).normalized;
+                Vector3 direction = (interactionTarget.Position - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 FaceTarget(angle);
 

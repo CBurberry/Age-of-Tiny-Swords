@@ -12,6 +12,12 @@ public abstract class AUnitInteractableNonUnit : MonoBehaviour, IUnitInteractabl
     [EnumFlags]
     private UnitInteractContexts interactableContexts;
 
+    //Set this to true when calling Destroy
+    private bool destroyCalled;
+
+    public bool DestructionPending => destroyCalled;
+    public Vector3 Position => transform.position;
+
     public UnitInteractContexts GetContexts() => interactableContexts;
 
     public abstract UnitInteractContexts GetApplicableContexts(SimpleUnit unit);
@@ -20,5 +26,11 @@ public abstract class AUnitInteractableNonUnit : MonoBehaviour, IUnitInteractabl
     {
         interactableContexts = contexts & GetApplicableContexts(unit);
         return interactableContexts != UnitInteractContexts.None;
+    }
+
+    protected virtual void DestroySelf()
+    {
+        destroyCalled = true;
+        Destroy(gameObject);
     }
 }

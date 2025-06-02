@@ -60,7 +60,6 @@ public class Sheep : AUnitInteractableUnit
     //Sheep should try to move away from an attacker
     public void MoveAwayFrom(Vector3 position)
     {
-        Debug.Log("Baaaa!");
         Vector3 direction = (transform.position - position).normalized;
         MoveTo(transform.position + (direction * 0.5f));
     }
@@ -74,7 +73,7 @@ public class Sheep : AUnitInteractableUnit
         GameObject gameObject = Instantiate(resourcePrefab, transform.position, Quaternion.identity,  GameManager.Instance.ResourcesParent);
         ResourceItem resourceItem = gameObject.GetComponent<ResourceItem>();
         resourceItem.Spawn(ResourceType.Food, foodAmount);
-        Destroy(this.gameObject);
+        DestroySelf();
     }
 
     protected override void OnDamaged(IDamageable attacker)

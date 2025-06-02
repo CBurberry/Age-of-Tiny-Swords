@@ -40,11 +40,11 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     private UnitHealthBar healthBar;
 
     [SerializeField]
-    private bool spawnDeadPrefab;
+    protected bool spawnDeadPrefab;
 
     [ShowIf("spawnDeadPrefab")]
     [SerializeField]
-    private DeadUnit deadPrefab;
+    protected DeadUnit deadPrefab;
 
     [SerializeField]
     private GameObject unitSelectedMarker;
@@ -55,7 +55,21 @@ public class SimpleUnit : MonoBehaviour, IDamageable
     [ShowNonSerializedField]
     protected int currentHp;
     protected bool isMoving { get; private set; }
-    protected IUnitInteractable interactionTarget;
+
+    //Caching information about what was previously interacted with
+    // helps contextualize what the unit should do after the target was killed or destroyed (aka now is null so can't differentiate)
+    protected Type lastInteractionTargetType;
+    private IUnitInteractable _interactionTarget;
+    protected IUnitInteractable interactionTarget 
+    {
+        get => _interactionTarget;
+        set
+        {
+            //Debug.Log($"Unit '{name}' set interaction target to {(value != null ? value.GetType().Name : "NULL")}");
+            lastInteractionTargetType = value?.GetType();
+            _interactionTarget = value;
+        }
+    }
 
     //These components should be on the prefab root, along with this script
     protected Animator animator;
@@ -215,28 +229,27 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             deadUnit.name = deadUnit.UnitName = name;
         }
 
-        OnDeath?.Invoke();
-        OnAnyUnitDied?.Invoke(this);
+        InvokeDeathEvents();
         Destroy(gameObject);
     }
 
-    void UpdateDestintation()
+    //So base class can properly override TriggerDeath and raise the required events
+    protected void InvokeDeathEvents()
     {
-        if (isMoving && interactionTarget != null)
+        OnDeath?.Invoke();
+        OnAnyUnitDied?.Invoke(this);
+    }
+
+    private void UpdateDestintation()
+    {
+        if (isMoving && interactionTarget != null && !interactionTarget.DestructionPending)
         {
-            try
-            {
-                _targetPos.OnNext((interactionTarget as MonoBehaviour).transform.position);
-                _pathfinder.destination = _targetPos.Value.Value;
-            }
-            catch
-            {
-                interactionTarget = null;
-            }
+            _targetPos.OnNext(interactionTarget.Position);
+            _pathfinder.destination = _targetPos.Value.Value;
         }
     }
 
-    void SetupPathfinder()
+    private void SetupPathfinder()
     {
         _pathfinder = GetComponent<AILerp>();
         _pathfinder.onSearchPath += UpdateDestintation;
@@ -281,7 +294,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
         }).AddTo(_disposables);
     }
 
-    Vector3 GetClosestPoint(Transform target)
+    private Vector3 GetClosestPoint(Transform target)
     {
         //Get the pivot of the sprite renderer of the object, we need to filter by name as there may be others for VFX animations
         var spriteRenderers = target.GetComponentsInChildren<SpriteRenderer>(true);

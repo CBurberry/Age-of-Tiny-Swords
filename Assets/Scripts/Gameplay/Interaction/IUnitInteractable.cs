@@ -1,9 +1,14 @@
+using UnityEngine;
+
 /// <summary>
 /// Implementer of this interface defines interactions when a unit engages a target
 /// (either automatically or by a player instruction)
 /// </summary>
 public interface IUnitInteractable
 {
+    bool DestructionPending { get; }
+    Vector3 Position { get; }
+
     /// <summary>
     /// Get all possible contexts that this interactable supports, regardless of condition of this instance.
     /// </summary>
