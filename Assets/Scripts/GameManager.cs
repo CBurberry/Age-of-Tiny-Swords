@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections;
 using UniRx;
 using UnityEngine;
 using static Player;
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         if (Knights == null || Goblins == null) 
         {
@@ -62,7 +63,8 @@ public class GameManager : MonoBehaviour
             AI.enabled = enableGoblinAI;
         }
 
-        RevealStartingArea();
+        yield return new WaitForSeconds(0.5f);
+        yield return RevealStartingArea();
     }
 
     public void TogglePause()
@@ -84,11 +86,12 @@ public class GameManager : MonoBehaviour
         _gameOver.OnNext(diedFaction == Faction.Goblins);
     }
 
-    private void RevealStartingArea()
+    private IEnumerator RevealStartingArea()
     {
         if (initialRevealRadius > 0f) 
         {
-            fogOfWarManager.UpdateArea(cameraResetTransform.position, initialRevealRadius).Forget();
+            yield return new WaitForEndOfFrame();
+            yield return fogOfWarManager.UpdateArea(cameraResetTransform.position, initialRevealRadius).ToCoroutine();
         }
     }
 
