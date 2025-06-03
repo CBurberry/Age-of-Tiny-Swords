@@ -8,7 +8,7 @@ public class UIService
 
     public IObservable<MainMenuViewModel> ObserveMainMenuViewModel() => Observable.Return(new MainMenuViewModel
     {
-        OnPlay = () => _service.LoadScene("LoadTest")
+        OnPlay = () => _service.LoadScene("Game")
     });
 
     public IObservable<GameViewModel> ObserveGameViewModel() => Observable.Return(new GameViewModel
