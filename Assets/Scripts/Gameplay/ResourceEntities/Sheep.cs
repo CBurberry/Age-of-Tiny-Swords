@@ -39,10 +39,11 @@ public class Sheep : AUnitInteractableUnit
 
     protected override void Update()
     {
-        if (idleTimer.Timer > IDLE_MOVE_TIME + randomOffset) 
+        //Disabling goblin idle movement due to pathfinding load limits
+        /*if (idleTimer.Timer > IDLE_MOVE_TIME + randomOffset) 
         {
             RandomMove();
-        }
+        }*/
     }
 
     public override bool IsAttacking() => false;

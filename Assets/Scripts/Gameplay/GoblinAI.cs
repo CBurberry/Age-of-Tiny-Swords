@@ -14,6 +14,7 @@ public class GoblinAI : MonoBehaviour
     private ExplodingUnit barrel;
 
     [Header("Behaviours")]
+    [Header("Idling")]
     [SerializeField]
     private float unitIdleMinTime;
 
@@ -29,6 +30,9 @@ public class GoblinAI : MonoBehaviour
     [ReadOnly]
     private float updateAtTime;
 
+    [InfoBox("IDLING IS DISABLED DUE TO PATHFINDING LOAD!", EInfoBoxType.Warning)]
+
+    [Header("Attacking")]
     [SerializeField]
     [MinMaxSlider(1, 100)]
     [Label("Attack Force Size")]
@@ -62,9 +66,9 @@ public class GoblinAI : MonoBehaviour
 
     //(1) Spawning logic will be capped to at most one spawn up to a maximum of 20 per spawn timer elapse
     //    cap increases for every time the spawn timer elapses
-    //(2) Attack order will be suppressed for the first 5 minutes of the game
+    //(2) Attack order will be suppressed for the first 10 minutes of the game
     private float gameTime;
-    private const float attackMissiveSuppresion = 300f;
+    private const float attackMissiveSuppresion = 600f;
     private int spawnedThisWave;
     private int maxSpawns;
 
@@ -103,13 +107,13 @@ public class GoblinAI : MonoBehaviour
             ResetUnitAttackTimer();
         }
 
-
-        elapsedUnitUpdateTimer += Time.deltaTime;
+        //Disabling goblin idle movement due to pathfinding load limits
+        /*elapsedUnitUpdateTimer += Time.deltaTime;
         if (elapsedUnitUpdateTimer > updateAtTime)
         {
             UpdateUnits();
             ResetUnitUpdateTimer();
-        }
+        }*/
     }
 
     private void ResetSpawnTimer()

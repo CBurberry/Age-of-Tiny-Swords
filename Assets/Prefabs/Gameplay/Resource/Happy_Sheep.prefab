@@ -328,7 +328,7 @@ MonoBehaviour:
   randomizeMaxFoodAmount: 1
   maxFoodAmount: 0
   foodAmount: 0
-  maxFoundAmountRange: {x: 80, y: 160}
+  maxFoundAmountRange: {x: 100, y: 200}
 --- !u!114 &2229769728546039962
 MonoBehaviour:
   m_ObjectHideFlags: 0
