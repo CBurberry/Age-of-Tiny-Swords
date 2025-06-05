@@ -125,22 +125,24 @@ public class MeleeUnit : AUnitInteractableUnit
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            if (!IsTargetWithinDistance(attackTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out Vector3 closestPoint))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(closestPoint, StartAttacking, false, stopAtAttackDistance: true);
                 yield return new WaitForEndOfFrame();
                 yield break;
             }
             else
             {
-                Vector3 direction = (interactionTarget.Position - transform.position).normalized;
+                Vector3 direction = (closestPoint - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 FaceTarget(angle);
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, true);
                 attackTarget.ApplyDamage(data.BaseAttackDamage, this);
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
+
+            yield return new WaitForEndOfFrame();
         }
 
         if (attackTarget != null)

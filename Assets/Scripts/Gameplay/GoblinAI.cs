@@ -52,6 +52,12 @@ public class GoblinAI : MonoBehaviour
 
     [Header("Spawning")]
     [SerializeField]
+    private AUnitInteractableUnit torchGoblinPrefab;
+
+    [SerializeField]
+    private Transform[] spawnPositions;
+
+    [SerializeField]
     [MinMaxSlider(0f, 300f)]
     [Label("Spawn Time")]
     private Vector2 randomRangeSpawnTime;
@@ -88,14 +94,14 @@ public class GoblinAI : MonoBehaviour
     private void Update()
     {
         gameTime += Time.deltaTime;
-        maxSpawns = (int)Mathf.Clamp(gameTime * 0.0166f, 0f, 20f);
 
         if (player.CanBuildMoreUnits)
         {
             elapsedSpawnTimer += Time.deltaTime;
             if (elapsedSpawnTimer > spawnAtTime)
             {
-                TriggerAllSpawns();
+                maxSpawns = (int)Mathf.Clamp(gameTime * 0.0166f, 0f, 10f);
+                StartCoroutine(TriggerAllSpawns());
                 ResetSpawnTimer();
             }
         }
@@ -134,38 +140,27 @@ public class GoblinAI : MonoBehaviour
         attackAtTime = Random.Range(randomRangeDelayBetweenAttackOrders.x, randomRangeDelayBetweenAttackOrders.y);
     }
 
-    private void TriggerAllSpawns()
+    private IEnumerator TriggerAllSpawns()
     {
         spawnedThisWave = 0;
-        AUnitInteractableUnit spawnedUnit = null;
+        AUnitInteractableUnit spawnedUnit;
         Vector3 randomPoint;
-        foreach (SimpleBuilding building in player.Buildings)
-        {
-            //Exit early if we can't spawn yet
-            if (spawnedThisWave >= maxSpawns) 
-            {
-                return;
-            }
 
-            //Spawn a unit for the given building type (goblins only have 1 per building)
-            if (building != null && building.State == BuildingStates.Constructed)
+        for (;spawnedThisWave < maxSpawns && player.CanBuildMoreUnits; spawnedThisWave++) 
+        {
+            var randomSpawn = spawnPositions.PickRandom();
+            if (randomSpawn != null)
             {
-                spawnedUnit = building.SpawnUnitInstance(0);
-                spawnedThisWave++;
+                spawnedUnit = Instantiate(torchGoblinPrefab, randomSpawn.position, Quaternion.identity, GameManager.Instance.UnitsParent);
 
                 //Move the spawn slightly so they're not all stacked on each other
-                randomPoint = Random.insideUnitCircle;
-                spawnedUnit.MoveTo(building.SpawnPosition + new Vector3(randomPoint.x, randomPoint.y, 0f));
+                randomPoint = Random.insideUnitCircle * 2f;
+                spawnedUnit.MoveTo(randomSpawn.position + new Vector3(randomPoint.x, randomPoint.y, 0f));
             }
+
+            //Yield between spawns to reduce load on the pathfinding system (single-threaded limitation)
+            yield return new WaitForSeconds(1f);
         }
-
-        //Spawn a Explosive Barrel at a random spawn
-        SimpleBuilding randomBuilding = player.Buildings.Where(x => x != null && x.State == BuildingStates.Constructed)
-            .ToList().PickRandom();
-
-        randomPoint = Random.insideUnitCircle;
-        spawnedUnit = Instantiate(barrel, randomBuilding.SpawnPosition, Quaternion.identity, GameManager.Instance.UnitsParent);
-        spawnedUnit.MoveTo(randomBuilding.SpawnPosition + new Vector3(randomPoint.x, randomPoint.y, 0f));
     }
 
     private void IssueAttackMissive()

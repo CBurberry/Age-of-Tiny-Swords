@@ -281,10 +281,10 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            if (!IsTargetWithinDistance(damageTarget, out _))
+            if (!IsTargetWithinDistance(damageTarget, out Vector3 closestPoint))
             {
                 animator.SetBool(ANIMATION_BOOL_CHOPPING, false);
-                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(closestPoint, StartAttacking, false, stopAtAttackDistance: true);
                 yield return new WaitForEndOfFrame();
                 yield break;
             }
@@ -294,6 +294,8 @@ public class PawnUnit : AUnitInteractableUnit, IDamageable
                 damageTarget.ApplyDamage(data.BaseAttackDamage, this);
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
+
+            yield return new WaitForEndOfFrame();
         }
 
         Debug.Log($"Unit '{name}' completed attacking. Was attacking sheep: {isAttackingSheep}");

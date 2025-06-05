@@ -86,6 +86,7 @@ public abstract class AUnitInteractableUnit : SimpleUnit, IUnitInteractable
     {
         closestPosition = target.GetClosestPosition(transform.position);
         float magnitude = (closestPosition - transform.position).magnitude;
+        //Debug.Log($"Unit '{name}' (position: {transform.position}) checking distance against target (closest position: {closestPosition}), magnitude {magnitude}, attackDistance {data.AttackDistance}, result: {magnitude <= data.AttackDistance}");
         return magnitude <= data.AttackDistance;
     }
 

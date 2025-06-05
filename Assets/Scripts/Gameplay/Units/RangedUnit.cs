@@ -126,10 +126,10 @@ public class RangedUnit : AUnitInteractableUnit
         while (condition.Invoke())
         {
             //Check we are at the target (proximity check? bounds?)
-            if (!IsTargetWithinDistance(attackTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out Vector3 closestPoint))
             {
                 animator.SetBool(ANIMATION_BOOL_ATTACKING, false);
-                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(closestPoint, StartAttacking, false, stopAtAttackDistance: true);
                 yield return new WaitForEndOfFrame();
                 yield break;
             }
@@ -139,6 +139,8 @@ public class RangedUnit : AUnitInteractableUnit
                 RangedAttack();
                 yield return RuntimeStatics.CoroutineUtilities.WaitForSecondsWithInterrupt(1f / data.AttackSpeed, () => !condition.Invoke());
             }
+
+            yield return new WaitForEndOfFrame();
         }
 
         if (attackTarget != null) 

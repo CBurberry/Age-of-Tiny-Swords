@@ -130,6 +130,7 @@ public class SimpleUnit : MonoBehaviour, IDamageable
             interactionTarget = null;
         }
 
+        //Debug.Log($"Unit '{name}' (position: {transform.position}) moving to target position: {worldPosition}." + Environment.NewLine + $"Is current position the same position as target? {worldPosition == transform.position}, stopAtAttackDistance? {stopAtAttackDistance}, magnitude {(worldPosition - transform.position).magnitude}, attackDistance {data.AttackDistance}, result: {worldPosition == transform.position || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance}");
         if (worldPosition == transform.position 
             || stopAtAttackDistance && (worldPosition - transform.position).magnitude <= data.AttackDistance) 
         {

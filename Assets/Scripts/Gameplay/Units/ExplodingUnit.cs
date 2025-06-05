@@ -189,7 +189,7 @@ public class ExplodingUnit : AUnitInteractableUnit
         Func<bool> condition = () => attackTarget != null && !attackTarget.IsKilled && IUnitInteractable.IsValid(interactionTarget);
         while (condition.Invoke())
         {
-            if (!IsTargetWithinDistance(attackTarget, out _))
+            if (!IsTargetWithinDistance(attackTarget, out Vector3 closestPoint))
             {
                 //Disarm and move
                 if (IsPrimedToExplode())
@@ -197,13 +197,13 @@ public class ExplodingUnit : AUnitInteractableUnit
                     animator.SetTrigger(ANIMATION_TRIG_DISARM);
                 }
 
-                MoveTo(interactionTarget.Position, StartAttacking, false, stopAtAttackDistance: true);
+                MoveTo(closestPoint, StartAttacking, false, stopAtAttackDistance: true);
                 yield return new WaitForEndOfFrame();
                 yield break;
             }
             else
             {
-                Vector3 direction = (interactionTarget.Position - transform.position).normalized;
+                Vector3 direction = (closestPoint - transform.position).normalized;
                 float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                 FaceTarget(angle);
 
@@ -221,6 +221,8 @@ public class ExplodingUnit : AUnitInteractableUnit
                     yield break;
                 }
             }
+
+            yield return new WaitForEndOfFrame();
         }
 
         if (attackTarget != null)
